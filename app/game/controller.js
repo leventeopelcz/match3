@@ -1,6 +1,6 @@
 'use strict';
 
-Game.controller('GameController', ['$scope', 'boardData', function($scope, boardData) {
+Game.controller('GameController', ['$scope', 'boardData', 'random', function($scope, boardData, random) {
   var rows = boardData.rows;
   var columns = boardData.columns;
   var candies = boardData.candies;
@@ -13,7 +13,7 @@ Game.controller('GameController', ['$scope', 'boardData', function($scope, board
     for(var j = 0; j < columns; j++) {
       var randomCandy;
       do {
-        randomCandy = boardData.randomInt(0, candies.length);
+        randomCandy = random.range(0, candies.length);
         $scope.board[i][j] = candies[randomCandy];
       } while((i >= 2 &&
         $scope.board[i - 1][j] == candies[randomCandy] &&
