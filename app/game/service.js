@@ -1,5 +1,6 @@
 'use strict';
 
+// Service for loading the level data from json.
 Game.service('level', ['$http', function($http) {
   var httpConfig = {
     cache: true
@@ -11,6 +12,7 @@ Game.service('level', ['$http', function($http) {
   }
 }]);
 
+// Utility service for random integer.
 Game.service('random', [function() {
   this.range = function(min, max) {
     return Math.floor((Math.random() * max) + min);
