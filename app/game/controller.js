@@ -11,7 +11,17 @@ Game.controller('GameController', ['$scope', 'boardData', function($scope, board
   for(var i = 0; i < rows; i++) {
     $scope.board[i] = [columns];
     for(var j = 0; j < columns; j++) {
-      $scope.board[i][j] = candies[boardData.randomInt(0, candies.length)];
+      var randomCandy;
+      do {
+        randomCandy = boardData.randomInt(0, candies.length);
+        $scope.board[i][j] = candies[randomCandy];
+      } while((i >= 2 &&
+        $scope.board[i - 1][j] == candies[randomCandy] &&
+        $scope.board[i - 2][j] == candies[randomCandy])
+        ||
+        (j >= 2 &&
+        $scope.board[i][j - 1] == candies[randomCandy] &&
+        $scope.board[i][j - 2] == candies[randomCandy]));
     }
   }
   
