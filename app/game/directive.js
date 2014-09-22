@@ -22,7 +22,7 @@ Game.directive('game', ['boardData', function(boardData) {
         
         var candies = boardData.candies;
         
-        for(var i = 0; i < boardData.candies.length; i++) {
+        for(var i = 0; i < candies.length; i++) {
           candies[i] = new function() {
             var x = i * candy.sourceSize;
             var y = 0;
@@ -55,6 +55,16 @@ Game.directive('game', ['boardData', function(boardData) {
         // canvas-unsupported code here
       }
 
+    }
+  };
+}]);
+
+Game.directive('hud', ['boardData', function(boardData) {
+  return {
+    restrict: 'AE',
+    link: function(scope, element, attrs) {
+      scope.movesLeft = boardData.movesLeft;
+      scope.score = boardData.score;
     }
   };
 }]);
