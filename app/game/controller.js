@@ -28,7 +28,6 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
     $scope.level.movesLeft = response.movesLeft;
     $scope.level.loaded = true;
     
-    /*
     // Generate game board with candy Ids.
     for(var i = 0; i < $scope.level.rows; i++) {
       $scope.board[i] = [$scope.level.columns];
@@ -53,15 +52,14 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
         }
       }
     }
-    */
     
-    $scope.board = $scope.level.board;
+    // For easy testing.
+    //$scope.board = $scope.level.board;
 
     // Print out game board with candy Ids.
     console.log.apply(console, $scope.board);
     
     buildMatchesVector();
-    //detectMatches();
   });
   
   //Build available swaps vector.
@@ -83,7 +81,6 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
             if(detectMatches(i,j) || detectMatches(i,j+1)) {
               console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
             }
-            
             
             // Swap it back.
             $scope.board[i][j+1] = $scope.board[i][j];
@@ -143,7 +140,6 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
     }
     
     return (horizontalMatches >=3 || verticalMatches >= 3);
-
   }
   
 }]);
