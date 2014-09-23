@@ -59,7 +59,7 @@ Game.directive('game', [function() {
               for(var i = 0; i < scope.level.rows; i++) {
                 for(var j = 0; j < scope.level.columns; j++) {
                   if(scope.board[i][j] != -1) {
-                    candies[scope.board[i][j]].draw(i*candy.destinationSize, j*candy.destinationSize);
+                    candies[scope.board[i][j]].draw(j*candy.destinationSize, i*candy.destinationSize);
                   }
                 }
               }
