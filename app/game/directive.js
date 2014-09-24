@@ -11,15 +11,22 @@ Game.directive('game', [function() {
       // Define Candy source size from atlas and the size we would like it to show up on canvas.
       var candy = {
         sourceSize: 200,
-        destinationSize: 60
+        destinationSize: null
       };
       
       // Watch for level.
       scope.$watch('level.loaded', function() {
         // If level loaded.
         if(scope.level.loaded) {
+          
+          // Set candy size.
+          if($window.innerWidth >= 976) {
+            candy.destinationSize = 976 / scope.level.columns;
+          } else {
+            candy.destinationSize = $window.innerWidth / scope.level.columns;
+          }
+          
           // Set canvas size.
-          // TODO: Make this responsive!
           canvas.setAttribute('width', candy.destinationSize * scope.level.columns);
           canvas.setAttribute('height', candy.destinationSize * scope.level.rows);
 
