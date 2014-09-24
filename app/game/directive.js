@@ -14,14 +14,17 @@ Game.directive('game', [function() {
         destinationSize: null
       };
       
+      // Max width of game board
+      var maxBoardWidth = 600;
+      
       // Watch for level.
       scope.$watch('level.loaded', function() {
         // If level loaded.
         if(scope.level.loaded) {
           
           // Set candy size.
-          if($window.innerWidth >= 976) {
-            candy.destinationSize = 976 / scope.level.columns;
+          if($window.innerWidth >= maxBoardWidth) {
+            candy.destinationSize = maxBoardWidth / scope.level.columns;
           } else {
             candy.destinationSize = $window.innerWidth / scope.level.columns;
           }
