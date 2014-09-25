@@ -28,7 +28,19 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
     $scope.level.movesLeft = response.movesLeft;
     $scope.level.loaded = true;
     
-    // Generate game board with candy Ids.
+    generateBoard();
+    
+    // For easy testing.
+    //$scope.board = $scope.level.board;
+
+    // Print out game board with candy Ids.
+    console.log.apply(console, $scope.board);
+    
+    buildMatchesVector();
+  });
+  
+  // Generate game board with candy Ids.
+  var generateBoard = function() {
     for(var i = 0; i < $scope.level.rows; i++) {
       $scope.board[i] = [$scope.level.columns];
       for(var j = 0; j < $scope.level.columns; j++) {
@@ -52,15 +64,7 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
         }
       }
     }
-    
-    // For easy testing.
-    //$scope.board = $scope.level.board;
-
-    // Print out game board with candy Ids.
-    console.log.apply(console, $scope.board);
-    
-    buildMatchesVector();
-  });
+  }
   
   //Build available swaps vector.
   var buildMatchesVector = function() {
@@ -77,9 +81,20 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
             
             //console.log.apply(console, $scope.board);
 
-            // Check if we have a match.
-            if(detectMatches(i,j) || detectMatches(i,j+1)) {
+            // Check if we have a match in [i,j]
+            var chain = detectMatches(i,j);
+            if(chain) {
+              chain.push([i,j+1]); // because we swapped!
               console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
+              console.log.apply(console, chain);
+            }
+            
+            // Check if we have a match in [i,j+1]
+            var chain = detectMatches(i,j+1);
+            if(chain) {
+              chain.push([i,j]); // because we swapped!
+              console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
+              console.log.apply(console, chain);
             }
             
             // Swap it back.
@@ -99,8 +114,19 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
             //console.log.apply(console, $scope.board);
 
             // Check if we have a match.
-            if(detectMatches(i,j) || detectMatches(i+1,j)) {
+            var chain = detectMatches(i,j);
+            if(chain) {
+              chain.push([i+1,j]); // because we swapped!
               console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
+              console.log.apply(console, chain);
+            }
+            
+            // Check if we have a match.
+            var chain = detectMatches(i+1,j);
+            if(chain) {
+              chain.push([i,j]); // because we swapped!
+              console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
+              console.log.apply(console, chain);
             }
             
             // Swap it back.
@@ -119,27 +145,42 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
     var horizontalMatches = 1;
     var verticalMatches = 1;
     var candyType = $scope.board[a][b];
+    var chain = [];
     //console.log("candy type: "+candyType+" ("+a+":"+b+")");
 
     for(var i = b - 1; i >= 0 && $scope.board[a][i] == candyType; i--) {
       horizontalMatches++;
+      chain.push([a,i]);
       //console.log("horizontal<< : ("+a+":"+i+")");
     }
     for(var i = b + 1; i < $scope.level.columns && $scope.board[a][i] == candyType; i++) {
       horizontalMatches++;
+      chain.push([a,i]);
       //console.log("horizontal>> : ("+a+":"+i+")");
     }
-
+    
+    if(horizontalMatches >= 3) {
+      return chain;
+    } else {
+      chain = [];
+    }
+    
     for(var j = a - 1; j >= 0 && $scope.board[j][b] == candyType; j--) {
       verticalMatches++;
+      chain.push([j,b]);
       //console.log("vertival^^ : ("+j+":"+b+")");
     }
     for(var j = a + 1; j < $scope.level.rows && $scope.board[j][b] == candyType; j++) {
       verticalMatches++;
+      chain.push([j,b]);
       //console.log("vertivalvv : ("+j+":"+b+")");
     }
     
-    return (horizontalMatches >=3 || verticalMatches >= 3);
+    if(verticalMatches >= 3) {
+      return chain;
+    } else {
+      chain = [];
+    }
   }
   
 }]);
