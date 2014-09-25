@@ -18,6 +18,9 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
     loaded: false
   }
   
+  // Available chains.
+  $scope.chains = [];
+  
   // Load level.
   level.load(function(response) {
     // set level datas
@@ -85,23 +88,24 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
             var chain = detectMatches(i,j);
             if(chain) {
               chain.push([i,j+1]); // because we swapped!
-              console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
-              console.log.apply(console, chain);
+              $scope.chains.push(chain);
+              //console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
+              //console.log.apply(console, chain);
             }
             
             // Check if we have a match in [i,j+1]
             var chain = detectMatches(i,j+1);
             if(chain) {
               chain.push([i,j]); // because we swapped!
-              console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
-              console.log.apply(console, chain);
+              $scope.chains.push(chain);
+              //console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
+              //console.log.apply(console, chain);
             }
             
             // Swap it back.
             $scope.board[i][j+1] = $scope.board[i][j];
             $scope.board[i][j] = original;
             //console.log.apply(console, $scope.board);
-            //console.log("===================");
           }
           
           // If there is tile to the bottom and if it is a candy.
@@ -117,23 +121,24 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
             var chain = detectMatches(i,j);
             if(chain) {
               chain.push([i+1,j]); // because we swapped!
-              console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
-              console.log.apply(console, chain);
+              $scope.chains.push(chain);
+              //console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
+              //console.log.apply(console, chain);
             }
             
             // Check if we have a match.
             var chain = detectMatches(i+1,j);
             if(chain) {
               chain.push([i,j]); // because we swapped!
-              console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
-              console.log.apply(console, chain);
+              $scope.chains.push(chain);
+              //console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
+              //console.log.apply(console, chain);
             }
             
             // Swap it back.
             $scope.board[i+1][j] = $scope.board[i][j];
             $scope.board[i][j] = original;
             //console.log.apply(console, $scope.board);
-            //console.log("===================");
           }
 
         }
