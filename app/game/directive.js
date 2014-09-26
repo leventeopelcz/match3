@@ -20,6 +20,12 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
       // Max width of game board
       var maxBoardWidth = 600;
       
+      // Swap vector.
+      var swap = {
+        source: null,
+        target: null
+      };
+      
       // Watch for level.
       scope.$watch('level.loaded', function() {
         // If level loaded.
@@ -50,6 +56,9 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         element[0].setAttribute('width', candyDestinationSize * scope.level.columns);
         element[0].setAttribute('height', candyDestinationSize * scope.level.rows);
         
+        // To enable the use of mouseover or rollover events.
+        canvas.enableMouseOver();
+        
         // A vector of the different candies.
         var candies = [];
         
@@ -76,12 +85,81 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
                 candyObj.y = i*candyDestinationSize;
                 candyObj.scaleX = candyScale;
                 candyObj.scaleY = candyScale;
+                candyObj.on('click', function(evt) {
+                  if(!swap.source) {
+                    swap.source = evt.target;
+                  } else if(!swap.target) {
+                    swap.target = evt.target;
+                    swap(swap);
+                    swap.source = null;
+                    swap.target = null;
+                  } else {
+                    swap.source = null;
+                    swap.target = null;
+                  }
+                });
+                /*candyObj.on('rollover', function(evt) {
+                  
+                });*/
                 canvas.addChild(candyObj);
               }
             }
           }
         }
         
+        var swap = function(swapObj) {
+          var si = swapObj.source.name.split(':')[0];
+          var sj = swapObj.source.name.split(':')[1];
+          var ti = swapObj.target.name.split(':')[0];
+          var tj = swapObj.target.name.split(':')[1];
+          
+          // Horizontal and 1 away or vertical and 1 away.
+          if(Math.abs(si-ti) == 1 && Math.abs(sj - tj) == 0 || Math.abs(sj - tj) == 1 && Math.abs(si-ti) == 0) {
+            // If it's a valid swap...
+            if(scope.checkSwapValidity([[si,sj],[ti,tj]])) {
+              // valid swap code here.
+              swapAnimation(swapObj);
+            } else {
+              // Swap back the candies.
+              invalidSwapAnimation(swapObj);
+            }
+          }
+        }
+        
+        var invalidSwapAnimation = function(swapObj) {
+          createjs.Tween.get(swapObj.source)
+          .to(
+            {y: swapObj.target.y, x: swapObj.target.x},
+            500,
+            createjs.Ease.sineIn)
+          .to(
+            {y: swapObj.source.y, x: swapObj.source.x},
+            500,
+            createjs.Ease.sineOut);
+          createjs.Tween.get(swapObj.target)
+          .to(
+            {y: swapObj.source.y, x: swapObj.source.x},
+            500,
+            createjs.Ease.sineIn)
+          .to(
+            {y: swapObj.target.y, x: swapObj.target.x},
+            500,
+            createjs.Ease.sineOut);
+        }
+        
+        var swapAnimation = function(swapObj) {
+          createjs.Tween.get(swapObj.source)
+          .to(
+            {y: swapObj.target.y, x: swapObj.target.x},
+            500,
+            createjs.Ease.sineOut);
+          createjs.Tween.get(swapObj.target)
+          .to(
+            {y: swapObj.source.y, x: swapObj.source.x},
+            500,
+            createjs.Ease.sineOut);
+        }
+
         // Highlight a random candy chain.
         var highlightRandomChain = function() {
           var chain = getRandomChain();
@@ -116,7 +194,7 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
           createjs.Ticker.addEventListener('tick', tick);
         }
         
-        var tick = function(event) {
+        var tick = function(evt) {
           canvas.update();
         } 
         

@@ -21,6 +21,9 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
   // Available chains.
   $scope.chains = [];
   
+  // Available swaps.
+  var validSwaps = [];
+  
   // Load level.
   level.load(function(response) {
     // set level datas
@@ -89,6 +92,7 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
             if(chain) {
               chain.push([i,j+1]); // because we swapped!
               $scope.chains.push(chain);
+              validSwaps.push([[i,j],[i,j+1]]);
               //console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
               //console.log.apply(console, chain);
             }
@@ -98,6 +102,7 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
             if(chain) {
               chain.push([i,j]); // because we swapped!
               $scope.chains.push(chain);
+              validSwaps.push([[i,j],[i,j+1]]);
               //console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
               //console.log.apply(console, chain);
             }
@@ -122,6 +127,7 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
             if(chain) {
               chain.push([i+1,j]); // because we swapped!
               $scope.chains.push(chain);
+              validSwaps.push([[i,j],[i+1,j]]);
               //console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
               //console.log.apply(console, chain);
             }
@@ -131,6 +137,7 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
             if(chain) {
               chain.push([i,j]); // because we swapped!
               $scope.chains.push(chain);
+              validSwaps.push([[i,j],[i+1,j]]);
               //console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
               //console.log.apply(console, chain);
             }
@@ -186,6 +193,23 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
     } else {
       chain = [];
     }
+  }
+  
+  $scope.checkSwapValidity = function(obj) {
+    var v1;
+    var v2;
+    var s1 = obj[0];
+    var s2 = obj[1];
+    
+    for(var i = 0; i < validSwaps.length; i++) {
+      v1 = validSwaps[i][0];
+      v2 = validSwaps[i][1];
+      if(v1[0] == s1[0] && v1[1] == s1[1] && v2[0] == s2[0] && v2[1] == s2[1] || v1[0] == s2[0] && v1[1] == s2[1] && v2[0] == s1[0] && v2[1] == s1[1]) {
+        return true;
+      }
+    }
+    
+    return false;
   }
   
 }]);
