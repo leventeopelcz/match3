@@ -74,6 +74,9 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
               if(scope.board[i][j] != -1) {
                 var candyObj = new createjs.Bitmap(candyAtlasSrc);
                 candyObj.name = i+':'+j;
+                candyObj.row = i;
+                candyObj.column = j;
+                candyObj.type = scope.board[i][j];
                 candyObj.sourceRect = candies[scope.board[i][j]].sourceRect;
                 candyObj.x = j*candyDestinationSize;
                 candyObj.y = i*candyDestinationSize;
