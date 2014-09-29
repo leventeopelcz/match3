@@ -34,12 +34,6 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         }
       });
       
-      // Get a random chain.
-      var getRandomChain = function() {
-        var randomIndex = random.range(0, scope.chains.length);
-        return scope.chains[randomIndex];
-      }
-      
       // Level loaded.
       var levelLoaded = function() {
         // Get candy pixel size.
@@ -174,6 +168,12 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
             500,
             createjs.Ease.sineOut);
         }
+        
+        // Get a random chain.
+        var getRandomChain = function() {
+          var randomIndex = random.range(0, scope.chains.length);
+          return scope.chains[randomIndex];
+        }
 
         // Highlight a random candy chain.
         var highlightRandomChain = function() {
@@ -185,14 +185,14 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         }
         
         // Highlight animation for candies in a chain.
-        var highlightAnimation = function(obj) {
-          createjs.Tween.get(obj, {loop: true})
+        var highlightAnimation = function(bitmap) {
+          createjs.Tween.get(bitmap, {loop: true})
           .to(
-            {scaleX:candyScale * 1.1, scaleY:candyScale * 0.7, y: obj.y-5, x: obj.x-2},
+            {scaleX:candyScale * 1.1, scaleY:candyScale * 0.7, y: bitmap.y-5, x: bitmap.x-2},
             500,
             createjs.Ease.sineOut)
           .to(
-            {scaleX:candyScale, scaleY:candyScale, y: obj.y+5},
+            {scaleX:candyScale, scaleY:candyScale, y: bitmap.y+5},
             500,
             createjs.Ease.sineIn);
         }
