@@ -117,10 +117,10 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         }
         
         var swap = function(swapObj) {
-          var si = swapObj.source.name.split(':')[0];
-          var sj = swapObj.source.name.split(':')[1];
-          var ti = swapObj.target.name.split(':')[0];
-          var tj = swapObj.target.name.split(':')[1];
+          var si = swapObj.source.row;
+          var sj = swapObj.source.column;
+          var ti = swapObj.target.row;
+          var tj = swapObj.target.column;
           var idx;
           
           // Horizontal and 1 away or vertical and 1 away.
