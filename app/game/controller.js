@@ -195,7 +195,7 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
     }
   }
   
-  $scope.checkSwapValidity = function(obj) {
+  $scope.getSwapIndex = function(obj) {
     var v1;
     var v2;
     var s1 = obj[0];
@@ -205,11 +205,22 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
       v1 = validSwaps[i][0];
       v2 = validSwaps[i][1];
       if(v1[0] == s1[0] && v1[1] == s1[1] && v2[0] == s2[0] && v2[1] == s2[1] || v1[0] == s2[0] && v1[1] == s2[1] && v2[0] == s1[0] && v2[1] == s1[1]) {
-        return true;
+        // Update board and return the index.
+        return i;
       }
     }
     
-    return false;
+    return null;
   }
   
+  
+  $scope.removeChain = function(idx) {
+    var chain = $scope.chains[idx];
+    var pair;
+    for(var i = 0; i < chain.length; i++) {
+      pair = chain[i];
+      $scope.board[pair[0]][pair[1]] = -2;
+    }
+  }
+
 }]);

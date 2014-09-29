@@ -107,18 +107,33 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
           }
         }
         
+        var removeChain = function(idx) {
+          scope.removeChain(idx);
+          var chain = scope.chains[idx];
+          var node;
+          var child;
+          for(var i = 0; i < chain.length; i++) {
+            node = chain[i];
+            child = canvas.getChildByName(node[0]+':'+node[1]);
+            canvas.removeChild(child);
+          }
+        }
+        
         var swap = function(swapObj) {
           var si = swapObj.source.name.split(':')[0];
           var sj = swapObj.source.name.split(':')[1];
           var ti = swapObj.target.name.split(':')[0];
           var tj = swapObj.target.name.split(':')[1];
+          var idx;
           
           // Horizontal and 1 away or vertical and 1 away.
           if(Math.abs(si-ti) == 1 && Math.abs(sj - tj) == 0 || Math.abs(sj - tj) == 1 && Math.abs(si-ti) == 0) {
             // If it's a valid swap...
-            if(scope.checkSwapValidity([[si,sj],[ti,tj]])) {
+            var idx = scope.getSwapIndex([[si,sj],[ti,tj]]);
+            if(idx) {
               // valid swap code here.
               swapAnimation(swapObj);
+              removeChain(idx);
             } else {
               // Swap back the candies.
               invalidSwapAnimation(swapObj);
