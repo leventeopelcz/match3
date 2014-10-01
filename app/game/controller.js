@@ -1,6 +1,6 @@
 'use strict';
 
-Game.controller('GameController', ['$scope', 'random', 'level', function($scope, random, level) {
+Game.controller('GameController', ['$scope', 'random', 'file', function($scope, random, file) {
   
   // Candy Ids.
   $scope.candiesVector = [0,1,2,3,4,5];
@@ -24,8 +24,8 @@ Game.controller('GameController', ['$scope', 'random', 'level', function($scope,
   // Available swaps.
   var validSwaps = [];
   
-  // Load level.
-  level.load(function(response) {
+  // Load the JSON file that contains the level layout.
+  file.load('level.json', function(response) {
     // set level datas
     $scope.level.board = response.board;
     $scope.level.rows = response.board.length;

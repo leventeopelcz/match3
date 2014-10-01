@@ -1,12 +1,12 @@
 'use strict';
 
 // Service for loading the level data from json.
-Game.service('level', ['$http', function($http) {
+Game.service('file', ['$http', function($http) {
   var httpConfig = {
     cache: true
   }; 
-  this.load = function(callback) {
-    $http.get('level.json', httpConfig).then(function(response) {
+  this.load = function(filedir, callback) {
+    $http.get(filedir, httpConfig).then(function(response) {
       callback(response.data);
     });
   }
