@@ -8,60 +8,204 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
       // Get Canvas.
       var canvas = new createjs.Stage(element[0]);
       
-      // Candy Atlas
-      var candyAtlasSrc = 'images/candies.png';
-      
       // Define Candy source size from atlas.
-      var candySourceSize = 200;
+      var CANDY_SOURCE_SIZE = 200;
       
-      // Candy scale for displaying.
+      // This will be calculated depending on the screen size and level layout.
+      var candyDestinationSize;
+      
+      // Candy scale for displaying, default is 1.
       var candyScale = 1;
       
-      // Max width of game board
+      // Max width of game board.
       var maxBoardWidth = 600;
       
-      // Swap vector.
-      var swap = {
-        source: null,
-        target: null
-      };
+      // CreateJS asset loader.
+      var assetLoader = new createjs.LoadQueue();
       
-      // Watch for level.
-      scope.$watch('level.loaded', function() {
-        // If level loaded.
-        if(scope.level.loaded) {
+      // ======================================================================
+      
+      // Assets to load.
+      assetLoader.loadManifest([
+         {id: 'candyAtlas', src:'images/candies.png'}
+      ]);
+      
+      // ======================================================================
+      
+      // If level data is loaded.
+      scope.$watch('levelLoaded', function() {
+        if(scope.levelLoaded) {
           levelLoaded();
         }
       });
       
-      // Level loaded.
-      var levelLoaded = function() {
-        // Get candy pixel size.
-        if($window.innerWidth >= maxBoardWidth) {
-          var candyDestinationSize = maxBoardWidth / scope.level.columns;
-        } else {
-          var candyDestinationSize = $window.innerWidth / scope.level.columns;
+      // ======================================================================
+      
+      // Adds the sprites for the candies.
+      var addSpritesForCandies = function(candies) {
+        var x;
+        var y = 0;
+        var width = CANDY_SOURCE_SIZE;
+        var height = CANDY_SOURCE_SIZE;
+        
+        for(var i = 0; i < candies.length; i++) {
+          x = candies[i].type * CANDY_SOURCE_SIZE;
+          candies[i].image = assetLoader.getResult('candyAtlas');
+          candies[i].sourceRect = new createjs.Rectangle(x, y, width, height);
+          candies[i].x = candies[i].column * candyDestinationSize;
+          candies[i].y = candies[i].row * candyDestinationSize;
+          candies[i].scaleX = candyScale;
+          candies[i].scaleY = candyScale;
+          canvas.addChild(candies[i]);
         }
         
-        // Get candy scale.
-        candyScale = candyDestinationSize / candySourceSize;
+        canvas.update();
+      }
+      
+      // ======================================================================
+      
+      // Interactivity functions.
+      
+      var swipeFromColumn = null;
+      var swipeFromRow = null;
+      
+      var convertPoint = new function() {
+        var column = null;
+        var row = null;
         
-        // Set canavas size.
-        element[0].setAttribute('width', candyDestinationSize * scope.level.columns);
-        element[0].setAttribute('height', candyDestinationSize * scope.level.rows);
+        this.getRow = function(y) {
+          if(y >= 0 && y < scope.GAME_BOARD.ROWS * candyDestinationSize) {
+            row = Math.floor(y / candyDestinationSize);
+          }
+          return row;
+        }
         
-        // To enable the use of mouseover or rollover events.
-        canvas.enableMouseOver();
+        this.getColumn = function(x) {
+          if(x >= 0 && x < scope.GAME_BOARD.COLUMNS * candyDestinationSize) {
+            column = Math.floor(x / candyDestinationSize);
+          }
+          return column;
+        }
+      } 
+      
+      var touchesBegan = function(evt) {
+        var row = convertPoint.getRow(evt.stageY);
+        var column = convertPoint.getColumn(evt.stageX);
+        var candy = scope.level.candyAtPosition(row, column);
         
-        // A vector of the different candies.
-        var candies = [];
+        if(candy) {
+          swipeFromRow = row;
+          swipeFromColumn = column;
+        }
+      }
+      
+      var touchesMoved = function(evt) {
+        if(swipeFromRow === null) return;
         
+        var row = convertPoint.getRow(evt.stageY);
+        var column = convertPoint.getColumn(evt.stageX);
+        
+        var hDelta = 0;
+        var vDelta = 0;
+        
+        if(column < swipeFromColumn) {          // swipe left
+          hDelta = -1;
+        } else if (column > swipeFromColumn) {   // swipe right
+          hDelta = 1;
+        } else if (row < swipeFromRow) {         // swipe down
+          vDelta = -1;
+        } else if (row > swipeFromRow) {         // swipe up
+          vDelta = 1;
+        }
+        
+        if (hDelta != 0 || vDelta != 0) {
+          trySwap(hDelta, vDelta);
+          swipeFromRow = null;
+        } 
+      }
+      
+      var trySwap = function(hDelta, vDelta) {
+        var toColumn = swipeFromColumn + hDelta;
+        var toRow = swipeFromRow + vDelta;
+        
+        if(toColumn < 0 || toColumn >= scope.GAME_BOARD.COLUMNS) return;
+        if(toRow < 0 || toRow >= scope.GAME_BOARD.ROWS) return;
+        
+        var toCandy = scope.level.candyAtPosition(toRow, toColumn);
+        if(!toCandy) return;
+        
+        var fromCandy = scope.level.candyAtPosition(swipeFromRow, swipeFromColumn);
+        
+        console.log("swapping: "+fromCandy+" <-> "+toCandy);
+      }
+      
+      
+      
+      // ======================================================================
+      
+      // Level data is loaded.
+      var levelLoaded = function() {
+        
+        // Assets loaded by createjs.
+        var assetsLoaded = function() {
+          
+          // Get candy pixel size.
+          if($window.innerWidth >= maxBoardWidth) {
+            candyDestinationSize = maxBoardWidth / scope.GAME_BOARD.COLUMNS;
+          } else {
+            candyDestinationSize = $window.innerWidth / scope.GAME_BOARD.COLUMNS;
+          }
+
+          // Get candy scale.
+          candyScale = candyDestinationSize / CANDY_SOURCE_SIZE;
+
+          // Set canavas size.
+          element[0].setAttribute('width', candyDestinationSize * scope.GAME_BOARD.COLUMNS);
+          element[0].setAttribute('height', candyDestinationSize * scope.GAME_BOARD.ROWS);
+
+          // Candy container to hold all the candies (can think about it as a layer).
+          var candiesLayer = new createjs.Container();
+          
+          addSpritesForCandies(scope.level.shuffle());
+          
+          // Enable touch.
+          createjs.Touch.enable(canvas);
+          
+          // To enable the use of mouseover or rollover events.
+          canvas.enableMouseOver();
+          
+          // Interactivity handlers.
+          canvas.on('stagemousedown', touchesBegan);
+          canvas.on('stagemousemove', touchesMoved);
+          
+          // Populate the board with candies.
+          //populateBoard();
+
+
+          // Building an array of swap pairs and chains.
+          //scope.buildSwapsAndChains(canvas);
+
+          // After 3 second, highlight a random chain.
+          //$timeout(highlightRandomChain, 3000);
+
+          //createjs.Ticker.addEventListener('tick', tick);
+        }
+        
+        // Createjs asset loader complete handler.
+        assetLoader.on('complete', assetsLoaded);
+      
+        
+        
+        // set containers dimensions?
+        
+        
+        /*
         // Creating a vector of different candies.
         for(var i = 0; i < scope.candiesVector.length; i++) {
-          var x = i * candySourceSize;
+          var x = i * CANDY_SOURCE_SIZE;
           var y = 0;
-          var width = candySourceSize;
-          var height = candySourceSize;
+          var width = CANDY_SOURCE_SIZE;
+          var height = CANDY_SOURCE_SIZE;
           
           candies[i] = new createjs.Bitmap(candyAtlasSrc);
           candies[i].sourceRect = new createjs.Rectangle(x, y, width, height);
@@ -71,7 +215,7 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         var populateBoard = function() {
           for(var i = 0; i < scope.level.rows; i++) {
             for(var j = 0; j < scope.level.columns; j++) {
-              if(scope.board[i][j] != -1) {
+              if(scope.board[i][j] > -1) {
                 var candyObj = new createjs.Bitmap(candyAtlasSrc);
                 candyObj.name = i+':'+j;
                 candyObj.row = i;
@@ -95,24 +239,21 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
                     swap.target = null;
                   }
                 });
-                /*candyObj.on('rollover', function(evt) {
-                  
-                });*/
+              
                 canvas.addChild(candyObj);
               }
             }
           }
         }
+        */
         
         var removeChain = function(idx) {
-          scope.removeChain(idx);
           var chain = scope.chains[idx];
-          var node;
-          var child;
+          
+          // Remove candies and chain members from board.
           for(var i = 0; i < chain.length; i++) {
-            node = chain[i];
-            child = canvas.getChildByName(node[0]+':'+node[1]);
-            canvas.removeChild(child);
+            canvas.removeChild(chain[i]);
+            scope.board[chain[i].row][chain[i].column] = -2;
           }
         }
         
@@ -125,16 +266,31 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
           
           // Horizontal and 1 away or vertical and 1 away.
           if(Math.abs(si-ti) == 1 && Math.abs(sj - tj) == 0 || Math.abs(sj - tj) == 1 && Math.abs(si-ti) == 0) {
-            // If it's a valid swap...
-            var idx = scope.getSwapIndex([[si,sj],[ti,tj]]);
-            if(idx) {
+            // If this pair is in the validSwaps array means it is a valid swap.
+            var obj = scope.getSwapIndex([swapObj.source, swapObj.target]);
+            if(obj) {
               // valid swap code here.
               swapAnimation(swapObj);
-              removeChain(idx);
+              
+              removeChain(obj.index);
+              
+              
+              // Swap the removed and the swapped on board.
+              var original = scope.board[swapObj.source.row][swapObj.source.column];
+              scope.board[swapObj.source.row][swapObj.source.column] = scope.board[swapObj.target.row][swapObj.target.column];
+              scope.board[swapObj.target.row][swapObj.target.column] = original;
+              
+              
+              
+              // Update swaps and chains after a valid swap.
+              scope.buildSwapsAndChains(canvas);
             } else {
               // Swap back the candies.
               invalidSwapAnimation(swapObj);
             }
+            
+            swap.source = null;
+            swap.target = null;
           }
         }
         
@@ -178,12 +334,11 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
           return scope.chains[randomIndex];
         }
 
-        // Highlight a random candy chain.
+        // Highlight a random chain.
         var highlightRandomChain = function() {
           var chain = getRandomChain();
           for(var i = 0; i < chain.length; i++) {
-            var child = canvas.getChildByName(chain[i][0]+':'+chain[i][1]);
-            highlightAnimation(child);
+            highlightAnimation(chain[i]);
           }
         }
         
@@ -200,29 +355,16 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
             createjs.Ease.sineIn);
         }
         
-        // Assets loaded by createjs.
-        var loadComplete = function() {
-          
-          // Populate the board with candies.
-          populateBoard();
-          
-          // After 3 second, highlight a random chain.
-          $timeout(highlightRandomChain, 3000);
-          
-          createjs.Ticker.addEventListener('tick', tick);
-        }
-        
         var tick = function(evt) {
           canvas.update();
         } 
-        
-        // Createjs asset loader.
-        var loader = new createjs.LoadQueue();
-        loader.on('complete', loadComplete);
-        loader.loadManifest([
-           {id: 'candyAtlas', src:candyAtlasSrc}
-        ]);
       }
+      
+      // Swap vector.
+      var swap = {
+        source: null,
+        target: null
+      };
       
     }
   };
