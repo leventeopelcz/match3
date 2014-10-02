@@ -66,8 +66,8 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
       
       // Interactivity functions.
       
-      var swipeFromColumn = null;
       var swipeFromRow = null;
+      var swipeFromColumn = null;
       
       var convertPoint = new function() {
         var column = null;
@@ -89,6 +89,8 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
       } 
       
       var touchesBegan = function(evt) {
+        if(!canvas.mouseEnabled) return;
+        
         var row = convertPoint.getRow(evt.stageY);
         var column = convertPoint.getColumn(evt.stageX);
         var candy = scope.level.candyAtPosition(row, column);
@@ -124,6 +126,13 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         } 
       }
       
+      /*
+      var touchesEnded = function(evt) {
+        swipeFromRow = null;
+        swipeFromColumn = null;
+      }
+      */
+      
       var trySwap = function(hDelta, vDelta) {
         var toColumn = swipeFromColumn + hDelta;
         var toRow = swipeFromRow + vDelta;
@@ -136,12 +145,64 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         
         var fromCandy = scope.level.candyAtPosition(swipeFromRow, swipeFromColumn);
         
-        console.log("swapping: "+fromCandy+" <-> "+toCandy);
+        var swap = new Swap();
+        swap.candyA = fromCandy;
+        swap.candyB = toCandy;
+        
+        canvas.mouseEnabled = false;
+        scope.level.performSwap(swap);
+        animateSwap(swap, function() {
+          canvas.mouseEnabled = true;
+        });
+        
       }
       
-      
+      // ======================================================================
+      // SWAP CLASS
+      // ======================================================================
+
+      function Swap() {
+        this.candyA = null;
+        this.candyB = null;
+
+        this.describe = function() {
+          return 'Swap '+this.candyA+ ' with '+this.candyB;
+        }
+      }
       
       // ======================================================================
+      // ANIMATIONS
+      // ======================================================================
+      
+      var animateSwap = function(swap, animComplete) {
+        // Always the swapped candy should be visually on top.
+        if(canvas.getChildIndex(swap.candyA) < canvas.getChildIndex(swap.candyB)) {
+          canvas.swapChildren(swap.candyA, swap.candyB);
+        }
+        
+        var duration = 300;
+        
+        createjs.Tween.get(swap.candyA)
+        .to(
+          {y: swap.candyB.y, x: swap.candyB.x},
+          duration,
+          createjs.Ease.sineOut);
+        
+        createjs.Tween.get(swap.candyB)
+        .to(
+          {y: swap.candyA.y, x: swap.candyA.x},
+          duration,
+          createjs.Ease.sineOut)
+        .call(animationComplete); 
+        
+        function animationComplete() {
+          animComplete();
+        }
+      }
+      
+      // ======================================================================
+      
+      // "controller"
       
       // Level data is loaded.
       var levelLoaded = function() {
@@ -177,26 +238,24 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
           // Interactivity handlers.
           canvas.on('stagemousedown', touchesBegan);
           canvas.on('stagemousemove', touchesMoved);
+          //canvas.on('stagemouseup', touchesEnded);
           
-          // Populate the board with candies.
-          //populateBoard();
-
 
           // Building an array of swap pairs and chains.
           //scope.buildSwapsAndChains(canvas);
 
           // After 3 second, highlight a random chain.
           //$timeout(highlightRandomChain, 3000);
-
-          //createjs.Ticker.addEventListener('tick', tick);
+          
+          // Canvas ticker for animations.
+          var tick = function(evt) {
+            canvas.update();
+          } 
+          createjs.Ticker.addEventListener('tick', tick);
         }
         
         // Createjs asset loader complete handler.
         assetLoader.on('complete', assetsLoaded);
-      
-        
-        
-        // set containers dimensions?
         
         
         /*
@@ -315,6 +374,7 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
             createjs.Ease.sineOut);
         }
         
+        /*
         var swapAnimation = function(swapObj) {
           createjs.Tween.get(swapObj.source)
           .to(
@@ -327,6 +387,7 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
             500,
             createjs.Ease.sineOut);
         }
+        */
         
         // Get a random chain.
         var getRandomChain = function() {
@@ -355,9 +416,6 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
             createjs.Ease.sineIn);
         }
         
-        var tick = function(evt) {
-          canvas.update();
-        } 
       }
       
       // Swap vector.
