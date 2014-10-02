@@ -83,7 +83,25 @@ Game.controller('GameController', ['$scope', 'random', 'file', function($scope, 
       candies[row][column] = candy;
       return candy;
     }
+    
+    this.performSwap = function(swap) {
+      var rowA = swap.candyA.row;
+      var columnA = swap.candyA.column;
+      var rowB = swap.candyB.row;
+      var columnB = swap.candyB.column;
+      
+      candies[rowA][columnA] = swap.candyB;
+      swap.candyB.row = rowA;
+      swap.candyB.column = columnA;
+      
+      candies[rowB][columnB] = swap.candyA;
+      swap.candyA.row = rowB;
+      swap.candyA.column = columnB;
+    }
+
   }
+  
+  // ==========================================================================
   
   // Score.
   //$scope.score = 0;
