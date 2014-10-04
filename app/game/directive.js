@@ -203,6 +203,40 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
       }
       
+      var animateInvalidSwap = function(swap, animComplete) {
+        // Always the swapped candy should be visually on top.
+        if(candiesLayer.getChildIndex(swap.candyA) < candiesLayer.getChildIndex(swap.candyB)) {
+          candiesLayer.swapChildren(swap.candyA, swap.candyB);
+        }
+        
+        var duration = 300;
+        
+        createjs.Tween.get(swap.candyA)
+        .to(
+          {y: swap.candyB.y, x: swap.candyB.x},
+          duration,
+          createjs.Ease.sineIn)
+        .to(
+          {y: swap.candyA.y, x: swap.candyA.x},
+          duration,
+          createjs.Ease.sineOut);
+        
+        createjs.Tween.get(swap.candyB)
+        .to(
+          {y: swap.candyA.y, x: swap.candyA.x},
+          duration,
+          createjs.Ease.sineIn)
+        .to(
+          {y: swap.candyB.y, x: swap.candyB.x},
+          duration,
+          createjs.Ease.sineOut)
+        .call(animationComplete); 
+        
+        function animationComplete() {
+          animComplete();
+        }
+      }
+      
       // ======================================================================
       // SELECTION INDICATOR
       // ======================================================================
