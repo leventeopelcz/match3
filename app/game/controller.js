@@ -36,6 +36,11 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($
   
   // ==========================================================================
   
+  $scope.handleMatches = function() {
+    var chains = $scope.level.removeMatches();
+    // TODO: soemthing with the set that removematches returns
+  }
+  
   // TODO: Unfinished!
   var fillHoles = function() {
     for(i = $scope.level.rows; i > 0; i--) {

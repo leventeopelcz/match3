@@ -170,6 +170,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           scope.level.performSwap(swap);
           animateSwap(swap, function() {
             canvas.mouseEnabled = true;
+            scope.handleMatches();
           });
         } else {
           canvas.mouseEnabled = false;
@@ -315,7 +316,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           canvas.on('stagemousedown', touchesBegan);
           canvas.on('stagemousemove', touchesMoved);
           //canvas.on('stagemouseup', touchesEnded);
-          
 
           // Building an array of swap pairs and chains.
           //scope.buildSwapsAndChains(canvas);
