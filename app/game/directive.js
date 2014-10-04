@@ -1,6 +1,6 @@
 'use strict';
 
-Game.directive('game', ['$window', 'random', '$timeout', function($window, random, $timeout) {
+Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($window, random, $timeout, Swap) {
   return {
     restrict: 'AE',
     link: function(scope, element, attrs) {
@@ -171,19 +171,6 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
           canvas.mouseEnabled = true;
         });
         
-      }
-      
-      // ======================================================================
-      // SWAP CLASS
-      // ======================================================================
-
-      function Swap() {
-        this.candyA = null;
-        this.candyB = null;
-
-        this.describe = function() {
-          return 'Swap '+this.candyA+ ' with '+this.candyB;
-        }
       }
       
       // ======================================================================
