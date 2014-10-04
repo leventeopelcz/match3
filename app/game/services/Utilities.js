@@ -18,17 +18,3 @@ Game.service('random', [function() {
     return Math.floor((Math.random() * max) + min);
   }
 }]);
-
-
-// Swap class 
-Game.factory('Swap', [function() {
-  var Swap = function() {
-    this.candyA = null;
-    this.candyB = null;
-
-    this.describe = function() {
-      return 'Swap '+this.candyA+ ' with '+this.candyB;
-    }
-  }
-  return Swap;
-}]);
