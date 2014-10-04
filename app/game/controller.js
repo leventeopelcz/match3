@@ -43,10 +43,154 @@ Game.controller('GameController', ['$scope', 'random', 'file', 'Swap', function(
   // Level
   function Level() {
     var candies = [$scope.GAME_BOARD.ROWS]; // Actually: [$scope.GAME_BOARD.ROWS][$scope.GAME_BOARD.COLUMNS]
+    
     var tiles = $scope.GAME_BOARD.LAYOUT;
     
+    var possibleSwaps = [];
+    
     this.shuffle = function() {
-      return crateInitialCandies();
+      var set = [];
+      
+      // In the very rare case that you end up with no possible swaps on the game board (try 3x3) try again.
+      do {
+        set = crateInitialCandies();
+        //set = createTestGameBoard();
+        //logGameBoard();
+        detectPossibleSwaps();
+        
+        for(var i = 0; i < possibleSwaps.length; i++) {
+          console.log(possibleSwaps[i].describe());
+        }
+      } while(possibleSwaps.length == 0);
+      
+      return set;
+    }
+    
+    var hasChainAtPosition = function(row, column) {        
+      var candyType = candies[row][column].type;
+      var horizontalMatches = 1;
+      var verticalMatches = 1;
+      
+      for(var i = column-1; i >= 0 && candies[row][i] && candies[row][i].type == candyType; i--) {
+        horizontalMatches++;
+        //console.log("horizontal<< : ("+row+":"+i+")");
+      }
+      for(var i = column+1; i < $scope.GAME_BOARD.COLUMNS && candies[row][i] && candies[row][i].type == candyType; i++) {
+        horizontalMatches++;
+        //console.log("horizontal>> : ("+row+":"+i+")");
+      }
+      
+      for(var j = row-1; j >= 0 && candies[j][column] && candies[j][column].type == candyType; j--) {
+        verticalMatches++;
+        //console.log("vertival^^ : ("+j+":"+column+")");
+      }
+      for(var j = row+1; j < $scope.GAME_BOARD.ROWS && candies[j][column] && candies[j][column].type == candyType; j++) {
+        verticalMatches++;
+        //console.log("vertivalvv : ("+j+":"+column+")");
+      }
+      
+      return (verticalMatches >= 3 || horizontalMatches >= 3);
+    }
+    
+    var detectPossibleSwaps = function() {
+      var set = [];
+      
+      for(var row = 0; row < $scope.GAME_BOARD.ROWS; row++) {
+        for(var column = 0; column < $scope.GAME_BOARD.COLUMNS; column++) {
+          
+          // If in current position there is a candy.
+          var candy = candies[row][column];
+          if(candy) {
+            
+            // Let's go horizontally.
+            if(column < $scope.GAME_BOARD.COLUMNS - 1) {
+              
+              // If there is a candy to the right.
+              var other = candies[row][column + 1];
+              if(other) {
+                
+                // Swap them.
+                candies[row][column] = other;
+                candies[row][column + 1] = candy;
+                //logGameBoard();
+
+                // Is either candy part of a chain?
+                if(hasChainAtPosition(row, column + 1) || hasChainAtPosition(row, column)) {
+                  var swap = new Swap();
+                  swap.candyA = candy;
+                  swap.candyB = other;
+                  set.push(swap);
+                  //console.log("added: "+swap.describe());
+                }
+
+                // Swap them back.
+                candies[row][column] = candy;
+                candies[row][column + 1] = other;
+                //logGameBoard();
+              }
+            }
+            
+            
+            // Let's go vertically.
+            if(row < $scope.GAME_BOARD.ROWS - 1) {
+              
+              // If there is a candy to the bottom.
+              var other = candies[row + 1][column];
+              if(other) {
+                
+                // Swap them.
+                candies[row][column] = other;
+                candies[row + 1][column] = candy;
+                //logGameBoard();
+                
+                // Is either candy part of a chain?
+                if(hasChainAtPosition(row + 1, column) || hasChainAtPosition(row, column)) {
+                  var swap = new Swap();
+                  swap.candyA = candy;
+                  swap.candyB = other;
+                  set.push(swap);
+                  //console.log("added: "+swap.describe());
+                }
+                
+                // Swap them back.
+                candies[row][column] = candy;
+                candies[row + 1][column] = other;
+                //logGameBoard();
+              }
+            }
+            
+            
+          }
+        }
+      }
+      
+      possibleSwaps = set;
+    }
+    
+    this.isPossibleSwap = function(swap) {
+      return isArrayContainSwap(possibleSwaps, swap);
+    }
+    
+    // This is basically '==' overloading on our Swap class.
+    // Testing if an array of Swap objects contains a Swap object.
+    var isArrayContainSwap = function(swapArray, swap) {
+      var other = null;
+
+      for(var i = 0; i < swapArray.length; i++) {
+        other = swapArray[i];
+        if(other.candyA.row == swap.candyA.row && 
+           other.candyA.column == swap.candyA.column && 
+           other.candyB.row == swap.candyB.row && 
+           other.candyB.column == swap.candyB.column || 
+           other.candyA.row == swap.candyB.row && 
+           other.candyA.column == swap.candyB.column && 
+           other.candyB.row == swap.candyA.row && 
+           other.candyB.column == swap.candyA.column) {
+          return true;
+        }
+      }
+      
+      return false;
     }
     
     this.candyAtPosition = function(row, column) {
@@ -63,8 +207,23 @@ Game.controller('GameController', ['$scope', 'random', 'file', 'Swap', function(
       for(var i = 0; i < $scope.GAME_BOARD.ROWS; i++) {
         candies[i] = [$scope.GAME_BOARD.COLUMNS];
         for(var j = 0; j < $scope.GAME_BOARD.COLUMNS; j++) {
+          // Make sure we don't have matches while generating:
+          // Generate random candy on the current spot and check if 2 spots to the left or above have candies and are not the same.
+          // Also check if we even need to generate candy in a spot defined by tiles.
           if(tiles[i][j] == 1) {
-            candyType = random.range(0, $scope.NUM_CANDY_TYPES);
+            do {
+              candyType = random.range(0, $scope.NUM_CANDY_TYPES);
+            } while((i >= 2 &&
+              tiles[i-1][j] &&
+              candies[i-1][j].type == candyType &&
+              tiles[i-2][j] &&
+              candies[i-2][j].type == candyType)
+              ||
+              (j >= 2 &&
+              tiles[i][j-1] &&
+              candies[i][j-1].type == candyType &&
+              tiles[i][j-2] &&
+              candies[i][j-2].type == candyType));
             set.push(createCandyAtPosition(i,j,candyType));
           } else {
             candies[i][j] = null;
@@ -98,206 +257,46 @@ Game.controller('GameController', ['$scope', 'random', 'file', 'Swap', function(
       swap.candyA.row = rowB;
       swap.candyA.column = columnB;
     }
+    
+    //=========================================================================
+    // UTILITY & TEST FUNCTIONS
+    //=========================================================================
+    
+    // For easy logging of game board.
+    var logGameBoard = function() {
+      var board = [$scope.GAME_BOARD.ROWS];
+      for(var row = 0; row < $scope.GAME_BOARD.ROWS; row++) {
+        board[row] = [$scope.GAME_BOARD.COLUMNS];
+        for(var column = 0; column < $scope.GAME_BOARD.COLUMNS; column++) {
+          board[row][column] = candies[row][column].type;
+        }
+      }
+      console.log.apply(console, board);
+    }
+    
+    // instead of randomly generating the game board, we just read in the whole board with candies from a test JSON.
+    var createTestGameBoard = function() {
+      var set = [];
+      candies = $scope.GAME_BOARD.LAYOUT;
+      
+      for(var i = 0; i < $scope.GAME_BOARD.ROWS; i++) {
+        for(var j = 0; j < $scope.GAME_BOARD.COLUMNS; j++) {
+          set.push(createCandyAtPosition(i,j,candies[i][j]));
+        }
+      }
+      
+      return set;
+    }
 
   }
   
   // ==========================================================================
-  
-  // Score.
-  //$scope.score = 0;
-  
-  // Moves left;
-  //$scope.movesLeft;
-  
-  
-  // Game board with Ids.
-  //$scope.board = [];
   
   // Available chains.
   //$scope.chains = [];
   
   // Available swaps.
   //var validSwaps = [];
-  
-  // Generate game board with candy Ids.
-  var generateBoard = function() {
-    for(var i = 0; i < $scope.level.rows; i++) {
-      $scope.board[i] = [$scope.level.columns];
-      for(var j = 0; j < $scope.level.columns; j++) {
-        var randomCandy;
-        // Make sure we don't have matches while generating:
-        // Generate random candy on the current spot and check if 2 candies to the left or above are not the same.
-        // Also check if we even need to generate candy in a spot defined by the level.board.
-        if($scope.level.board[i][j] != 0) {
-          do {
-            randomCandy = random.range(0, $scope.candiesVector.length);
-            $scope.board[i][j] = $scope.candiesVector[randomCandy];
-          } while((i >= 2 &&
-            $scope.board[i - 1][j] == $scope.candiesVector[randomCandy] &&
-            $scope.board[i - 2][j] == $scope.candiesVector[randomCandy])
-            ||
-            (j >= 2 &&
-            $scope.board[i][j - 1] == $scope.candiesVector[randomCandy] &&
-            $scope.board[i][j - 2] == $scope.candiesVector[randomCandy]));
-        } else {
-          $scope.board[i][j] = -1;
-        }
-      }
-    }
-  }
-  
-  //Build available swap pairs and chains.
-  $scope.buildSwapsAndChains = function(canvas) {
-    validSwaps = [];
-    $scope.chains = [];
-    for(var i = 0; i < $scope.level.rows; i++) {
-      for(var j = 0; j < $scope.level.columns; j++) {
-        if($scope.board[i][j] > -1) {
-          
-          // If there is tile to the right and if it is a candy.
-          if(j+1 < $scope.level.columns && $scope.board[i][j+1] > -1) {
-            // Swap the current and the candy to the right.
-            var original = $scope.board[i][j];
-            $scope.board[i][j] = $scope.board[i][j+1];
-            $scope.board[i][j+1] = original;
-            
-            //console.log.apply(console, $scope.board);
-
-            // Check if we have a match in [i,j]
-            var chain = detectMatches(i,j, canvas);
-            if(chain) {
-              chain.push(canvas.getChildByName(i+':'+(j+1))); // because we swapped!
-              $scope.chains.push(chain);
-              validSwaps.push([canvas.getChildByName(i+':'+j), canvas.getChildByName(i+':'+(j+1))]);
-              //console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
-              //console.log.apply(console, chain);
-            }
-            
-            // Check if we have a match in [i,j+1]
-            var chain = detectMatches(i,j+1, canvas);
-            if(chain) {
-              chain.push(canvas.getChildByName(i+':'+j)); // because we swapped!
-              $scope.chains.push(chain);
-              validSwaps.push([canvas.getChildByName(i+':'+j), canvas.getChildByName(i+':'+(j+1))]);
-              //console.log("match: " + "(" + i + ":" + j + ") <-> (" + i + ":" + (j+1) + ")");
-              //console.log.apply(console, chain);
-            }
-            
-            // Swap it back.
-            $scope.board[i][j+1] = $scope.board[i][j];
-            $scope.board[i][j] = original;
-            //console.log.apply(console, $scope.board);
-          }
-          
-          // If there is tile to the bottom and if it is a candy.
-          if(i+1 < $scope.level.rows && $scope.board[i+1][j] > -1) {
-            // Swap the current and the candy to the bottom.
-            var original = $scope.board[i][j];
-            $scope.board[i][j] = $scope.board[i+1][j];
-            $scope.board[i+1][j] = original;
-            
-            //console.log.apply(console, $scope.board);
-
-            // Check if we have a match.
-            var chain = detectMatches(i,j, canvas);
-            if(chain) {
-              chain.push(canvas.getChildByName((i+1)+':'+j)); // because we swapped!
-              $scope.chains.push(chain);
-              validSwaps.push([canvas.getChildByName(i+':'+j), canvas.getChildByName((i+1)+':'+j)]);
-              //console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
-              //console.log.apply(console, chain);
-            }
-            
-            // Check if we have a match.
-            var chain = detectMatches(i+1,j, canvas);
-            if(chain) {
-              chain.push(canvas.getChildByName(i+':'+j)); // because we swapped!
-              $scope.chains.push(chain);
-              validSwaps.push([canvas.getChildByName(i+':'+j), canvas.getChildByName((i+1)+':'+j)]);
-              //console.log("match: " + "(" + i + ":" + j + ") <-> (" + (i+1) + ":" + j + ")");
-              //console.log.apply(console, chain);
-            }
-            
-            // Swap it back.
-            $scope.board[i+1][j] = $scope.board[i][j];
-            $scope.board[i][j] = original;
-            //console.log.apply(console, $scope.board);
-          }
-
-        }
-      }
-    }
-    //console.log(validSwaps);
-    console.log.apply(console, $scope.board);
-  }
-  
-  var detectMatches = function(a, b, canvas) {
-    var horizontalMatches = 1;
-    var verticalMatches = 1;
-    var candyType = $scope.board[a][b];
-    var chain = [];
-    //console.log("candy type: "+candyType+" ("+a+":"+b+")");
-
-    for(var i = b - 1; i >= 0 && $scope.board[a][i] == candyType; i--) {
-      horizontalMatches++;
-      chain.push(canvas.getChildByName(a+':'+i));
-      //console.log("horizontal<< : ("+a+":"+i+")");
-    }
-    for(var i = b + 1; i < $scope.level.columns && $scope.board[a][i] == candyType; i++) {
-      horizontalMatches++;
-      chain.push(canvas.getChildByName(a+':'+i));
-      //console.log("horizontal>> : ("+a+":"+i+")");
-    }
-    
-    if(horizontalMatches >= 3) {
-      return chain;
-    } else {
-      chain = [];
-    }
-    
-    for(var j = a - 1; j >= 0 && $scope.board[j][b] == candyType; j--) {
-      verticalMatches++;
-      chain.push(canvas.getChildByName(j+':'+b));
-      //console.log("vertival^^ : ("+j+":"+b+")");
-    }
-    for(var j = a + 1; j < $scope.level.rows && $scope.board[j][b] == candyType; j++) {
-      verticalMatches++;
-      chain.push(canvas.getChildByName(j+':'+b));
-      //console.log("vertivalvv : ("+j+":"+b+")");
-    }
-    
-    if(verticalMatches >= 3) {
-      return chain;
-    } else {
-      chain = [];
-    }
-  }
-  
-  $scope.getSwapIndex = function(pair) {
-    var v1;
-    var v2;
-    var s1 = pair[0];
-    var s2 = pair[1];
-    
-    for(var i = 0; i < validSwaps.length; i++) {
-      v1 = validSwaps[i][0];
-      v2 = validSwaps[i][1];
-      
-      if(v1.row == s1.row && 
-         v1.column == s1.column && 
-         v2.row == s2.row && 
-         v2.column == s2.column || 
-         v1.row == s2.row && 
-         v1.column == s2.column && 
-         v2.row == s1.row && 
-         v2.column == s1.column) {
-        // Return index.
-        return {index: i, type: v1.type};
-      }
-    }
-    
-    return null;
-  }
   
   
   // TODO: Unfinished!
