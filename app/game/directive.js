@@ -165,12 +165,18 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         swap.candyA = fromCandy;
         swap.candyB = toCandy;
         
-        canvas.mouseEnabled = false;
-        scope.level.performSwap(swap);
-        animateSwap(swap, function() {
-          canvas.mouseEnabled = true;
-        });
-        
+        if(scope.level.isPossibleSwap(swap)) {
+          canvas.mouseEnabled = false;
+          scope.level.performSwap(swap);
+          animateSwap(swap, function() {
+            canvas.mouseEnabled = true;
+          });
+        } else {
+          canvas.mouseEnabled = false;
+          animateInvalidSwap(swap, function() {
+            canvas.mouseEnabled = true;
+          });
+        }
       }
       
       // ======================================================================
