@@ -333,54 +333,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         // Createjs asset loader complete handler.
         assetLoader.on('complete', assetsLoaded);
         
-        
-        /*
-        // Creating a vector of different candies.
-        for(var i = 0; i < scope.candiesVector.length; i++) {
-          var x = i * CANDY_SOURCE_SIZE;
-          var y = 0;
-          var width = CANDY_SOURCE_SIZE;
-          var height = CANDY_SOURCE_SIZE;
-          
-          candies[i] = new createjs.Bitmap(candyAtlasSrc);
-          candies[i].sourceRect = new createjs.Rectangle(x, y, width, height);
-        }
-        
-        // Populate board with candies.
-        var populateBoard = function() {
-          for(var i = 0; i < scope.level.rows; i++) {
-            for(var j = 0; j < scope.level.columns; j++) {
-              if(scope.board[i][j] > -1) {
-                var candyObj = new createjs.Bitmap(candyAtlasSrc);
-                candyObj.name = i+':'+j;
-                candyObj.row = i;
-                candyObj.column = j;
-                candyObj.type = scope.board[i][j];
-                candyObj.sourceRect = candies[scope.board[i][j]].sourceRect;
-                candyObj.x = j*candyDestinationSize;
-                candyObj.y = i*candyDestinationSize;
-                candyObj.scaleX = candyScale;
-                candyObj.scaleY = candyScale;
-                candyObj.on('click', function(evt) {
-                  if(!swap.source) {
-                    swap.source = evt.target;
-                  } else if(!swap.target) {
-                    swap.target = evt.target;
-                    swap(swap);
-                    swap.source = null;
-                    swap.target = null;
-                  } else {
-                    swap.source = null;
-                    swap.target = null;
-                  }
-                });
-              
-                canvas.addChild(candyObj);
-              }
-            }
-          }
-        }
-        */
+        //===========================================================================<<<<<<<<
+        //===========================================================================<<<<<<<<
+        //===========================================================================<<<<<<<<
         
         var removeChain = function(idx) {
           var chain = scope.chains[idx];
