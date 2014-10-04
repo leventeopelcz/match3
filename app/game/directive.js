@@ -23,6 +23,19 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
       // CreateJS asset loader.
       var assetLoader = new createjs.LoadQueue();
       
+      // Game layers.
+      var candiesLayer = new createjs.Container();
+      canvas.addChild(candiesLayer);
+      
+      var effectsLayer = new createjs.Container();
+      canvas.addChild(effectsLayer);
+      
+      var uiLayer = new createjs.Container();
+      canvas.addChild(uiLayer);
+      
+      // Selection indicator for candies.
+      var selectionIndicator = null;
+      
       // ======================================================================
       
       // Assets to load.
@@ -56,7 +69,7 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
           candies[i].y = candies[i].row * candyDestinationSize;
           candies[i].scaleX = candyScale;
           candies[i].scaleY = candyScale;
-          canvas.addChild(candies[i]);
+          candiesLayer.addChild(candies[i]);
         }
         
         canvas.update();
@@ -98,6 +111,8 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         if(candy) {
           swipeFromRow = row;
           swipeFromColumn = column;
+          
+          showSelectionIndicatorForCandy(candy);
         }
       }
       
@@ -121,6 +136,7 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         }
         
         if (hDelta != 0 || vDelta != 0) {
+          hideSelectionIndicatorForCandy();
           trySwap(hDelta, vDelta);
           swipeFromRow = null;
         } 
@@ -176,8 +192,8 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
       
       var animateSwap = function(swap, animComplete) {
         // Always the swapped candy should be visually on top.
-        if(canvas.getChildIndex(swap.candyA) < canvas.getChildIndex(swap.candyB)) {
-          canvas.swapChildren(swap.candyA, swap.candyB);
+        if(candiesLayer.getChildIndex(swap.candyA) < candiesLayer.getChildIndex(swap.candyB)) {
+          candiesLayer.swapChildren(swap.candyA, swap.candyB);
         }
         
         var duration = 300;
@@ -198,6 +214,41 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         function animationComplete() {
           animComplete();
         }
+      }
+      
+      // ======================================================================
+      // SELECTION INDICATOR
+      // ======================================================================
+      
+      var createSelectionIndicatorForCandy = function() {
+        var x = 0;
+        var y = 4 * CANDY_SOURCE_SIZE;
+        var width = CANDY_SOURCE_SIZE;
+        var height = CANDY_SOURCE_SIZE;
+        
+        selectionIndicator = new createjs.Bitmap();
+        selectionIndicator.image = assetLoader.getResult('candyAtlas');
+        selectionIndicator.name = 'selectionIndicator';
+        selectionIndicator.sourceRect = new createjs.Rectangle(x, y, width, height);
+        selectionIndicator.scaleX = candyScale;
+        selectionIndicator.scaleY = candyScale;
+        console.log(selectionIndicator);
+      }
+      
+      var showSelectionIndicatorForCandy = function(candy) {
+        // If indicator is visible, remove it first.
+        var s = uiLayer.getChildByName('selectionIndicator');
+        if(s) {
+          uiLayer.removeChild(s);
+        }
+        
+        selectionIndicator.x = candy.x;
+        selectionIndicator.y = candy.y;
+        uiLayer.addChild(selectionIndicator);
+      }
+      
+      var hideSelectionIndicatorForCandy = function() {
+        uiLayer.removeChild(selectionIndicator);
       }
       
       // ======================================================================
@@ -223,11 +274,10 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
           // Set canavas size.
           element[0].setAttribute('width', candyDestinationSize * scope.GAME_BOARD.COLUMNS);
           element[0].setAttribute('height', candyDestinationSize * scope.GAME_BOARD.ROWS);
-
-          // Candy container to hold all the candies (can think about it as a layer).
-          var candiesLayer = new createjs.Container();
           
           addSpritesForCandies(scope.level.shuffle());
+          
+          createSelectionIndicatorForCandy();
           
           // Enable touch.
           createjs.Touch.enable(canvas);
