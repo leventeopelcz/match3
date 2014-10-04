@@ -423,42 +423,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           }
         }
         
-        var invalidSwapAnimation = function(swapObj) {
-          createjs.Tween.get(swapObj.source)
-          .to(
-            {y: swapObj.target.y, x: swapObj.target.x},
-            500,
-            createjs.Ease.sineIn)
-          .to(
-            {y: swapObj.source.y, x: swapObj.source.x},
-            500,
-            createjs.Ease.sineOut);
-          createjs.Tween.get(swapObj.target)
-          .to(
-            {y: swapObj.source.y, x: swapObj.source.x},
-            500,
-            createjs.Ease.sineIn)
-          .to(
-            {y: swapObj.target.y, x: swapObj.target.x},
-            500,
-            createjs.Ease.sineOut);
-        }
-        
-        /*
-        var swapAnimation = function(swapObj) {
-          createjs.Tween.get(swapObj.source)
-          .to(
-            {y: swapObj.target.y, x: swapObj.target.x},
-            500,
-            createjs.Ease.sineOut);
-          createjs.Tween.get(swapObj.target)
-          .to(
-            {y: swapObj.source.y, x: swapObj.source.x},
-            500,
-            createjs.Ease.sineOut);
-        }
-        */
-        
         // Get a random chain.
         var getRandomChain = function() {
           var randomIndex = random.range(0, scope.chains.length);
@@ -487,12 +451,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
         
       }
-      
-      // Swap vector.
-      var swap = {
-        source: null,
-        target: null
-      };
       
     }
   };
