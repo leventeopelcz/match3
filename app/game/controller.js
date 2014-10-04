@@ -1,6 +1,6 @@
 'use strict';
 
-Game.controller('GameController', ['$scope', 'random', 'file', function($scope, random, file) {
+Game.controller('GameController', ['$scope', 'random', 'file', 'Swap', function($scope, random, file, Swap) {
   
   // Number of candy types.
   $scope.NUM_CANDY_TYPES = 5;
