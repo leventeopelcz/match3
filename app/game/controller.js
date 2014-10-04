@@ -33,26 +33,5 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($
     // Instantiate our new level.
     $scope.level = new Level($scope.GAME_BOARD);
   });
-  
-  // ==========================================================================
-  
-  // TODO: Unfinished!
-  var fillHoles = function() {
-    for(i = $scope.level.rows; i > 0; i--) {
-      for(j = 0; j < $scope.level.columns; j++) {
-        // If it's the board and an empty space.
-        if($scope.board[i][j] != -1 && $scope.board[i][j] == -2) {
-          // Scan for the next candy upwards.
-          for(var scan = i-1; scan > 0; scan--) {
-            // If it's a candy.
-            if(scan >= 0) {
-              $scope.board[i][j] = $scope.board[scan][j];
-              $scope.board[scan][j] = -2;
-            }
-          }
-        }
-      }
-    }
-  }
 
 }]);
