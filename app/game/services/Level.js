@@ -1,7 +1,7 @@
 'use strict';
 
 // Level class 
-Game.factory('Level', ['random', 'Swap', function(random, Swap) {
+Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) {
   function Level(data) {
     var candies = [data.ROWS]; // Actually: [data.ROWS][data.COLUMNS]
     
@@ -19,9 +19,11 @@ Game.factory('Level', ['random', 'Swap', function(random, Swap) {
         //logGameBoard();
         detectPossibleSwaps();
         
+        /*
         for(var i = 0; i < possibleSwaps.length; i++) {
           console.log(possibleSwaps[i].describe());
         }
+        */
       } while(possibleSwaps.length == 0);
       
       return set;
@@ -217,6 +219,85 @@ Game.factory('Level', ['random', 'Swap', function(random, Swap) {
       candies[rowB][columnB] = swap.candyA;
       swap.candyA.row = rowB;
       swap.candyA.column = columnB;
+    }
+    
+    //=========================================================================
+    // CHAIN DETECTION
+    //=========================================================================
+    
+    this.removeMatches = function() {
+      var horizontalChains = detectHorizontalMatches();
+      var verticalChains = detectVerticalMatches();
+      
+      for(var i = 0; i < horizontalChains.length; i++)
+        console.log(horizontalChains[i].description());
+      for(var i = 0; i < verticalChains.length; i++)
+        console.log(verticalChains[i].description());
+      
+      return horizontalChains.concat(verticalChains);
+    }
+    
+    var detectHorizontalMatches = function() {
+      var set = [];
+      
+      for(var row = 0; row < data.ROWS; row++) {
+        for(var column = 0; column < data.COLUMNS - 2; ) {
+          
+          if(candies[row][column]) {
+            var matchType = candies[row][column].type;
+            
+            if(candies[row][column + 1] && candies[row][column + 1].type == matchType && 
+               candies[row][column + 2] && candies[row][column + 2].type == matchType) {
+              var chain = new Chain();
+              chain.chainType = 'ChainTypeHorizontal';
+              
+              do {
+                chain.addCandy(candies[row][column]);
+                column += 1;
+              } while(column < data.COLUMNS && candies[row][column] && candies[row][column].type == matchType);
+              
+              set.push(chain);
+              continue;
+            }
+            
+          }
+          
+          column += 1;
+        }
+      }
+      return set;
+    }
+    
+    var detectVerticalMatches = function() {
+      var set = [];
+      
+      for(var column = 0; column < data.COLUMNS; column++) {
+        for(var row = 0; row < data.ROWS - 2; ) {
+          
+          if(candies[row][column]) {
+            var matchType = candies[row][column].type;
+            
+            if(candies[row + 1][column] && candies[row + 1][column].type == matchType && 
+               candies[row + 2][column] && candies[row + 2][column].type == matchType) {
+              var chain = new Chain();
+              chain.chainType = 'ChainTypeVertical';
+              
+              do {
+                chain.addCandy(candies[row][column]);
+                row += 1;
+              } while(row < data.ROWS && candies[row][column] && candies[row][column].type == matchType);
+              
+              set.push(chain);
+              continue;
+            }
+            
+          }
+          
+          row += 1;
+        }
+      }
+      
+      return set;
     }
     
     //=========================================================================
