@@ -169,8 +169,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           canvas.mouseEnabled = false;
           scope.level.performSwap(swap);
           animateSwap(swap, function() {
-            canvas.mouseEnabled = true;
-            scope.handleMatches();
+            handleMatches();
           });
         } else {
           canvas.mouseEnabled = false;
@@ -178,6 +177,13 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             canvas.mouseEnabled = true;
           });
         }
+      }
+      
+      var handleMatches = function() {
+        var chains = scope.level.removeMatches();
+        animateMatchedCookies(chains, function() {
+          canvas.mouseEnabled = true;
+        });
       }
       
       // ======================================================================
@@ -237,10 +243,33 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           {y: swap.candyB.y, x: swap.candyB.x},
           duration,
           createjs.Ease.sineOut)
-        .call(animationComplete); 
+        .call(animationComplete);
         
         function animationComplete() {
           animComplete();
+        }
+      }
+      
+      var animateMatchedCookies = function(chains, animComplete) {
+        var duration = 300;
+        
+        for(var i = 0; i < chains.length; i++) {
+          var cs = chains[i].getCandies();
+          for(var j = 0; j < cs.length; j++) {
+            var candy = cs[j];
+            // The candy can be part of two chains but we only want to animate once.
+            if(candy) {
+              createjs.Tween.get(candy)
+              .to(
+                {scaleX: 0, scaleY: 0, x: candy.x + candyDestinationSize/2, y: candy.y + candyDestinationSize/2},
+                duration,
+                createjs.Ease.sineOut)
+              .call(function() {
+                candiesLayer.removeChild(candy);
+                animComplete();
+              });
+            }
+          }
         }
       }
       
