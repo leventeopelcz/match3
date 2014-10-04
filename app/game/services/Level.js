@@ -316,6 +316,37 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       }
     }
     
+    this.fillHoles = function() {
+      var columns = [];
+      
+      for(var column = 0; column < data.COLUMNS; column++) {
+        var array = null;
+        for(var row = data.ROWS - 1; row >= 0; row--) {
+          // If there should be a candy but there isn't.
+          if(tiles[row][column] != 0 && !candies[row][column]) {
+            for(var lookup = row - 1; lookup >= 0 ; lookup--) {
+              var candy = candies[lookup][column];
+              if(candy) {
+                candies[lookup][column] = null;
+                candies[row][column] = candy;
+                candy.row = row;
+                
+                if(!array) {
+                  array = [];
+                  columns.push(array);
+                }
+                array.push(candy);
+                
+                break;
+              }
+            }
+          }
+        }
+      }
+      
+      return columns;
+    }
+    
     //=========================================================================
     // UTILITY & TEST FUNCTIONS
     //=========================================================================
