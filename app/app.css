@@ -1,20 +1,5 @@
 /* app css stylesheet */
 
-.gem-box {
-  width: 10%;
-  padding-bottom: 10%;
-  border: 1px solid #eaeaea;
-  float: left;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.gem {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  text-align: center;
-  padding-top: 37%;
+body {
+  background-color: rgb(200, 201, 206);
 }
