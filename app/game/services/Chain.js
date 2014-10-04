@@ -13,7 +13,7 @@ Game.service('Chain', [function() {
       candies.push(candy);
     }
     
-    this.candies = function() {
+    this.getCandies = function() {
       return candies;
     }
     

@@ -193,6 +193,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
           }
         }
       }
+      
       return set;
     }
     
@@ -229,10 +230,15 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       var horizontalChains = detectHorizontalMatches();
       var verticalChains = detectVerticalMatches();
       
+      /*
       for(var i = 0; i < horizontalChains.length; i++)
         console.log(horizontalChains[i].description());
       for(var i = 0; i < verticalChains.length; i++)
         console.log(verticalChains[i].description());
+      */
+      
+      removeCandies(horizontalChains);
+      removeCandies(verticalChains);
       
       return horizontalChains.concat(verticalChains);
     }
@@ -300,6 +306,16 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       return set;
     }
     
+    var removeCandies = function(chains) {
+      for(var i = 0; i < chains.length; i++) {
+        var cs = chains[i].getCandies();
+        for(var j = 0; j < cs.length; j++) {
+          var candy = cs[j];
+          candies[candy.row][candy.column] = null;
+        }
+      }
+    }
+    
     //=========================================================================
     // UTILITY & TEST FUNCTIONS
     //=========================================================================
@@ -310,7 +326,11 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       for(var row = 0; row < data.ROWS; row++) {
         board[row] = [data.COLUMNS];
         for(var column = 0; column < data.COLUMNS; column++) {
-          board[row][column] = candies[row][column].type;
+          if(candies[row][column]) {
+            board[row][column] = candies[row][column].type;
+          } else {
+            board[row][column] = null;
+          }
         }
       }
       console.log.apply(console, board);
