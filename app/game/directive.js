@@ -232,7 +232,6 @@ Game.directive('game', ['$window', 'random', '$timeout', function($window, rando
         selectionIndicator.sourceRect = new createjs.Rectangle(x, y, width, height);
         selectionIndicator.scaleX = candyScale;
         selectionIndicator.scaleY = candyScale;
-        console.log(selectionIndicator);
       }
       
       var showSelectionIndicatorForCandy = function(candy) {
