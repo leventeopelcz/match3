@@ -99,7 +99,17 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           }
           return column;
         }
-      } 
+      }
+      
+      var pointForColumn = new function() {
+        this.getX = function(column) {
+          return (column * candyDestinationSize);
+        }
+        
+        this.getY = function(row) {
+          return (row * candyDestinationSize);
+        }
+      }
       
       var touchesBegan = function(evt) {
         if(!canvas.mouseEnabled) return;
@@ -181,8 +191,10 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       var handleMatches = function() {
         var chains = scope.level.removeMatches();
-        animateMatchedCookies(chains, function() {
+        animateMatchedCandies(chains, function() {
           canvas.mouseEnabled = true;
+          var columns = scope.level.fillHoles();
+          animateFallingCandies(columns);
         });
       }
       
@@ -250,7 +262,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
       }
       
-      var animateMatchedCookies = function(chains, animComplete) {
+      var animateMatchedCandies = function(chains, animComplete) {
         var duration = 300;
         
         for(var i = 0; i < chains.length; i++) {
@@ -269,6 +281,35 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
                 animComplete();
               });
             }
+          }
+        }
+      }
+      
+      var animateFallingCandies = function(columns, animComplete) {
+        var longestDuration = 0;
+        var array;
+        var candy;
+        var newY;
+        //var timeLine = createjs.Timeline();
+        
+        for(var i = 0; i < columns.length; i++) {
+          array = columns[i];
+          for(var j = 0; j < array.length; j++) {
+            candy = array[j];
+            
+            var delay = 50 + 150 * j;
+            newY = pointForColumn.getY(candy.row);
+            var duration = ((newY - candy.y) / candyDestinationSize) * 500;
+            longestDuration = Math.max(longestDuration, duration + delay);
+            
+            console.log(duration);
+            
+            createjs.Tween.get(candy)
+            .to(
+              {y: newY},
+              duration,
+              createjs.Ease.sineOut)
+            .wait(delay);
           }
         }
       }
