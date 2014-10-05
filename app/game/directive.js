@@ -407,53 +407,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         //===========================================================================<<<<<<<<
         //===========================================================================<<<<<<<<
         
-        var removeChain = function(idx) {
-          var chain = scope.chains[idx];
-          
-          // Remove candies and chain members from board.
-          for(var i = 0; i < chain.length; i++) {
-            canvas.removeChild(chain[i]);
-            scope.board[chain[i].row][chain[i].column] = -2;
-          }
-        }
-        
-        var swap = function(swapObj) {
-          var si = swapObj.source.row;
-          var sj = swapObj.source.column;
-          var ti = swapObj.target.row;
-          var tj = swapObj.target.column;
-          var idx;
-          
-          // Horizontal and 1 away or vertical and 1 away.
-          if(Math.abs(si-ti) == 1 && Math.abs(sj - tj) == 0 || Math.abs(sj - tj) == 1 && Math.abs(si-ti) == 0) {
-            // If this pair is in the validSwaps array means it is a valid swap.
-            var obj = scope.getSwapIndex([swapObj.source, swapObj.target]);
-            if(obj) {
-              // valid swap code here.
-              swapAnimation(swapObj);
-              
-              removeChain(obj.index);
-              
-              
-              // Swap the removed and the swapped on board.
-              var original = scope.board[swapObj.source.row][swapObj.source.column];
-              scope.board[swapObj.source.row][swapObj.source.column] = scope.board[swapObj.target.row][swapObj.target.column];
-              scope.board[swapObj.target.row][swapObj.target.column] = original;
-              
-              
-              
-              // Update swaps and chains after a valid swap.
-              scope.buildSwapsAndChains(canvas);
-            } else {
-              // Swap back the candies.
-              invalidSwapAnimation(swapObj);
-            }
-            
-            swap.source = null;
-            swap.target = null;
-          }
-        }
-        
         // Get a random chain.
         var getRandomChain = function() {
           var randomIndex = random.range(0, scope.chains.length);
