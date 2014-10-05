@@ -226,13 +226,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       var horizontalChains = detectHorizontalMatches();
       var verticalChains = detectVerticalMatches();
       
-      /*
-      for(var i = 0; i < horizontalChains.length; i++)
-        console.log(horizontalChains[i].description());
-      for(var i = 0; i < verticalChains.length; i++)
-        console.log(verticalChains[i].description());
-      */
-      
       removeCandies(horizontalChains);
       removeCandies(verticalChains);
       
