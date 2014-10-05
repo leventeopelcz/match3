@@ -71,8 +71,21 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           candies[i].scaleY = candyScale;
           candiesLayer.addChild(candies[i]);
         }
+      }
+      
+      // ======================================================================
+      
+      var addSpriteForCandy = function(candy) {
+        var x = candy.type * CANDY_SOURCE_SIZE;
+        var y = 0;
+        var width = CANDY_SOURCE_SIZE;
+        var height = CANDY_SOURCE_SIZE;
         
-        canvas.update();
+        candy.image = assetLoader.getResult('candyAtlas');
+        candy.sourceRect = new createjs.Rectangle(x, y, width, height);
+        candy.scaleX = candyScale;
+        candy.scaleY = candyScale;
+        candiesLayer.addChild(candy);
       }
       
       // ======================================================================
@@ -135,7 +148,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         var hDelta = 0;
         var vDelta = 0;
         
-        if(column < swipeFromColumn) {          // swipe left
+        if(column < swipeFromColumn) {           // swipe left
           hDelta = -1;
         } else if (column > swipeFromColumn) {   // swipe right
           hDelta = 1;
@@ -192,9 +205,14 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       var handleMatches = function() {
         var chains = scope.level.removeMatches();
         animateMatchedCandies(chains, function() {
-          canvas.mouseEnabled = true;
           var columns = scope.level.fillHoles();
-          animateFallingCandies(columns);
+          animateFallingCandies(columns, function() {
+            var columns = scope.level.topUpCandies();
+            animateNewCandies(columns, function() {
+              canvas.mouseEnabled = true;
+              console.log('called');
+            });
+          });
         });
       }
       
@@ -264,53 +282,133 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       var animateMatchedCandies = function(chains, animComplete) {
         var duration = 300;
+        var totalCandiesToAnimate = 0;
+        var candiesToAnimate = 0;
+        
+        // Get the number of candies we animate.
+        for(var i = 0; i < chains.length; i++) {
+          var chain = chains[i].getCandies();
+          for(var j = 0; j < chain.length; j++) {
+            totalCandiesToAnimate++;
+          }
+        }
         
         for(var i = 0; i < chains.length; i++) {
-          var cs = chains[i].getCandies();
-          for(var j = 0; j < cs.length; j++) {
-            var candy = cs[j];
+          var chain = chains[i].getCandies();
+          for(var j = 0; j < chain.length; j++) {
+            var candy = chain[j];
+            candiesToAnimate++;
+            
             // The candy can be part of two chains but we only want to animate once.
             if(candy) {
-              createjs.Tween.get(candy)
-              .to(
+              var tween = createjs.Tween.get(candy);
+              tween.to(
                 {scaleX: 0, scaleY: 0, x: candy.x + candyDestinationSize/2, y: candy.y + candyDestinationSize/2},
                 duration,
-                createjs.Ease.sineOut)
-              .call(function() {
-                candiesLayer.removeChild(candy);
-                animComplete();
-              });
+                createjs.Ease.sineOut);
+              
+              // If this is the last candy we want to animate, assign a complete event. 
+              // So this way we won't call the complete function more than once.
+              if(candiesToAnimate == totalCandiesToAnimate) {
+                tween.call(function() {
+                  candiesLayer.removeChild(candy);
+                  animComplete();
+                });
+              }
+              
             }
           }
         }
       }
       
       var animateFallingCandies = function(columns, animComplete) {
-        var longestDuration = 0;
-        var array;
-        var candy;
-        var newY;
-        //var timeLine = createjs.Timeline();
+        var totalCandiesToAnimate = 0;
+        var candiesToAnimate = 0;
+        
+        // Get the number of candies we animate.
+        for(var i = 0; i < columns.length; i++) {
+          var array = columns[i];
+          for(var j = 0; j < array.length; j++) {
+            totalCandiesToAnimate++;
+          }
+        }
         
         for(var i = 0; i < columns.length; i++) {
-          array = columns[i];
+          var array = columns[i];
           for(var j = 0; j < array.length; j++) {
-            candy = array[j];
+            var candy = array[j];
+            candiesToAnimate++;
             
-            var delay = 50 + 150 * j;
-            newY = pointForColumn.getY(candy.row);
-            var duration = ((newY - candy.y) / candyDestinationSize) * 500;
-            longestDuration = Math.max(longestDuration, duration + delay);
+            var delay = 100 * j;
+            var newY = pointForColumn.getY(candy.row);
+            var duration = ((newY - candy.y) / candyDestinationSize) * 200;
             
-            console.log(duration);
+            var tween = createjs.Tween.get(candy);
+            tween
+              .wait(delay)
+              .to(
+                {y: newY},
+                duration,
+                createjs.Ease.sineOut);
             
-            createjs.Tween.get(candy)
-            .to(
-              {y: newY},
-              duration,
-              createjs.Ease.sineOut)
-            .wait(delay);
+            // If this is the last candy we want to animate, assign a complete event. 
+            // So this way we won't call the complete function more than once.
+            if(candiesToAnimate == totalCandiesToAnimate) {
+              tween.call(function() {
+                animComplete();
+              });
+            }
+            
           }
+        }
+      }
+      
+      var animateNewCandies = function(columns, animComplete) {
+        var totalCandiesToAnimate = 0;
+        var candiesToAnimate = 0;
+        
+        // Get the number of candies we animate.
+        for(var i = 0; i < columns.length; i++) {
+          var array = columns[i];
+          for(var j = 0; j < array.length; j++) {
+            totalCandiesToAnimate++;
+          }
+        }
+        
+        for(var i = 0; i < columns.length; i++) {
+          var array = columns[i];
+          var startRow = array[0].row - 1;
+          
+          for(var j = 0; j < array.length; j++) {
+            var candy = array[j];
+            candiesToAnimate++;
+            
+            candy.x = pointForColumn.getX(candy.column);
+            candy.y = pointForColumn.getY(startRow);
+            addSpriteForCandy(candy);
+            
+            var delay = 200 * (array.length - j - 1);
+            var duration = (candy.row - startRow) * 100;
+            var newY = pointForColumn.getY(candy.row);
+            
+            var tween = createjs.Tween.get(candy);
+            tween
+              .wait(delay)
+              .to(
+                {y: newY},
+                duration,
+                createjs.Ease.sineOut);
+            
+            // If this is the last candy we want to animate, assign a complete event. 
+            // So this way we won't call the complete function more than once.
+            if(candiesToAnimate == totalCandiesToAnimate) {
+              tween.call(function() {
+                animComplete();
+              });
+            }
+            
+          }
+          
         }
       }
       

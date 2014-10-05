@@ -322,9 +322,11 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       for(var column = 0; column < data.COLUMNS; column++) {
         var array = null;
         for(var row = data.ROWS - 1; row >= 0; row--) {
+          
           // If there should be a candy but there isn't.
           if(tiles[row][column] != 0 && !candies[row][column]) {
             for(var lookup = row - 1; lookup >= 0 ; lookup--) {
+              
               var candy = candies[lookup][column];
               if(candy) {
                 candies[lookup][column] = null;
@@ -339,8 +341,41 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
                 
                 break;
               }
+              
             }
           }
+          
+        }
+      }
+      
+      return columns;
+    }
+    
+    this.topUpCandies = function() {
+      var columns = [];
+      var candyType = null;
+      
+      for(var column = 0; column < data.COLUMNS; column++) {
+        var array = null;
+        for(var row = 0; row < data.ROWS && !candies[row][column]; row++) {
+          
+          if(tiles[row][column] != 0) {
+            // Don't be the same type as the last one to prevent too many freebie matches.
+            do {
+              var newCandyType = random.range(0, data.NUM_CANDY_TYPES);
+            } while(newCandyType === candyType);
+            
+            candyType = newCandyType;
+            
+            var candy = createCandyAtPosition(row, column, candyType);
+            
+            if(!array) {
+              array = [];
+              columns.push(array);
+            }
+            array.push(candy);
+          }
+          
         }
       }
       
