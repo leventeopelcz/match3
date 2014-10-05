@@ -12,18 +12,15 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     this.shuffle = function() {
       var set = [];
       
+      // Uncomment to test with predifined gameboard.
+      //set = createTestGameBoard();
+      //this.detectPossibleSwaps();
+      //return set;
+      
       // In the very rare case that you end up with no possible swaps on the game board (try 3x3) try again.
       do {
         set = crateInitialCandies();
-        //set = createTestGameBoard();
-        //logGameBoard();
-        detectPossibleSwaps();
-        
-        /*
-        for(var i = 0; i < possibleSwaps.length; i++) {
-          console.log(possibleSwaps[i].describe());
-        }
-        */
+        this.detectPossibleSwaps();
       } while(possibleSwaps.length == 0);
       
       return set;
@@ -55,7 +52,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       return (verticalMatches >= 3 || horizontalMatches >= 3);
     }
     
-    var detectPossibleSwaps = function() {
+    this.detectPossibleSwaps = function() {
       var set = [];
       
       for(var row = 0; row < data.ROWS; row++) {
@@ -121,7 +118,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
                 //logGameBoard();
               }
             }
-            
             
           }
         }
@@ -395,7 +391,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
           if(candies[row][column]) {
             board[row][column] = candies[row][column].type;
           } else {
-            board[row][column] = null;
+            board[row][column] = -1;
           }
         }
       }

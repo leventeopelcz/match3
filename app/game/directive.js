@@ -204,16 +204,24 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       var handleMatches = function() {
         var chains = scope.level.removeMatches();
+        if(chains.length == 0) {
+          beginNextTurn();
+          return;
+        }
         animateMatchedCandies(chains, function() {
           var columns = scope.level.fillHoles();
           animateFallingCandies(columns, function() {
             var columns = scope.level.topUpCandies();
             animateNewCandies(columns, function() {
-              canvas.mouseEnabled = true;
-              console.log('called');
+              handleMatches(); // recursion
             });
           });
         });
+      }
+      
+      var beginNextTurn = function() {
+        scope.level.detectPossibleSwaps();
+        canvas.mouseEnabled = true;
       }
       
       // ======================================================================
