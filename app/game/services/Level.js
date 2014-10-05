@@ -297,9 +297,9 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     
     var removeCandies = function(chains) {
       for(var i = 0; i < chains.length; i++) {
-        var cs = chains[i].getCandies();
-        for(var j = 0; j < cs.length; j++) {
-          var candy = cs[j];
+        var chain = chains[i].getCandies();
+        for(var j = 0; j < chain.length; j++) {
+          var candy = chain[j];
           candies[candy.row][candy.column] = null;
         }
       }
