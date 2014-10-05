@@ -485,9 +485,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           canvas.on('stagemousemove', touchesMoved);
           //canvas.on('stagemouseup', touchesEnded);
 
-          // Building an array of swap pairs and chains.
-          //scope.buildSwapsAndChains(canvas);
-
           // After 3 second, highlight a random chain.
           //$timeout(highlightRandomChain, 3000);
           
