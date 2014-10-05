@@ -333,6 +333,12 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         var totalCandiesToAnimate = 0;
         var candiesToAnimate = 0;
         
+        // If no candies needs to fall.
+        if(columns.length == 0) {
+          animComplete();
+          return;
+        }
+        
         // Get the number of candies we animate.
         for(var i = 0; i < columns.length; i++) {
           var array = columns[i];
