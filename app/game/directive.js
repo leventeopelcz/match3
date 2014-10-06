@@ -65,11 +65,17 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           x = candies[i].type * CANDY_SOURCE_SIZE;
           candies[i].image = assetLoader.getResult('candyAtlas');
           candies[i].sourceRect = new createjs.Rectangle(x, y, width, height);
-          candies[i].x = candies[i].column * candyDestinationSize;
-          candies[i].y = candies[i].row * candyDestinationSize;
-          candies[i].scaleX = candyScale;
-          candies[i].scaleY = candyScale;
+          candies[i].x = candies[i].column * candyDestinationSize + candyDestinationSize/4;
+          candies[i].y = candies[i].row * candyDestinationSize + candyDestinationSize/4;
+          candies[i].scaleX = candyScale / 2;
+          candies[i].scaleY = candyScale / 2;
           candiesLayer.addChild(candies[i]);
+          candies[i].alpha = 0;
+          
+          animateBeginGame(candies[i], function() {
+            // anim complete;
+            // TODO: not implemented yet (maybe use array of candies instead of singular candy to get last anim complete, as before)
+          });
         }
       }
       
@@ -422,10 +428,26 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
                 animComplete();
               });
             }
-            
           }
           
         }
+      }
+      
+      var animateBeginGame = function(candy, animComplete) {
+        var duration = 300;
+        var randomDelay = random.range(100, 500);
+        var realX = candy.column * candyDestinationSize;
+        var realY = candy.row * candyDestinationSize;
+        
+        createjs.Tween.get(candy)
+          .wait(randomDelay)
+          .to(
+            {scaleX: candyScale, scaleY: candyScale, alpha: 1, x: realX, y: realY},
+            duration,
+            createjs.Ease.sineOut)
+          .call(function() {
+            animComplete();
+          });
       }
       
       // ======================================================================
