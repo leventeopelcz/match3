@@ -17,6 +17,14 @@ Game.service('Chain', [function() {
       return candies;
     }
     
+    this.getCandy = function(index) {
+      return candies[index];
+    }
+    
+    this.length = function() {
+      return candies.length;
+    }
+    
     this.description = function() {
       return '('+ this.chainType + '): ' + candies;
     }
