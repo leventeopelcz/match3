@@ -9,51 +9,83 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     
     var possibleSwaps = [];
     
+    var possibleChains = [];
+    
     this.shuffle = function() {
       var set = [];
       
       // Uncomment to test with predifined gameboard.
-      //set = createTestGameBoard();
-      //this.detectPossibleSwaps();
-      //return set;
+      set = createTestGameBoard();
+      this.detectPossibleSwaps();
+      
+      for(var i = 0; i < possibleChains.length; i++) {
+        console.log(possibleChains[i].description());
+      }
+      
+      return set;
       
       // In the very rare case that you end up with no possible swaps on the game board (try 3x3) try again.
+      /*
       do {
         set = crateInitialCandies();
         this.detectPossibleSwaps();
       } while(possibleSwaps.length == 0);
       
+      for(var i = 0; i < possibleChains.length; i++) {
+        console.log(possibleChains[i].description());
+      }
+      
       return set;
+      */
     }
     
     var hasChainAtPosition = function(row, column) {        
       var candyType = candies[row][column].type;
       var horizontalMatches = 1;
       var verticalMatches = 1;
+      var horizontalChain = new Chain();
+      var verticalChain = new Chain();
       
       for(var i = column-1; i >= 0 && candies[row][i] && candies[row][i].type == candyType; i--) {
         horizontalMatches++;
+        horizontalChain.addCandy(candies[row][i]);
         //console.log("horizontal<< : ("+row+":"+i+")");
       }
       for(var i = column+1; i < data.COLUMNS && candies[row][i] && candies[row][i].type == candyType; i++) {
         horizontalMatches++;
+        horizontalChain.addCandy(candies[row][i]);
         //console.log("horizontal>> : ("+row+":"+i+")");
+      }
+      
+      if(horizontalMatches >= 3) {
+        horizontalChain.chainType = 'ChainTypeHorizontal';
+        return horizontalChain;
+      } else {
+        horizontalChain = null;
       }
       
       for(var j = row-1; j >= 0 && candies[j][column] && candies[j][column].type == candyType; j--) {
         verticalMatches++;
+        verticalChain.addCandy(candies[j][column]);
         //console.log("vertival^^ : ("+j+":"+column+")");
       }
       for(var j = row+1; j < data.ROWS && candies[j][column] && candies[j][column].type == candyType; j++) {
         verticalMatches++;
+        verticalChain.addCandy(candies[j][column]);
         //console.log("vertivalvv : ("+j+":"+column+")");
       }
       
-      return (verticalMatches >= 3 || horizontalMatches >= 3);
+      if(verticalMatches >= 3) {
+        verticalChain.chainType = 'ChainTypeVertical';
+        return verticalChain;
+      } else {
+        verticalChain = null;
+      }
     }
     
     this.detectPossibleSwaps = function() {
       var set = [];
+      possibleChains = [];
       
       for(var row = 0; row < data.ROWS; row++) {
         for(var column = 0; column < data.COLUMNS; column++) {
@@ -75,12 +107,26 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
                 //logGameBoard();
 
                 // Is either candy part of a chain?
-                if(hasChainAtPosition(row, column + 1) || hasChainAtPosition(row, column)) {
+                var chain = hasChainAtPosition(row, column + 1);
+                if(chain) {
                   var swap = new Swap();
                   swap.candyA = candy;
                   swap.candyB = other;
                   set.push(swap);
-                  //console.log("added: "+swap.describe());
+                  
+                  chain.addCandy(candies[row][column+1]);
+                  possibleChains.push(chain);
+                }
+                
+                var chain = hasChainAtPosition(row, column);
+                if(chain) {
+                  var swap = new Swap();
+                  swap.candyA = candy;
+                  swap.candyB = other;
+                  set.push(swap);
+                  
+                  chain.addCandy(candies[row][column]);
+                  possibleChains.push(chain);
                 }
 
                 // Swap them back.
@@ -104,12 +150,26 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
                 //logGameBoard();
                 
                 // Is either candy part of a chain?
-                if(hasChainAtPosition(row + 1, column) || hasChainAtPosition(row, column)) {
+                var chain = hasChainAtPosition(row + 1, column);
+                if(chain) {
                   var swap = new Swap();
                   swap.candyA = candy;
                   swap.candyB = other;
                   set.push(swap);
-                  //console.log("added: "+swap.describe());
+                  
+                  chain.addCandy(candies[row + 1][column]);
+                  possibleChains.push(chain);
+                }
+                
+                var chain = hasChainAtPosition(row, column);
+                if(chain) {
+                  var swap = new Swap();
+                  swap.candyA = candy;
+                  swap.candyB = other;
+                  set.push(swap);
+                  
+                  chain.addCandy(candies[row][column]);
+                  possibleChains.push(chain);
                 }
                 
                 // Swap them back.
@@ -230,6 +290,11 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       removeCandies(verticalChains);
       
       return horizontalChains.concat(verticalChains);
+    }
+    
+    this.getRandomMatch = function() {
+      var randomIndex = random.range(0, possibleChains.length);
+      return possibleChains[randomIndex];
     }
     
     var detectHorizontalMatches = function() {
