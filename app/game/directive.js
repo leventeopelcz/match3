@@ -94,6 +94,51 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         candiesLayer.addChild(candy);
       }
       
+      //=======================================================================
+      // Hinting
+      //=======================================================================
+
+      // Highlight a random chain.
+      var hint = function() {
+        var chain = scope.level.getRandomMatch();
+        for(var i = 0; i < chain.length(); i++) {
+          animateHint(chain.getCandy(i));
+        }
+      }
+
+      var animateHint = function(candy) {
+        // Set registration point to bottom.
+        candy.regY = candy.getBounds().height;
+        // Fix offset caused by moving the registration point.
+        candy.y = candy.y + candyDestinationSize;
+        
+        var duration = 200;
+        
+        var fromY = candy.y;
+        var toY = candy.y - candyDestinationSize * 0.1;
+        
+        var fromScaleY = candy.scaleY;
+        var toScaleY = candy.scaleY * 0.8;
+        
+        createjs.Tween.get(candy, {loop: true})
+        .to(
+          {y: toY},
+          duration,
+          createjs.Ease.quadOut)
+        .to(
+          {y: fromY},
+          duration,
+          createjs.Ease.quadIn)
+        .to(
+          {scaleY: toScaleY},
+          duration,
+          createjs.Ease.quadOut)
+        .to(
+          {scaleY: fromScaleY},
+          duration,
+          createjs.Ease.quadIn);
+      }
+      
       // ======================================================================
       
       // Interactivity functions.
@@ -521,7 +566,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           //canvas.on('stagemouseup', touchesEnded);
 
           // After 3 second, highlight a random chain.
-          //$timeout(highlightRandomChain, 3000);
+          $timeout(hint, 3000);
           
           // Canvas ticker for animations.
           var tick = function(evt) {
@@ -531,39 +576,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
         
         // Createjs asset loader complete handler.
-        assetLoader.on('complete', assetsLoaded);
-        
-        //===========================================================================<<<<<<<<
-        //===========================================================================<<<<<<<<
-        //===========================================================================<<<<<<<<
-        
-        // Get a random chain.
-        var getRandomChain = function() {
-          var randomIndex = random.range(0, scope.chains.length);
-          return scope.chains[randomIndex];
-        }
-
-        // Highlight a random chain.
-        var highlightRandomChain = function() {
-          var chain = getRandomChain();
-          for(var i = 0; i < chain.length; i++) {
-            highlightAnimation(chain[i]);
-          }
-        }
-        
-        // Highlight animation for candies in a chain.
-        var highlightAnimation = function(bitmap) {
-          createjs.Tween.get(bitmap, {loop: true})
-          .to(
-            {scaleX:candyScale * 1.1, scaleY:candyScale * 0.7, y: bitmap.y-5, x: bitmap.x-2},
-            500,
-            createjs.Ease.sineOut)
-          .to(
-            {scaleX:candyScale, scaleY:candyScale, y: bitmap.y+5},
-            500,
-            createjs.Ease.sineIn);
-        }
-        
+        assetLoader.on('complete', assetsLoaded);        
       }
       
     }
