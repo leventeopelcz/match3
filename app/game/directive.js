@@ -48,7 +48,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       // If level data is loaded.
       scope.$watch('levelLoaded', function() {
         if(scope.levelLoaded) {
-          levelLoaded();
+          beginGame();
         }
       });
       
@@ -464,10 +464,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       // ======================================================================
       
-      // "controller"
-      
-      // Level data is loaded.
-      var levelLoaded = function() {
+      var beginGame = function() {
         
         // Assets loaded by createjs.
         var assetsLoaded = function() {
