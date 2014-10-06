@@ -222,6 +222,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       var beginNextTurn = function() {
         scope.level.detectPossibleSwaps();
         canvas.mouseEnabled = true;
+        scope.movesLeft--;
+        scope.$apply();
       }
       
       // ======================================================================
