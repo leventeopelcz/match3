@@ -98,6 +98,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       // Hinting
       //=======================================================================
       
+      
+      var hintTimeoutPromise = null;
+      
       var hintChain = null;
       var originalY = [];
       
@@ -194,7 +197,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       var touchesBegan = function(evt) {
         if(!canvas.mouseEnabled) return;
         
-        stopHint();
+        if(hintChain) {
+          stopHint();
+        }
         
         var row = convertPoint.getRow(evt.stageY);
         var column = convertPoint.getColumn(evt.stageX);
@@ -272,11 +277,15 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       var handleMatches = function() {
+        // Stop hint timeout if havent triggered yet.
+        $timeout.cancel(hintTimeoutPromise);
+        
         var chains = scope.level.removeMatches();
         if(chains.length == 0) {
           beginNextTurn();
           return;
         }
+        
         animateMatchedCandies(chains, function() {
           var columns = scope.level.fillHoles();
           animateFallingCandies(columns, function() {
@@ -293,6 +302,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         canvas.mouseEnabled = true;
         scope.movesLeft--;
         scope.$apply();
+        hintTimeoutPromise = $timeout(hint, 3000);
       }
       
       // ======================================================================
@@ -584,7 +594,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           //canvas.on('stagemouseup', touchesEnded);
 
           // After 3 second, highlight a random chain.
-          $timeout(hint, 3000);
+          hintTimeoutPromise = $timeout(hint, 3000);
           
           // Canvas ticker for animations.
           var tick = function(evt) {
