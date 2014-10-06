@@ -97,12 +97,28 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       //=======================================================================
       // Hinting
       //=======================================================================
-
+      
+      var hintChain = null;
+      var originalY = [];
+      
       // Highlight a random chain.
       var hint = function() {
-        var chain = scope.level.getRandomMatch();
-        for(var i = 0; i < chain.length(); i++) {
-          animateHint(chain.getCandy(i));
+        hintChain = scope.level.getRandomMatch();
+        for(var i = 0; i < hintChain.length(); i++) {
+          var candy = hintChain.getCandy(i);
+          originalY[i] = candy.y;
+          animateHint(candy);
+        }
+      }
+      
+      var stopHint = function() {
+        // Put back everything how it was.
+        for(var i = 0; i < hintChain.length(); i++) {
+          var candy = hintChain.getCandy(i);
+          candy.regY = 0;
+          candy.scaleY = candyScale;
+          candy.y = originalY[i];
+          createjs.Tween.removeTweens(candy);
         }
       }
 
@@ -177,6 +193,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       var touchesBegan = function(evt) {
         if(!canvas.mouseEnabled) return;
+        
+        stopHint();
         
         var row = convertPoint.getRow(evt.stageY);
         var column = convertPoint.getColumn(evt.stageX);
