@@ -39,7 +39,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       */
     }
     
-    var hasChainAtPosition = function(row, column) {        
+    var hasChainAtPosition = function(row, column) {
       var candyType = candies[row][column].type;
       var horizontalMatches = 1;
       var verticalMatches = 1;
