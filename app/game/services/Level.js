@@ -289,6 +289,9 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       removeCandies(horizontalChains);
       removeCandies(verticalChains);
       
+      calculateScores(horizontalChains);
+      calculateScores(verticalChains);
+      
       return horizontalChains.concat(verticalChains);
     }
     
@@ -434,6 +437,26 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       }
       
       return columns;
+    }
+    
+    //=========================================================================
+    // SCORES
+    //=========================================================================
+    
+    this.comboMultiplier = 0;
+    var me = this;
+    
+    this.resetComboMultiplier = function() {
+      this.comboMultiplier = 0;
+    } 
+    
+    var calculateScores = function(chains) {
+      var chain = null;
+      for(var i = 0; i < chains.length; i++) {
+        chain = chains[i];
+        chain.score = data.BASE_SCORE * me.comboMultiplier * chain.length();
+        me.comboMultiplier++;
+      }
     }
     
     //=========================================================================

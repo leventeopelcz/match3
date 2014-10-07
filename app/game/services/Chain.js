@@ -5,6 +5,7 @@ Game.service('Chain', [function() {
   var Chain = function() {
     var candies = null;
     this.chainType = null;
+    this.score = null;
     
     this.addCandy = function(candy) {
       if(!candies) {

@@ -287,6 +287,12 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
         
         animateMatchedCandies(chains, function() {
+          var chain = null;
+          for(var i = 0; i < chains.length; i++) {
+            chain = chains[i];
+            scope.score += chain.score;
+          }
+          
           var columns = scope.level.fillHoles();
           animateFallingCandies(columns, function() {
             var columns = scope.level.topUpCandies();
@@ -303,6 +309,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         scope.movesLeft--;
         scope.$apply();
         hintTimeoutPromise = $timeout(hint, 3000);
+        scope.level.resetComboMultiplier();
       }
       
       // ======================================================================
@@ -384,6 +391,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         for(var i = 0; i < chains.length; i++) {
           var chain = chains[i].getCandies();
+          animateScoreForChain(chain);
           for(var j = 0; j < chain.length; j++) {
             var candy = chain[j];
             candiesToAnimate++;
@@ -555,6 +563,49 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       var hideSelectionIndicatorForCandy = function() {
         uiLayer.removeChild(selectionIndicator);
+      }
+      
+      // ======================================================================
+      // SCORING
+      // ======================================================================
+      
+      var animateScoreForChain = function(chain, animComplete) {
+        var candy = null;
+        var duration = 500;
+        var delay = 500;
+        
+        var animationComplete = function(text) {
+          return function() {
+            uiLayer.removeChild(text);
+            // anim complete.
+          }
+        }
+        
+        for(var i = 0; i < chain.length; i++) {
+          candy = chain[i];
+          var text = new createjs.Text(scope.GAME_BOARD.BASE_SCORE * scope.level.comboMultiplier, "40px Lilita One", "#000");
+          text.regX = text.getBounds().width / 2;
+          text.regY = -text.getBounds().height / 2
+          text.x = candy.x + candyDestinationSize/2;
+          text.y = candy.y + candyDestinationSize/2;
+          text.scaleX = 0.3;
+          text.scaleY = 0.3;
+          text.alpha = 0;
+          text.outline = 2;
+          text.textBaseline = "alphabetic";
+          uiLayer.addChild(text);
+          
+          createjs.Tween.get(text)
+          .to(
+            {scaleX: 1.5, scaleY: 1.5, alpha: 1},
+            duration,
+            createjs.Ease.quadOut)
+          .to(
+            {scaleX: 1, scaleY: 1, alpha: 1},
+            duration,
+            createjs.Ease.quadIn)
+          .call(animationComplete(text));
+        }
       }
       
       // ======================================================================
