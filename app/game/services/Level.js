@@ -231,7 +231,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
           // Also check if we even need to generate candy in a spot defined by tiles.
           if(tiles[i][j] == 1) {
             do {
-              candyType = random.range(0, data.NUM_CANDY_TYPES);
+              candyType = random.range(1, data.NUM_CANDY_TYPES);
             } while((i >= 2 &&
               tiles[i-1][j] &&
               candies[i-1][j].type == candyType &&
@@ -419,7 +419,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
           if(tiles[row][column] != 0) {
             // Don't be the same type as the last one to prevent too many freebie matches.
             do {
-              var newCandyType = random.range(0, data.NUM_CANDY_TYPES);
+              var newCandyType = random.range(1, data.NUM_CANDY_TYPES);
             } while(newCandyType === candyType);
             
             candyType = newCandyType;

@@ -9,7 +9,7 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($
     COLUMNS: null,
     SCORE: null,
     MOVES_LEFT: null,
-    NUM_CANDY_TYPES: 5,
+    NUM_CANDY_TYPES: 6,
     BASE_SCORE: null
   }
   

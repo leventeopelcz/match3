@@ -62,7 +62,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         var height = CANDY_SOURCE_SIZE;
         
         for(var i = 0; i < candies.length; i++) {
-          x = candies[i].type * CANDY_SOURCE_SIZE;
+          x = (candies[i].type - 1) * CANDY_SOURCE_SIZE;
           candies[i].image = assetLoader.getResult('candyAtlas');
           candies[i].sourceRect = new createjs.Rectangle(x, y, width, height);
           candies[i].x = candies[i].column * candyDestinationSize + candyDestinationSize/4;
@@ -82,7 +82,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       // ======================================================================
       
       var addSpriteForCandy = function(candy) {
-        var x = candy.type * CANDY_SOURCE_SIZE;
+        var x = (candy.type - 1) * CANDY_SOURCE_SIZE;
         var y = 0;
         var width = CANDY_SOURCE_SIZE;
         var height = CANDY_SOURCE_SIZE;
