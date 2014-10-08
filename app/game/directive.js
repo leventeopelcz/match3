@@ -583,16 +583,16 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         for(var i = 0; i < chain.length; i++) {
           candy = chain[i];
-          var text = new createjs.Text(scope.GAME_BOARD.BASE_SCORE * scope.level.comboMultiplier, "40px Lilita One", "#000");
-          text.regX = text.getBounds().width / 2;
-          text.regY = -text.getBounds().height / 2
+
+          var text = customText(scope.GAME_BOARD.BASE_SCORE * scope.level.comboMultiplier);
+          
           text.x = candy.x + candyDestinationSize/2;
           text.y = candy.y + candyDestinationSize/2;
+          text.regX = text.getBounds().width / 2;
+          text.regY = text.getBounds().height / 2
           text.scaleX = 0.3;
           text.scaleY = 0.3;
           text.alpha = 0;
-          text.outline = 2;
-          text.textBaseline = "alphabetic";
           uiLayer.addChild(text);
           
           createjs.Tween.get(text)
@@ -606,6 +606,40 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             createjs.Ease.quadIn)
           .call(animationComplete(text));
         }
+      }
+      
+      // Custom text
+      var customText = function(string) {
+        var container = new createjs.Container();
+        var text = new createjs.Text(string, "40px Lilita One", "#000");
+        var gradient = new createjs.Shape();
+        
+        var height = text.getBounds().height;
+        var width = text.getBounds().width;
+        
+        text.cache(0, 0, width, height);
+        
+        gradient.graphics.beginLinearGradientFill(["#f7e70a", "#f64400"], [0, 1], 0, 0, 0, height);
+        gradient.graphics.drawRect(0, 0, width, height);
+        gradient.graphics.endFill();
+        
+        gradient.filters = [
+          new createjs.AlphaMaskFilter(text.cacheCanvas)
+        ];
+        
+        gradient.cache(0, 0, width, height);
+        
+        var outline = new createjs.Text(string, "40px Lilita One", "#573514");
+        outline.outline = 2;
+        
+        var outline2 = new createjs.Text(string, "40px Lilita One", "#000");
+        outline2.outline = 4;
+        
+        container.addChild(outline2);
+        container.addChild(gradient);
+        container.addChild(outline);
+        
+        return container;
       }
       
       // ======================================================================
