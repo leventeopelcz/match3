@@ -330,22 +330,58 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     this.removeMatches = function(swap) {
       var horizontalChains = detectHorizontalMatches();
       var verticalChains = detectVerticalMatches();
+      var lChains = detectLMatches(horizontalChains, verticalChains);
       
       removeCandies(horizontalChains);
       removeCandies(verticalChains);
+      removeCandies(lChains);
       
       calculateScores(horizontalChains);
       calculateScores(verticalChains);
+      calculateScores(lChains);
       
       addPowerups(horizontalChains, swap);
       addPowerups(verticalChains, swap);
+      addPowerups(lChains, swap);
       
-      return horizontalChains.concat(verticalChains);
+      return horizontalChains.concat(verticalChains).concat(lChains);
     }
     
     this.getRandomMatch = function() {
       var randomIndex = random.range(0, possibleChains.length);
       return possibleChains[randomIndex];
+    }
+    
+    var detectLMatches = function(horizontalChains, verticalChains) {
+      var set = [];
+      
+      var chain = null;
+      for(var i = 0; i < horizontalChains.length; i++) {
+        chain = horizontalChains[i].getCandies();
+        for(var j = 0; j < chain.length; j++) {
+          var part1 = getChainContainingCandy(verticalChains, chain[j]);
+          if(part1) {
+            var part2 = horizontalChains.splice(i,1);
+          }
+          set.push(part1);
+          set.push(part2);
+        }
+      }
+      
+      return set;
+    }
+    
+    var getChainContainingCandy = function(chains, candy) {
+      var chain = null;
+      for(var i = 0; i < chains.length; i++) {
+        chain = chains[i].getCandies();
+        for(var j = 0; j < chain.length; j++) {
+          if(chain[j] === candy) {
+            return chains.splice(i,1);
+          }
+        }
+      }
+      return null;
     }
     
     var detectHorizontalMatches = function() {
