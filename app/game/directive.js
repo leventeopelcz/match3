@@ -82,8 +82,12 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       // ======================================================================
       
       var addSpriteForCandy = function(candy) {
-        var x = (candy.type - 1) * CANDY_SOURCE_SIZE;
-        var y = 0;
+        if(candy.bonusType == 4) {
+          var x = 0;
+        } else {
+          var x = (candy.type - 1) * CANDY_SOURCE_SIZE;
+        }
+        var y = candy.bonusType * CANDY_SOURCE_SIZE;
         var width = CANDY_SOURCE_SIZE;
         var height = CANDY_SOURCE_SIZE;
         
@@ -246,6 +250,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       */
       
+      var swap = new Swap();
+      
       var trySwap = function(hDelta, vDelta) {
         var toColumn = swipeFromColumn + hDelta;
         var toRow = swipeFromRow + vDelta;
@@ -258,7 +264,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         var fromCandy = scope.level.candyAtPosition(swipeFromRow, swipeFromColumn);
         
-        var swap = new Swap();
         swap.candyA = fromCandy;
         swap.candyB = toCandy;
         
@@ -280,7 +285,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         // Stop hint timeout if havent triggered yet.
         $timeout.cancel(hintTimeoutPromise);
         
-        var chains = scope.level.removeMatches();
+        var chains = scope.level.removeMatches(swap);
         if(chains.length == 0) {
           beginNextTurn();
           return;
@@ -292,6 +297,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             chain = chains[i];
             scope.score += chain.score;
           }
+          
+          animateAddPowerups(chains);
           
           var columns = scope.level.fillHoles();
           animateFallingCandies(columns, function() {
@@ -531,12 +538,24 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           });
       }
       
+      var animateAddPowerups = function(chains) {
+        if(swap.candyA.bonusType) {
+          swap.candyA.x = pointForColumn.getX(swap.candyA.column);
+          swap.candyA.y = pointForColumn.getY(swap.candyA.row);
+          addSpriteForCandy(swap.candyA);
+        } else {
+          swap.candyB.x = pointForColumn.getX(swap.candyB.column);
+          swap.candyB.y = pointForColumn.getY(swap.candyB.row);
+          addSpriteForCandy(swap.candyB);
+        }
+      }
+      
       // ======================================================================
       // SELECTION INDICATOR
       // ======================================================================
       
       var createSelectionIndicatorForCandy = function() {
-        var x = 0;
+        var x = CANDY_SOURCE_SIZE;
         var y = 4 * CANDY_SOURCE_SIZE;
         var width = CANDY_SOURCE_SIZE;
         var height = CANDY_SOURCE_SIZE;

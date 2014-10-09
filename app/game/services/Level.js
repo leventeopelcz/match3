@@ -253,12 +253,13 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       return set;
     }
     
-    var createCandyAtPosition = function(row, column, type) {
+    var createCandyAtPosition = function(row, column, type, bonusType) {
       var candy = new createjs.Bitmap();
       candy.name = row + ':' + column;
       candy.row = row;
       candy.column = column;
       candy.type = type;
+      candy.bonusType = (bonusType || null);
       candies[row][column] = candy;
       return candy;
     }
@@ -279,10 +280,54 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     }
     
     //=========================================================================
+    // POWERUPS
+    //=========================================================================
+    
+    var addPowerups = function(chains, swap) {
+      for(var i = 0; i < chains.length; i++) {
+        var chain = chains[i];
+        var bonusType = 0;
+        
+        // Adding striped sepcial
+        if(chain.length() == 4) {
+          if(chain.chainType == 'ChainTypeHorizontal') {
+            bonusType = 1;
+          }
+          if(chain.chainType == 'ChainTypeVertical') {
+            bonusType = 2;
+          }
+          // If chain occured from swap (not a freebie).
+          if(swap.candyA.type === chain.getCandy(0).type) {
+            candies[swap.candyA.row][swap.candyA.column] = createCandyAtPosition(swap.candyA.row, swap.candyA.column, swap.candyA.type, bonusType);
+            swap.candyA = candies[swap.candyA.row][swap.candyA.column];
+          } else {
+            candies[swap.candyB.row][swap.candyB.column] = createCandyAtPosition(swap.candyB.row, swap.candyB.column, swap.candyB.type, bonusType);
+            swap.candyB = candies[swap.candyB.row][swap.candyB.column];
+          }
+          
+          //TODO: chain occured from freebie: have to put special candy in middle.
+        }
+        
+        // Adding $$$ sepcial
+        if(chain.length() == 5 && (chain.chainType == 'ChainTypeHorizontal' || chain.chainType == 'ChainTypeVertical')) {
+          bonusType = 4;
+          
+          if(swap.candyA.type === chain.getCandy(0).type) {
+            candies[swap.candyA.row][swap.candyA.column] = createCandyAtPosition(swap.candyA.row, swap.candyA.column, -1, bonusType);
+            swap.candyA = candies[swap.candyA.row][swap.candyA.column];
+          } else {
+            candies[swap.candyB.row][swap.candyB.column] = createCandyAtPosition(swap.candyB.row, swap.candyB.column, -1, bonusType);
+            swap.candyB = candies[swap.candyB.row][swap.candyB.column];
+          }
+        }
+      }
+    }
+    
+    //=========================================================================
     // CHAIN DETECTION
     //=========================================================================
     
-    this.removeMatches = function() {
+    this.removeMatches = function(swap) {
       var horizontalChains = detectHorizontalMatches();
       var verticalChains = detectVerticalMatches();
       
@@ -291,6 +336,9 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       
       calculateScores(horizontalChains);
       calculateScores(verticalChains);
+      
+      addPowerups(horizontalChains, swap);
+      addPowerups(verticalChains, swap);
       
       return horizontalChains.concat(verticalChains);
     }
