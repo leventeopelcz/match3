@@ -340,6 +340,33 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       }
     }
     
+    var removeCandiesByPowerup = function(powerup) {
+      // Horizontally
+      if(powerup.bonusType === 1) {
+        for(var column = 0; column < data.COLUMNS; column++) {
+          candies[powerup.row][column] = null;
+        }
+      }
+      
+      // Vertically
+      if(powerup.bonusType === 2) {
+        for(var row = 0; row < data.ROWS; row++) {
+          candies[row][powerup.column] = null;
+        }
+      }
+      
+      /* BOMB WIP
+       * what if it's on the edge or there is no tile on +-1 position!
+      if(powerup.bonusType === 3) {
+        var max
+        for(var row = powerup.row - 1; row < powerup.row + 1; row++) {
+          
+        }
+      }
+      */
+      
+    }
+    
     //=========================================================================
     // CHAIN DETECTION
     //=========================================================================
