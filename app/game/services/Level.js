@@ -1,5 +1,8 @@
 'use strict';
 
+
+// FIXME: same match in chains more than once?
+
 // Level class 
 Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) {
   function Level(data) {
@@ -355,6 +358,9 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
         }
       }
       
+      // NOTE: What if it's on the edge or there is no tile on +-1 position!
+      // NOTE: remove candies first then the powerup effect. be careful of double removing (trying to remove nulls).
+      
       /* BOMB WIP
        * what if it's on the edge or there is no tile on +-1 position!
       if(powerup.bonusType === 3) {
@@ -426,6 +432,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       return set;
     }
     
+    // TODO: better naming for this function
     var getChainContainingCandy = function(chains, candy) {
       var chain = null;
       for(var i = 0; i < chains.length; i++) {
