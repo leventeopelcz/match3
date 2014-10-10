@@ -359,12 +359,23 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       for(var i = 0; i < horizontalChains.length; i++) {
         chain = horizontalChains[i].getCandies();
         for(var j = 0; j < chain.length; j++) {
-          var part1 = getChainContainingCandy(verticalChains, chain[j]);
-          if(part1) {
-            var part2 = horizontalChains.splice(i,1);
+          var obj = getChainContainingCandy(verticalChains, chain[j]);
+          if(obj) {
+            // We want to add chain not an array of 1 chain.
+            var part2 = horizontalChains.splice(i,1)[0];
+            
+            var part1 = obj.chain;
+            part1.removeCandy(obj.candy);
+            part2.removeCandy(obj.candy);
+
+            var lchain = new Chain();
+            lchain.chainType = 'ChainTypeL';
+            
+            lchain.candies = part1.candies.concat(part2.candies);
+            lchain.candies.push(obj.candy);
+            
+            set.push(lchain);
           }
-          set.push(part1);
-          set.push(part2);
         }
       }
       
@@ -377,7 +388,11 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
         chain = chains[i].getCandies();
         for(var j = 0; j < chain.length; j++) {
           if(chain[j] === candy) {
-            return chains.splice(i,1);
+            // We want to return a chain not an array of 1 chain and the candy.
+            return {
+              'chain': chains.splice(i,1)[0],
+              'candy': candy
+            }
           }
         }
       }
@@ -448,10 +463,10 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     }
     
     var removeCandies = function(chains) {
-      for(var i = 0; i < chains.length; i++) {
-        var chain = chains[i].getCandies();
-        for(var j = 0; j < chain.length; j++) {
-          var candy = chain[j];
+      for(var i in chains) {
+        var chain = chains[i];
+        for(var j in chain.candies) {
+          var candy = chain.candies[j];
           candies[candy.row][candy.column] = null;
         }
       }

@@ -3,31 +3,39 @@
 // Chain class.
 Game.service('Chain', [function() {
   var Chain = function() {
-    var candies = null;
+    this.candies = [];
     this.chainType = null;
     this.score = null;
     
     this.addCandy = function(candy) {
-      if(!candies) {
-        candies = [];
+      if(!this.candies) {
+        this.candies = [];
       }
-      candies.push(candy);
+      this.candies.push(candy);
     }
     
     this.getCandies = function() {
-      return candies;
+      return this.candies;
     }
     
     this.getCandy = function(index) {
-      return candies[index];
+      return this.candies[index];
+    }
+    
+    this.removeCandy = function(candy) {
+      for(var i in this.candies) {
+        if(this.candies[i] === candy) {
+          this.candies.splice(i, 1);
+        }
+      }
     }
     
     this.length = function() {
-      return candies.length;
+      return this.candies.length;
     }
     
     this.description = function() {
-      return '('+ this.chainType + '): ' + candies;
+      return '('+ this.chainType + '): ' + this.candies;
     }
   }
   return Chain;
