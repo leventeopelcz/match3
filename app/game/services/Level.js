@@ -542,18 +542,19 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     // SCORES
     //=========================================================================
     
-    this.comboMultiplier = 0;
+    this.comboMultiplier = 1;
     var me = this;
     
     this.resetComboMultiplier = function() {
-      this.comboMultiplier = 0;
+      this.comboMultiplier = 1;
     } 
     
     var calculateScores = function(chains) {
       var chain = null;
-      for(var i = 0; i < chains.length; i++) {
+      
+      for(var i in chains) {
         chain = chains[i];
-        chain.score = data.BASE_SCORE * me.comboMultiplier * chain.length();
+        chain.score = data.BASE_SCORE * me.comboMultiplier * chain.candies.length;
         me.comboMultiplier++;
       }
     }

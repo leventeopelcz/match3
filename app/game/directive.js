@@ -603,7 +603,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         for(var i = 0; i < chain.length; i++) {
           candy = chain[i];
 
-          var text = customText(scope.GAME_BOARD.BASE_SCORE * scope.level.comboMultiplier);
+          var text = customText(scope.GAME_BOARD.BASE_SCORE * (scope.level.comboMultiplier - 1));
           
           text.x = candy.x + candyDestinationSize/2;
           text.y = candy.y + candyDestinationSize/2;
