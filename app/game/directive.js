@@ -1,5 +1,8 @@
 'use strict';
 
+// TODO: Dynamic text size!
+// FIXME: Cancel swipe outside canvas?
+
 Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($window, random, $timeout, Swap) {
   return {
     restrict: 'AE',
