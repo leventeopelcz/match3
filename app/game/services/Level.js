@@ -539,6 +539,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
                 candies[lookup][column] = null;
                 candies[row][column] = candy;
                 candy.row = row;
+                candy.name = row + ':' + candy.column;
                 
                 if(!array) {
                   array = [];
