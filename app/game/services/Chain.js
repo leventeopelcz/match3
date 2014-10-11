@@ -34,7 +34,7 @@ Game.service('Chain', [function() {
       return this.candies.length;
     }
     
-    this.description = function() {
+    this.describe = function() {
       return '('+ this.chainType + '): ' + this.candies;
     }
   }
