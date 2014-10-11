@@ -426,32 +426,26 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       var animateFallingCandies = function(columns, animComplete) {
-        var totalCandiesToAnimate = 0;
-        var candiesToAnimate = 0;
-        
         // If no candies needs to fall.
         if(columns.length == 0) {
           animComplete();
           return;
         }
         
-        // Get the number of candies we animate.
-        for(var i = 0; i < columns.length; i++) {
-          var array = columns[i];
-          for(var j = 0; j < array.length; j++) {
-            totalCandiesToAnimate++;
-          }
-        }
+        var longestDuration = 0;
         
         for(var i = 0; i < columns.length; i++) {
           var array = columns[i];
           for(var j = 0; j < array.length; j++) {
             var candy = array[j];
-            candiesToAnimate++;
             
-            var delay = 100 * j;
+            var delay = 200 * j;
             var newY = pointForColumn.getY(candy.row);
-            var duration = ((newY - candy.y) / candyDestinationSize) * 200;
+            var duration = ((newY - candy.y) / candyDestinationSize) * 100;
+            
+            if(longestDuration < duration + delay) {
+              longestDuration = duration + delay;
+            }
             
             var tween = createjs.Tween.get(candy);
             tween
@@ -460,38 +454,21 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
                 {y: newY},
                 duration,
                 createjs.Ease.sineOut);
-            
-            // If this is the last candy we want to animate, assign a complete event. 
-            // So this way we won't call the complete function more than once.
-            if(candiesToAnimate == totalCandiesToAnimate) {
-              tween.call(function() {
-                animComplete();
-              });
-            }
-            
           }
         }
+        
+        $timeout(animComplete, longestDuration);
       }
       
       var animateNewCandies = function(columns, animComplete) {
-        var totalCandiesToAnimate = 0;
-        var candiesToAnimate = 0;
-        
-        // Get the number of candies we animate.
-        for(var i = 0; i < columns.length; i++) {
-          var array = columns[i];
-          for(var j = 0; j < array.length; j++) {
-            totalCandiesToAnimate++;
-          }
-        }
-        
+        var longestDuration = 0;
+
         for(var i = 0; i < columns.length; i++) {
           var array = columns[i];
           var startRow = array[0].row - 1;
           
           for(var j = 0; j < array.length; j++) {
             var candy = array[j];
-            candiesToAnimate++;
             
             candy.x = pointForColumn.getX(candy.column);
             candy.y = pointForColumn.getY(startRow);
@@ -501,6 +478,10 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             var duration = (candy.row - startRow) * 100;
             var newY = pointForColumn.getY(candy.row);
             
+            if(longestDuration < duration + delay) {
+              longestDuration = duration + delay;
+            }
+            
             var tween = createjs.Tween.get(candy);
             tween
               .wait(delay)
@@ -508,17 +489,12 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
                 {y: newY},
                 duration,
                 createjs.Ease.sineOut);
-            
-            // If this is the last candy we want to animate, assign a complete event. 
-            // So this way we won't call the complete function more than once.
-            if(candiesToAnimate == totalCandiesToAnimate) {
-              tween.call(function() {
-                animComplete();
-              });
-            }
           }
           
         }
+        
+        // +100 to smooth it out.
+        $timeout(animComplete, longestDuration + 100);
       }
       
       var animateBeginGame = function(candy, animComplete) {
@@ -532,10 +508,10 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           .to(
             {scaleX: candyScale, scaleY: candyScale, alpha: 1, x: realX, y: realY},
             duration,
-            createjs.Ease.sineOut)
-          .call(function() {
-            animComplete();
-          });
+            createjs.Ease.sineOut);
+        
+        // longest delay can be.
+        $timeout(animComplete, duration + 500);
       }
       
       var animateAddPowerups = function(chains) {
