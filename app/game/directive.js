@@ -43,7 +43,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       // Assets to load.
       assetLoader.loadManifest([
-         {id: 'candyAtlas', src:'images/candies.png'}
+        {id: 'candyAtlas', src:'images/candies.png'},
+        {id: 'removeEffect', src:'images/effect_sprite.png'}
       ]);
       
       // ======================================================================
@@ -101,10 +102,36 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         candiesLayer.addChild(candy);
       }
       
+      // ======================================================================
+      
+      var addSpriteEffect = function(x, y) {
+        var data = {
+          images: [assetLoader.getResult('removeEffect')],
+          frames: {width:200, height:200, regX:100, regY:100, count:10}
+        }
+        
+        var spriteSheet = new createjs.SpriteSheet(data);
+        var sprite = new createjs.Sprite(spriteSheet);
+        
+        sprite.x = x + candyDestinationSize/2;
+        sprite.y = y + candyDestinationSize/2;
+        
+        sprite.scaleX = candyScale * 1.3;
+        sprite.scaleY = candyScale * 1.3;
+        
+        sprite.on('animationend', function(evt) {
+          evt.remove();
+          effectsLayer.removeChild(sprite);
+        });
+        
+        effectsLayer.addChild(sprite);
+        
+        sprite.play();
+      }
+      
       //=======================================================================
       // Hinting
       //=======================================================================
-      
       
       var hintTimeoutPromise = null;
       
@@ -408,6 +435,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             
             // The candy can be part of two chains but we only want to animate once.
             if(candy) {
+              
+              addSpriteEffect(candy.x, candy.y);
+              
               var tween = createjs.Tween.get(candy);
               tween.to(
                 {scaleX: 0, scaleY: 0, x: candy.x + candyDestinationSize/2, y: candy.y + candyDestinationSize/2},
