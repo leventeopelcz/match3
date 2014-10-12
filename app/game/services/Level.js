@@ -312,7 +312,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
         }
         
         // Adding bomb specials
-        if(chain.length() >= 5 && chain.chainType == 'ChainTypeL') {
+        if((chain.length() == 5 || chain.length() == 6) && chain.chainType == 'ChainTypeL') {
           bonusType = 3;
           
           if(swap.candyA.type === chain.getCandy(0).type) {
@@ -327,7 +327,8 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
         }
         
         // Adding $$$ sepcial
-        if(chain.length() >= 5 && (chain.chainType == 'ChainTypeHorizontal' || chain.chainType == 'ChainTypeVertical')) {
+        if(chain.length() >= 5 && (chain.chainType == 'ChainTypeHorizontal' || chain.chainType == 'ChainTypeVertical') ||
+           chain.length() >= 7 && chain.chainType == 'ChainTypeL') {
           bonusType = 4;
           
           if(swap.candyA.type === chain.getCandy(0).type) {
