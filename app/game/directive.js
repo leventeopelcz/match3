@@ -414,48 +414,36 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       var animateMatchedCandies = function(chains, animComplete) {
-        var duration = 300;
-        var totalCandiesToAnimate = 0;
-        var candiesToAnimate = 0;
+        var duration = 3000;
         
-        // Get the number of candies we animate.
-        for(var i = 0; i < chains.length; i++) {
-          var chain = chains[i].getCandies();
-          for(var j = 0; j < chain.length; j++) {
-            totalCandiesToAnimate++;
+        var animationComplete = function(candy) {
+          return function() {
+            candiesLayer.removeChild(candy);
           }
         }
         
         for(var i = 0; i < chains.length; i++) {
           var chain = chains[i].getCandies();
-          animateScoreForChain(chain);
+          //animateScoreForChain(chscain);
           for(var j = 0; j < chain.length; j++) {
             var candy = chain[j];
-            candiesToAnimate++;
             
             // The candy can be part of two chains but we only want to animate once.
             if(candy) {
               
               addSpriteEffect(candy.x, candy.y);
               
-              var tween = createjs.Tween.get(candy);
-              tween.to(
+              createjs.Tween.get(candy)
+              .to(
                 {scaleX: 0, scaleY: 0, x: candy.x + candyDestinationSize/2, y: candy.y + candyDestinationSize/2},
                 duration,
-                createjs.Ease.sineOut);
-              
-              // If this is the last candy we want to animate, assign a complete event. 
-              // So this way we won't call the complete function more than once.
-              if(candiesToAnimate == totalCandiesToAnimate) {
-                tween.call(function() {
-                  candiesLayer.removeChild(candy);
-                  animComplete();
-                });
-              }
-              
+                createjs.Ease.sineOut)
+              .call(animationComplete(candy));
             }
           }
         }
+        
+        $timeout(animComplete, duration);
       }
       
       var animateFallingCandies = function(columns, animComplete) {
