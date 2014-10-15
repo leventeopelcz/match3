@@ -344,7 +344,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
           } else {
             // Freebie chain. Put powerup to first position.
             var candy = chain.candies[0];
-            candies[candy.row][candy.column] = createCandyAtPosition(candy.row, candy.column, candy.type, bonusType);
+            candies[candy.row][candy.column] = createCandyAtPosition(candy.row, candy.column, -1, bonusType);
           }
         }
       }
