@@ -292,7 +292,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
         var bonusType = 0;
         
         // Adding striped sepcial
-        if(chain.length() == 4) {
+        if(chain.candies.length == 4) {
           if(chain.chainType == 'ChainTypeHorizontal') {
             bonusType = 1;
           }
@@ -300,78 +300,126 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
             bonusType = 2;
           }
           // If chain occured from swap (not a freebie).
-          if(swap.candyA.type === chain.getCandy(0).type) {
+          if(swap.candyA && swap.candyA.type === chain.candies[0].type) {
             candies[swap.candyA.row][swap.candyA.column] = createCandyAtPosition(swap.candyA.row, swap.candyA.column, swap.candyA.type, bonusType);
             swap.candyA = candies[swap.candyA.row][swap.candyA.column];
-          } else {
+          } else if(swap.candyB && swap.candyB.type === chain.candies[0].type) {
             candies[swap.candyB.row][swap.candyB.column] = createCandyAtPosition(swap.candyB.row, swap.candyB.column, swap.candyB.type, bonusType);
             swap.candyB = candies[swap.candyB.row][swap.candyB.column];
+          } else {
+            // Freebie chain. Put powerup to first position.
+            var candy = chain.candies[0];
+            candies[candy.row][candy.column] = createCandyAtPosition(candy.row, candy.column, candy.type, bonusType);    
           }
-          
-          //TODO: chain occured from freebie: have to put special candy in middle.
         }
         
         // Adding bomb specials
-        if((chain.length() == 5 || chain.length() == 6) && chain.chainType == 'ChainTypeL') {
+        if((chain.candies.length == 5 || chain.candies.length == 6) && chain.chainType == 'ChainTypeL') {
           bonusType = 3;
           
-          if(swap.candyA.type === chain.getCandy(0).type) {
+          if(swap.candyA && swap.candyA.type === chain.candies[0].type) {
             candies[swap.candyA.row][swap.candyA.column] = createCandyAtPosition(swap.candyA.row, swap.candyA.column, swap.candyA.type, bonusType);
             swap.candyA = candies[swap.candyA.row][swap.candyA.column];
-          } else {
+          } else if(swap.candyB && swap.candyB.type === chain.candies[0].type) {
             candies[swap.candyB.row][swap.candyB.column] = createCandyAtPosition(swap.candyB.row, swap.candyB.column, swap.candyB.type, bonusType);
             swap.candyB = candies[swap.candyB.row][swap.candyB.column];
+          } else {
+            // Freebie chain. Put powerup to first position.
+            var candy = chain.candies[0];
+            candies[candy.row][candy.column] = createCandyAtPosition(candy.row, candy.column, candy.type, bonusType);
           }
-          
-          //TODO: chain occured from freebie: have to put special candy in middle.
         }
         
         // Adding $$$ sepcial
-        if(chain.length() >= 5 && (chain.chainType == 'ChainTypeHorizontal' || chain.chainType == 'ChainTypeVertical') ||
-           chain.length() >= 7 && chain.chainType == 'ChainTypeL') {
+        if(chain.candies.length >= 5 && (chain.chainType == 'ChainTypeHorizontal' || chain.chainType == 'ChainTypeVertical') ||
+           chain.candies.length >= 7 && chain.chainType == 'ChainTypeL') {
           bonusType = 4;
           
-          if(swap.candyA.type === chain.getCandy(0).type) {
+          if(swap.candyA && swap.candyA.type === chain.candies[0].type) {
             candies[swap.candyA.row][swap.candyA.column] = createCandyAtPosition(swap.candyA.row, swap.candyA.column, -1, bonusType);
             swap.candyA = candies[swap.candyA.row][swap.candyA.column];
-          } else {
+          } else if(swap.candyB && swap.candyB.type === chain.candies[0].type) {
             candies[swap.candyB.row][swap.candyB.column] = createCandyAtPosition(swap.candyB.row, swap.candyB.column, -1, bonusType);
             swap.candyB = candies[swap.candyB.row][swap.candyB.column];
+          } else {
+            // Freebie chain. Put powerup to first position.
+            var candy = chain.candies[0];
+            candies[candy.row][candy.column] = createCandyAtPosition(candy.row, candy.column, candy.type, bonusType);
           }
-          
-          //TODO: chain occured from freebie: have to put special candy in middle.
         }
       }
     }
     
-    var removeCandiesByPowerup = function(powerup) {
-      // Horizontally
-      if(powerup.bonusType === 1) {
-        for(var column = 0; column < data.COLUMNS; column++) {
-          candies[powerup.row][column] = null;
+    var detectPowerupChains = function(powerups) {
+      var set = [];
+      var powerup = null;
+      
+      for(var i in powerups) {
+        powerup = powerups[i];
+        var chain = new Chain();
+        
+        // Horizontally
+        if(powerup.bonusType === 1) {
+          for(var column = 0; column < data.COLUMNS; column++) {
+            // Add all candies to chain except powerup (watch out for gaps).
+            if(column !== powerup.column && tiles[powerup.row][column]) {
+              chain.candies.push(candies[powerup.row][column]);
+            }
+          }
+          
+          chain.chainType = 'ChainTypePowerup';
+          set.push(chain);
         }
+        
+        // Vertically
+        if(powerup.bonusType === 2) {
+          for(var row = 0; row < data.ROWS; row++) {
+            // Add all candies to chain except powerup.
+            if(row !== powerup.row  && tiles[row][powerup.column]) {
+              chain.candies.push(candies[row][powerup.column]);
+            }
+          }
+          
+          chain.chainType = 'ChainTypePowerup';
+          set.push(chain);
+        }
+        
+        // L Shape
+        if(powerup.bonusType === 3) {
+          // NOTE: replace this with actual code, this is a copy of vertical.
+          // NOTE: What if it's on the edge or there is no tile on +-1 position!
+          for(var row = 0; row < data.ROWS; row++) {
+            // Add all candies to chain except powerup.
+            if(row !== powerup.row && tiles[row][powerup.column]) {
+              chain.candies.push(candies[row][powerup.column]);
+            }
+          }
+          
+          chain.chainType = 'ChainTypePowerup';
+          set.push(chain);
+        } 
       }
       
-      // Vertically
-      if(powerup.bonusType === 2) {
-        for(var row = 0; row < data.ROWS; row++) {
-          candies[row][powerup.column] = null;
-        }
-      }
+      return set;
+    }
+    
+    var detectPowerupInChains = function(chains) {
+      var set = [];
       
-      // NOTE: What if it's on the edge or there is no tile on +-1 position!
-      // NOTE: remove candies first then the powerup effect. be careful of double removing (trying to remove nulls).
-      
-      /* BOMB WIP
-       * what if it's on the edge or there is no tile on +-1 position!
-      if(powerup.bonusType === 3) {
-        var max
-        for(var row = powerup.row - 1; row < powerup.row + 1; row++) {
+      for(var i in chains) {
+        var chain = chains[i];
+        for(var j in chain.candies) {
+          var candy = chain.candies[j];
+          
+          // If it's a special candy.
+          if(candy.bonusType) {
+            set.push(candy);
+          }
           
         }
       }
-      */
       
+      return set;
     }
     
     //=========================================================================
@@ -383,19 +431,41 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       var verticalChains = detectVerticalMatches();
       var lChains = detectLMatches(horizontalChains, verticalChains);
       
+      
+      var horizontalPowerups = detectPowerupInChains(horizontalChains);
+      var verticalPowerups = detectPowerupInChains(verticalChains);
+      var lPowerups = detectPowerupInChains(lChains);
+      
+      var horizontalPowerupChains = detectPowerupChains(horizontalPowerups);
+      var verticalPowerupChains = detectPowerupChains(verticalPowerups);
+      var lPowerupChains = detectPowerupChains(lPowerups);
+      
+      
       removeCandies(horizontalChains);
       removeCandies(verticalChains);
       removeCandies(lChains);
+      
+      
+      removeCandies(horizontalPowerupChains);
+      removeCandies(verticalPowerupChains);
+      removeCandies(lPowerupChains);
+      
       
       calculateScores(horizontalChains);
       calculateScores(verticalChains);
       calculateScores(lChains);
       
+      
+      calculateScores(horizontalPowerupChains);
+      calculateScores(verticalPowerupChains);
+      calculateScores(lPowerupChains);
+      
+      
       addPowerups(horizontalChains, swap);
       addPowerups(verticalChains, swap);
       addPowerups(lChains, swap);
       
-      return horizontalChains.concat(verticalChains).concat(lChains);
+      return horizontalChains.concat(verticalChains).concat(lChains).concat(horizontalPowerupChains).concat(verticalPowerupChains);
     }
     
     this.getRandomMatch = function() {

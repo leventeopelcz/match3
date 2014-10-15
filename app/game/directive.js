@@ -414,7 +414,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       var animateMatchedCandies = function(chains, animComplete) {
-        var duration = 3000;
+        var duration = 300;
         
         var animationComplete = function(candy) {
           return function() {
@@ -536,15 +536,41 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       var animateAddPowerups = function(chains) {
-        if(swap.candyA.bonusType) {
+        if(swap.candyA && swap.candyA.bonusType) {
           swap.candyA.x = pointForColumn.getX(swap.candyA.column);
           swap.candyA.y = pointForColumn.getY(swap.candyA.row);
           addSpriteForCandy(swap.candyA);
-        } else {
+        } else if(swap.candyB && swap.candyB.bonusType) {
           swap.candyB.x = pointForColumn.getX(swap.candyB.column);
           swap.candyB.y = pointForColumn.getY(swap.candyB.row);
           addSpriteForCandy(swap.candyB);
+        } else {
+          // Add freebie powerup.
+          for(var i = 0; i < chains.length; i++) {
+            var chain = chains[i];
+            
+            if(chain.candies.length > 3 && chain.chainType != 'ChainTypePowerup') {
+              for(var j in chain.candies) {
+                var candy = chain.candies[j];
+                
+                console.log(candy);
+                var c = scope.level.candyAtPosition(candy.row, candy.column)
+                
+                console.log(c);
+                if(c && c.bonusType) {  
+                  c.x = pointForColumn.getX(candy.column);
+                  c.y = pointForColumn.getY(candy.row);
+                  addSpriteForCandy(c);
+                  console.log(c);
+                }
+              }
+            }
+            
+          }
         }
+        
+        swap.candyA = null;
+        swap.candyB = null;
       }
       
       // ======================================================================
