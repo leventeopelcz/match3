@@ -631,7 +631,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           text.x = candy.x + candyDestinationSize/2;
           text.y = candy.y + candyDestinationSize/2;
           text.regX = text.getBounds().width / 2;
-          text.regY = text.getBounds().height / 2
+          text.regY = text.getBounds().height / 2;
           text.scaleX = 0.3;
           text.scaleY = 0.3;
           text.alpha = 0;
