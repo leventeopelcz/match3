@@ -44,7 +44,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       // Assets to load.
       assetLoader.loadManifest([
         {id: 'candyAtlas', src:'images/candies.png'},
-        {id: 'removeEffect', src:'images/effect_sprite.png'}
+        {id: 'removeEffect', src:'images/effect_sprite.png'},
+        {id: 'effectsAtlas', src:'images/effects.png'}
       ]);
       
       // ======================================================================
@@ -423,13 +424,18 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
         
         for(var i = 0; i < chains.length; i++) {
-          var chain = chains[i].getCandies();
-          //animateScoreForChain(chscain);
-          for(var j = 0; j < chain.length; j++) {
-            var candy = chain[j];
+          var chain = chains[i];
+          //animateScoreForChain(chain.candies);
+          for(var j = 0; j < chain.candies.length; j++) {
+            var candy = chain.candies[j];
             
             // The candy can be part of two chains but we only want to animate once.
             if(candy) {
+              
+              if(candy.bonusType) {
+                // this is a special candy, add effect
+                animatePowerupExplode(candy);
+              }
               
               addSpriteEffect(candy.x, candy.y);
               
@@ -682,6 +688,204 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         container.addChild(outline);
         
         return container;
+      }
+      
+      // ======================================================================
+      // POWERUP EFFECT ANIMATIONS
+      // ======================================================================
+      
+      
+      // General effect bitmap creation.
+      var createSpriteforEffect = function(name, img, sourceRect, x, y, scaleX, scaleY, alpha, rotation) {
+        var effect = new createjs.Bitmap();
+        effect.image = assetLoader.getResult(img);
+        effect.name = name;
+        effect.sourceRect = sourceRect;
+        effect.scaleX = scaleX;
+        effect.scaleY = scaleY;
+        
+        if(alpha) {
+          effect.alpha = alpha;
+        }
+        
+        if(rotation) {
+          effect.rotation = rotation;
+        }
+
+        effect.x = x;
+        effect.y = y;
+        effect.regX = effect.getBounds().width / 2;
+        effect.regY = effect.getBounds().height / 2;
+        
+        return effect;
+      }
+      
+      // Animating the different explosions.
+      var animatePowerupExplode = function(powerup) {
+        var x = 0;
+        var y = CANDY_SOURCE_SIZE;
+        var width = CANDY_SOURCE_SIZE * 2;
+        var height = CANDY_SOURCE_SIZE * 2;
+        
+        console.log(powerup);
+        
+        var powerupCenter = powerup.x + candyDestinationSize / 2;
+        
+        //---------------------------------------------------------------------
+        // Powerup explosion
+        //---------------------------------------------------------------------
+        
+        var boom = createSpriteforEffect(
+          'boom', 
+          'effectsAtlas', 
+          new createjs.Rectangle(x, y, width, height),
+          powerupCenter,
+          powerupCenter,
+          candyScale * 0.3,
+          candyScale * 0.3,
+          0
+        );
+        
+        effectsLayer.addChild(boom);
+        
+        var duration = 300;
+        
+        createjs.Tween.get(boom)
+        .to(
+          {scaleX: candyScale, scaleY: candyScale, alpha: 0.7},
+          duration,
+          createjs.Ease.quadOut)
+        .to(
+          {scaleX: candyScale * 0.7, scaleY: candyScale * 0.7, alpha: 0},
+          duration,
+          createjs.Ease.quadIn)
+        .call(function() {
+          effectsLayer.removeChild(boom);
+          // anim end
+        });
+        
+        //---------------------------------------------------------------------
+        // Horizontal explosion
+        //---------------------------------------------------------------------
+        
+        if(powerup.bonusType == 1) {
+          x = 0;
+          y = 0;
+          width = CANDY_SOURCE_SIZE * 3;
+          height = CANDY_SOURCE_SIZE;
+          
+          var canvasWidth = canvas.getBounds().width;
+          
+          var wooshRight = createSpriteforEffect(
+            'wooshRight', 
+            'effectsAtlas', 
+            new createjs.Rectangle(x, y, width, height),
+            powerupCenter,
+            powerupCenter,
+            candyScale * 0.3,
+            candyScale * 0.3,
+            0.3
+          );
+          
+          var wooshLeft = createSpriteforEffect(
+            'wooshLeft', 
+            'effectsAtlas', 
+            new createjs.Rectangle(x, y, width, height),
+            powerupCenter,
+            powerupCenter,
+            candyScale * 0.3,
+            candyScale * 0.3,
+            0.3,
+            180
+          );
+
+          effectsLayer.addChild(wooshRight);
+          effectsLayer.addChild(wooshLeft);
+          
+          duration = 30000;
+        
+          createjs.Tween.get(wooshRight)
+          .to(
+            {scaleX: candyScale, scaleY: candyScale, alpha: 1, x: wooshRight.x + canvasWidth},
+            duration,
+            createjs.Ease.quadOut)
+          .call(function() {
+            effectsLayer.removeChild(wooshRight);
+            // anim end
+          });
+          
+          createjs.Tween.get(wooshLeft)
+          .to(
+            {scaleX: candyScale, scaleY: candyScale, alpha: 1, x: wooshLeft.x - canvasWidth},
+            duration,
+            createjs.Ease.quadOut)
+          .call(function() {
+            effectsLayer.removeChild(wooshLeft);
+            // anim end
+          });
+        }
+        
+        //---------------------------------------------------------------------
+        // Vertical explosion
+        //---------------------------------------------------------------------
+        
+        if(powerup.bonusType == 2) {
+          x = 0;
+          y = 0;
+          width = CANDY_SOURCE_SIZE * 3;
+          height = CANDY_SOURCE_SIZE;
+          
+          var canvasHeight = canvas.getBounds().height;
+          
+          var wooshUp = createSpriteforEffect(
+            'wooshUp', 
+            'effectsAtlas', 
+            new createjs.Rectangle(x, y, width, height),
+            powerupCenter,
+            powerupCenter,
+            candyScale * 0.3,
+            candyScale * 0.3,
+            0.3,
+            90
+          );
+          
+          var wooshDown = createSpriteforEffect(
+            'wooshDown', 
+            'effectsAtlas', 
+            new createjs.Rectangle(x, y, width, height),
+            powerupCenter,
+            powerupCenter,
+            candyScale * 0.3,
+            candyScale * 0.3,
+            0.3,
+            270
+          );
+
+          effectsLayer.addChild(wooshUp);
+          effectsLayer.addChild(wooshDown);
+          
+          duration = 30000;
+        
+          createjs.Tween.get(wooshUp)
+          .to(
+            {scaleX: candyScale, scaleY: candyScale, alpha: 1, y: wooshUp.y + canvasHeight},
+            duration,
+            createjs.Ease.quadOut)
+          .call(function() {
+            effectsLayer.removeChild(wooshUp);
+            // anim end
+          });
+          
+          createjs.Tween.get(wooshDown)
+          .to(
+            {scaleX: candyScale, scaleY: candyScale, alpha: 1, y: wooshDown.y - canvasHeight},
+            duration,
+            createjs.Ease.quadOut)
+          .call(function() {
+            effectsLayer.removeChild(wooshDown);
+            // anim end
+          });
+        }
       }
       
       // ======================================================================
