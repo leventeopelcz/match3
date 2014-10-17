@@ -362,44 +362,39 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
         if(powerup.bonusType === 1) {
           for(var column = 0; column < data.COLUMNS; column++) {
             // Add all candies to chain except powerup (watch out for gaps).
-            if(column !== powerup.column && tiles[powerup.row][column]) {
+            if(candies[powerup.row][column] !== powerup && tiles[powerup.row][column]) {
               chain.candies.push(candies[powerup.row][column]);
             }
           }
-          
-          chain.chainType = 'ChainTypePowerup';
-          set.push(chain);
         }
         
         // Vertically
         if(powerup.bonusType === 2) {
           for(var row = 0; row < data.ROWS; row++) {
             // Add all candies to chain except powerup.
-            if(row !== powerup.row  && tiles[row][powerup.column]) {
+            if(candies[row][powerup.column] !== powerup  && tiles[row][powerup.column]) {
               chain.candies.push(candies[row][powerup.column]);
             }
           }
-          
-          chain.chainType = 'ChainTypePowerup';
-          set.push(chain);
         }
         
         // L Shape
         if(powerup.bonusType === 3) {
-          // NOTE: replace this with actual code, this is a copy of vertical.
-          // NOTE: What if it's on the edge or there is no tile on +-1 position!
-          for(var row = 0; row < data.ROWS; row++) {
-            // Add all candies to chain except powerup.
-            if(row !== powerup.row && tiles[row][powerup.column]) {
-              chain.candies.push(candies[row][powerup.column]);
+          for(var row = powerup.row - 1; row < powerup.row + 2; row++) {
+            for(var column = powerup.column - 1; column < powerup.column + 2; column++) {
+              // Add all candies to chain except powerup.
+              if(candies[row][column] !== powerup && tiles[row][column]) {
+                chain.candies.push(candies[row][column]);
+                console.log(candies[row][column]);
+              }
             }
           }
-          
-          chain.chainType = 'ChainTypePowerup';
-          set.push(chain);
-        } 
+        }
+        
+        chain.chainType = 'ChainTypePowerup';
+        set.push(chain);
       }
-      
+   
       return set;
     }
     
