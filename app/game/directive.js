@@ -1,6 +1,5 @@
 'use strict';
 
-// TODO: Dynamic text size!
 // FIXME: Cancel swipe outside canvas?
 
 Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($window, random, $timeout, Swap) {
@@ -631,25 +630,25 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         for(var i = 0; i < chain.length; i++) {
           candy = chain[i];
-
-          var text = customText(scope.GAME_BOARD.BASE_SCORE * (scope.level.comboMultiplier - 1));
+          
+          var text = customText(scope.GAME_BOARD.BASE_SCORE * (scope.level.comboMultiplier - 1), candyDestinationSize+'px', 'Lilita One');
           
           text.x = candy.x + candyDestinationSize/2;
           text.y = candy.y + candyDestinationSize/2;
           text.regX = text.getBounds().width / 2;
           text.regY = text.getBounds().height / 2;
-          text.scaleX = 0.3;
-          text.scaleY = 0.3;
+          text.scaleX = 0.3 * candyScale;
+          text.scaleY = 0.3 * candyScale;
           text.alpha = 0;
           uiLayer.addChild(text);
           
           createjs.Tween.get(text)
           .to(
-            {scaleX: 1.5, scaleY: 1.5, alpha: 1},
+            {scaleX: 1 * candyScale, scaleY: 1 * candyScale, alpha: 1},
             duration,
             createjs.Ease.quadOut)
           .to(
-            {scaleX: 1, scaleY: 1, alpha: 1},
+            {scaleX: 0.3 * candyScale, scaleY: 0.3 * candyScale, alpha: 1},
             duration,
             createjs.Ease.quadIn)
           .call(animationComplete(text));
@@ -657,9 +656,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       // Custom text
-      var customText = function(string) {
+      var customText = function(string, fontSize, fontFamily) {
         var container = new createjs.Container();
-        var text = new createjs.Text(string, "40px Lilita One", "#000");
+        var text = new createjs.Text(string, fontSize+' '+fontFamily, "#000");
         var gradient = new createjs.Shape();
         
         var height = text.getBounds().height;
@@ -677,11 +676,11 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         gradient.cache(0, 0, width, height);
         
-        var outline = new createjs.Text(string, "40px Lilita One", "#573514");
-        outline.outline = 2;
+        var outline = new createjs.Text(string, fontSize+' '+fontFamily, "#573514");
+        outline.outline = candyDestinationSize * 0.05; // 5% border depending on candy size.
         
-        var outline2 = new createjs.Text(string, "40px Lilita One", "#000");
-        outline2.outline = 4;
+        var outline2 = new createjs.Text(string, fontSize+' '+fontFamily, "#000");
+        outline2.outline = candyDestinationSize * 0.1; // 10% border depending on candy size.
         
         container.addChild(outline2);
         container.addChild(gradient);
