@@ -726,10 +726,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         var y = CANDY_SOURCE_SIZE;
         var width = CANDY_SOURCE_SIZE * 2;
         var height = CANDY_SOURCE_SIZE * 2;
-        
-        console.log(powerup);
-        
-        var powerupCenter = powerup.x + candyDestinationSize / 2;
+
+        var powerupCenterX = powerup.x + candyDestinationSize / 2;
+        var powerupCenterY = powerup.y + candyDestinationSize / 2;
         
         //---------------------------------------------------------------------
         // Powerup explosion
@@ -739,8 +738,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           'boom', 
           'effectsAtlas', 
           new createjs.Rectangle(x, y, width, height),
-          powerupCenter,
-          powerupCenter,
+          powerupCenterX,
+          powerupCenterY,
           candyScale * 0.3,
           candyScale * 0.3,
           0
@@ -780,8 +779,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             'wooshRight', 
             'effectsAtlas', 
             new createjs.Rectangle(x, y, width, height),
-            powerupCenter,
-            powerupCenter,
+            powerupCenterX,
+            powerupCenterY,
             candyScale * 0.3,
             candyScale * 0.3,
             0.3
@@ -791,8 +790,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             'wooshLeft', 
             'effectsAtlas', 
             new createjs.Rectangle(x, y, width, height),
-            powerupCenter,
-            powerupCenter,
+            powerupCenterX,
+            powerupCenterY,
             candyScale * 0.3,
             candyScale * 0.3,
             0.3,
@@ -841,8 +840,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             'wooshUp', 
             'effectsAtlas', 
             new createjs.Rectangle(x, y, width, height),
-            powerupCenter,
-            powerupCenter,
+            powerupCenterX,
+            powerupCenterY,
             candyScale * 0.3,
             candyScale * 0.3,
             0.3,
@@ -853,8 +852,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             'wooshDown', 
             'effectsAtlas', 
             new createjs.Rectangle(x, y, width, height),
-            powerupCenter,
-            powerupCenter,
+            powerupCenterX,
+            powerupCenterY,
             candyScale * 0.3,
             candyScale * 0.3,
             0.3,
