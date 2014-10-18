@@ -685,6 +685,37 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       console.log.apply(console, board);
     }
     
+    this.topUpCandiesRed = function() {
+      var columns = [];
+      var candyType = 1;
+      var last = 0;
+      
+      for(var column = 0; column < data.COLUMNS; column++) {
+        var array = null;
+        for(var row = 0; row < data.ROWS && !candies[row][column]; row++) {
+          
+          if(tiles[row][column] != 0) {
+            if(last != candyType) {
+              var candy = createCandyAtPosition(row, column, candyType);
+              last = candyType;
+            } else {
+              var candy = createCandyAtPosition(row, column, candyType + 1);
+              last = 0;
+            }
+            
+            if(!array) {
+              array = [];
+              columns.push(array);
+            }
+            array.push(candy);
+          }
+          
+        }
+      }
+      
+      return columns;
+    }
+    
     // instead of randomly generating the game board, we just read in the whole board with candies from a test JSON.
     var createTestGameBoard = function() {
       var set = [];
