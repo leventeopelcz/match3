@@ -18,28 +18,21 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       var set = [];
       
       // Uncomment to test with predifined gameboard.
+      /*
       set = createTestGameBoard();
       this.detectPossibleSwaps();
       
-      for(var i = 0; i < possibleChains.length; i++) {
-        console.log(possibleChains[i].description());
-      }
-      
       return set;
+      */
       
       // In the very rare case that you end up with no possible swaps on the game board (try 3x3) try again.
-      /*
+
       do {
         set = crateInitialCandies();
         this.detectPossibleSwaps();
       } while(possibleSwaps.length == 0);
       
-      for(var i = 0; i < possibleChains.length; i++) {
-        console.log(possibleChains[i].description());
-      }
-      
       return set;
-      */
     }
     
     var hasChainAtPosition = function(row, column) {
