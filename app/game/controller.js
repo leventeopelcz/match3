@@ -25,7 +25,7 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($
   // ==========================================================================
   
   // Load the JSON file that contains the level layout.
-  file.load('level_test.json', function(response) {
+  file.load('level.json', function(response) {
     // Set global level data.
     $scope.GAME_BOARD.LAYOUT = response.layout;
     $scope.GAME_BOARD.ROWS = response.layout.length;
