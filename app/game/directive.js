@@ -783,7 +783,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           effectsLayer.addChild(wooshRight);
           effectsLayer.addChild(wooshLeft);
           
-          duration = 30000;
+          // NOTE: make these durations 'responsive', they depend on canvas size!!!
+          duration = 2000;
         
           createjs.Tween.get(wooshRight)
           .to(
@@ -845,7 +846,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           effectsLayer.addChild(wooshUp);
           effectsLayer.addChild(wooshDown);
           
-          duration = 30000;
+          // NOTE: make these durations 'responsive', they depend on canvas size!!!
+          duration = 2000;
         
           createjs.Tween.get(wooshUp)
           .to(
