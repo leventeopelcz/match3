@@ -1,7 +1,7 @@
 'use strict';
 
 
-// FIXME: same match in chains more than once?
+// NOTE: same match in chains more than once? Double check this.
 
 // Level class 
 Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) {
