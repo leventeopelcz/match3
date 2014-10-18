@@ -313,7 +313,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       var handleMatches = function() {
         // Stop hint timeout if havent triggered yet.
-        $timeout.cancel(hintTimeoutPromise);
+        //$timeout.cancel(hintTimeoutPromise);
         
         var chains = scope.level.removeMatches(swap);
         if(chains.length == 0) {
@@ -345,7 +345,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         canvas.mouseEnabled = true;
         scope.movesLeft--;
         scope.$apply();
-        hintTimeoutPromise = $timeout(hint, 3000);
+        //hintTimeoutPromise = $timeout(hint, 3000);
         scope.level.resetComboMultiplier();
       }
       
@@ -923,7 +923,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           //canvas.on('stagemouseup', touchesEnded);
 
           // After 3 second, highlight a random chain.
-          hintTimeoutPromise = $timeout(hint, 3000);
+          //hintTimeoutPromise = $timeout(hint, 3000);
           
           // Canvas ticker for animations.
           var tick = function(evt) {
