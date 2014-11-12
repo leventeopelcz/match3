@@ -124,6 +124,15 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
                   chain.addCandy(candies[row][column]);
                   possibleChains.push(chain);
                 }
+                
+                // If one of them is a bomb powerup
+                if(candy.bonusType === 4 || other.bonusType === 4) {
+                  var swap = new Swap();
+                  swap.candyA = candy;
+                  swap.candyB = other;
+                  set.push(swap);
+                  console.log(swap.describe());
+                }
 
                 // Swap them back.
                 candies[row][column] = candy;
@@ -166,6 +175,15 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
                   
                   chain.addCandy(candies[row][column]);
                   possibleChains.push(chain);
+                }
+                
+                // If one of them is a bomb powerup
+                if(candy.bonusType === 4 || other.bonusType === 4) {
+                  var swap = new Swap();
+                  swap.candyA = candy;
+                  swap.candyB = other;
+                  set.push(swap);
+                  console.log(swap.describe());
                 }
                 
                 // Swap them back.
@@ -373,10 +391,8 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
         if(powerup.bonusType === 4) {
           for(var row = 0; row < data.ROWS; row++) {
             for(var column = 0; column < data.COLUMNS; column++) {
-              // Add all candies to chain except powerup.
-              // && candy.type === swipe.type
-              if(candies[row][column] !== powerup && tiles[row][column]) {
-                //chain.candies.push(candies[row][column]);
+              if(candies[row][column].type === powerup.type) {
+                chain.candies.push(candies[row][column]);
               }
             }
           }
@@ -413,6 +429,17 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     //=========================================================================
     
     this.removeMatches = function(swap) {
+      
+      // Special case if it's a bomb.
+      if(swap && swap.candyA.bonusType === 4) {
+        swap.candyA.type = swap.candyB.type;
+        var bombPowerups = [swap.candyA];
+      }
+      if(swap && swap.candyB.bonusType === 4) {
+        swap.candyB.type = swap.candyA.type;
+        var bombPowerups = [swap.candyB];
+      }
+      
       var horizontalChains = detectHorizontalMatches();
       var verticalChains = detectVerticalMatches();
       var lChains = detectLMatches(horizontalChains, verticalChains);
@@ -422,19 +449,24 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       var verticalPowerups = detectPowerupInChains(verticalChains);
       var lPowerups = detectPowerupInChains(lChains);
       
+      
       var horizontalPowerupChains = detectPowerupChains(horizontalPowerups);
       var verticalPowerupChains = detectPowerupChains(verticalPowerups);
       var lPowerupChains = detectPowerupChains(lPowerups);
       
+      var bombPowerupChains = detectPowerupChains(bombPowerups);
       
       removeCandies(horizontalChains);
       removeCandies(verticalChains);
       removeCandies(lChains);
+
       
       
       removeCandies(horizontalPowerupChains);
       removeCandies(verticalPowerupChains);
       removeCandies(lPowerupChains);
+      
+      removeCandies(bombPowerupChains);
       
       
       calculateScores(horizontalChains);
@@ -446,9 +478,11 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       calculateScores(verticalPowerupChains);
       calculateScores(lPowerupChains);
       
+      calculateScores(bombPowerupChains);
+      
       console.log('==========================');
       
-      return horizontalChains.concat(verticalChains).concat(lChains).concat(horizontalPowerupChains).concat(verticalPowerupChains).concat(lPowerupChains);
+      return horizontalChains.concat(verticalChains).concat(lChains).concat(horizontalPowerupChains).concat(verticalPowerupChains).concat(lPowerupChains).concat(bombPowerupChains);
     }
     
     this.getRandomMatch = function() {

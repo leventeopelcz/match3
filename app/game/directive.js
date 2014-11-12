@@ -280,7 +280,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       */
       
-      var swap = new Swap();
+      var swap = null;
       
       var trySwap = function(hDelta, vDelta) {
         var toColumn = swipeFromColumn + hDelta;
@@ -294,6 +294,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         var fromCandy = scope.level.candyAtPosition(swipeFromRow, swipeFromColumn);
         
+        swap = new Swap();
         swap.candyA = fromCandy;
         swap.candyB = toCandy;
         
@@ -332,6 +333,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           animateFallingCandies(columns, function() {
             var columns = scope.level.topUpCandies();
             animateNewCandies(columns, function() {
+              swap = null;
               handleMatches(); // recursion
             });
           });
@@ -430,9 +432,14 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             for(var j in chain.candies) {
               var c = chain.candies[j];
               
-              if(c === swap.candyA || c === swap.candyB) {
+              if(swap && (c === swap.candyA || c === swap.candyB)) {
                 candy = scope.level.findCorrectCandyInChain(chain, swap);
+                break;
               }
+            }
+            
+            if(!candy) {
+              candy = chain.candies[0];
             }
             
             var powerup = scope.level.addPowerup(chain, candy);
