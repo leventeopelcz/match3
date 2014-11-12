@@ -131,7 +131,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
                   swap.candyA = candy;
                   swap.candyB = other;
                   set.push(swap);
-                  console.log(swap.describe());
                 }
 
                 // Swap them back.
@@ -183,7 +182,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
                   swap.candyA = candy;
                   swap.candyB = other;
                   set.push(swap);
-                  console.log(swap.describe());
                 }
                 
                 // Swap them back.
@@ -298,11 +296,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     //=========================================================================
     
     this.findCorrectCandyInChain = function(chain, swap) {
-      
-      console.log(chain.candies);
-      console.log(swap.candyA);
-      console.log(swap.candyB);
-      
       for(var i in chain.candies) {
         if(chain.candies[i] === swap.candyA) {
           return swap.candyA;
@@ -316,9 +309,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     
     this.addPowerup = function(chain, candy) {
       var bonusType = 0;
-      
-      console.log(chain.candies);
-      console.log(candy);
         
       // Adding line sepcial
       if(chain.candies.length == 4) {
