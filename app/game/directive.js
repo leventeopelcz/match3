@@ -556,9 +556,11 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       var animateAddPowerup = function(candy) {
-        candy.x = pointForColumn.getX(candy.column);
-        candy.y = pointForColumn.getY(candy.row);
-        addSpriteForCandy(candy);
+        return function() {
+          candy.x = pointForColumn.getX(candy.column);
+          candy.y = pointForColumn.getY(candy.row);
+          addSpriteForCandy(candy);
+        }
       }
       
       // ======================================================================
