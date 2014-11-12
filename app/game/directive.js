@@ -438,6 +438,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             var powerup = scope.level.addPowerup(chain, candy);
             animateAddPowerup(powerup);
             
+            $timeout(animateAddPowerup(powerup), duration);
           }
           
           for(var j = 0; j < chain.candies.length; j++) {
