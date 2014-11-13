@@ -344,13 +344,24 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         });
       }
       
-      var beginNextTurn = function() {
-        scope.level.detectPossibleSwaps();
-        canvas.mouseEnabled = true;
+      var decrementMoves = function() {
         scope.movesLeft--;
         scope.$apply();
-        hint = new Hint();
+        
+        if(scope.movesLeft === 0) {
+          // game over
+          canvas.mouseEnabled = false;
+          hint.cancelHint();
+          console.log('=============== game over ================');
+        }
+      }
+      
+      var beginNextTurn = function() {
+        scope.level.detectPossibleSwaps();
         scope.level.resetComboMultiplier();
+        canvas.mouseEnabled = true;
+        hint = new Hint();
+        decrementMoves();
       }
       
       // ======================================================================
