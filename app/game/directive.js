@@ -449,17 +449,21 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           
           for(var j = 0; j < chain.candies.length; j++) {
             var candy = chain.candies[j];
-            
+
             // The candy can be part of two chains but we only want to animate once.
             if(candy) {
-              
+
               if(candy.bonusType) {
                 // this is a special candy, add effect
-                animatePowerupExplode(candy);
+                if(candy.bonusType == 4) {
+                  animateBombExplode(candy, chain);
+                } else {
+                  animatePowerupExplode(candy);
+                }
               }
-              
+
               addSpriteEffect(candy.x, candy.y);
-              
+
               createjs.Tween.get(candy)
               .to(
                 {scaleX: 0, scaleY: 0, x: candy.x + candyDestinationSize/2, y: candy.y + candyDestinationSize/2},
@@ -467,7 +471,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
                 createjs.Ease.sineOut)
               .call(animationComplete(candy));
             }
-          }
+          } 
+          
         }
         
         $timeout(animComplete, duration);
@@ -877,6 +882,81 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             effectsLayer.removeChild(wooshDown);
             // anim end
           });
+        }
+        
+      }
+      
+      //-----------------------------------------------------------------------
+      // Bomb explosion
+      //-----------------------------------------------------------------------
+      
+      var animateBombExplode = function(powerup, chain) {
+        var x = 0;
+        var y = CANDY_SOURCE_SIZE * 3;
+        var width = CANDY_SOURCE_SIZE * 4;
+        var height = CANDY_SOURCE_SIZE;
+        
+        var powerupCenterX = powerup.x + candyDestinationSize / 2;
+        var powerupCenterY = powerup.y + candyDestinationSize / 2;
+        
+        var deltaY = 0;
+        var deltaX = 0;
+        var angle = 0;
+
+        var distance = 0;
+        
+        var animationComplete = function(effect) {
+          return function() {
+            effectsLayer.removeChild(effect);
+            // anim complete.
+          }
+        }
+        
+        for(var i in chain.candies) {
+          var candy = chain.candies[i];
+          
+          if (candy !== powerup) {
+            deltaY = candy.y - powerup.y;
+            deltaX = candy.x - powerup.x;
+
+            angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+
+            distance = Math.sqrt(Math.pow(powerup.x - candy.x, 2) + Math.pow(powerup.y - candy.y, 2));
+
+            var boomWoosh = createSpriteforEffect(
+              'boomWoosh', 
+              'effectsAtlas', 
+              new createjs.Rectangle(x, y, width, height),
+              powerupCenterX,
+              powerupCenterY,
+              candyScale * 0.3,
+              candyScale * 0.3,
+              0,
+              angle
+            );
+            
+            boomWoosh.regX = 0;
+
+            effectsLayer.addChild(boomWoosh);
+            
+            var duration = random.range(50, 200);
+
+            createjs.Tween.get(boomWoosh)
+            .to(
+              {scaleX: 0, scaleY: 0, alpha: 0},
+              duration,
+              createjs.Ease.quadIn)
+            .to(
+              {scaleX: (distance / candyDestinationSize / 4) * candyScale, scaleY: candyScale, alpha: 1},
+              duration,
+              createjs.Ease.quadIn)
+            .to(
+              {scaleX: 0, scaleY: 0, alpha: 0},
+              duration,
+              createjs.Ease.quadIn)
+            .call(animationComplete(boomWoosh));
+          }
+          
         }
       }
       
