@@ -137,12 +137,10 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       var Hint = function() {
         var hintChain = scope.level.getRandomMatch();
-        var originalY = [];
         
         var hintTimeoutPromise = $timeout(function() {
           for(var i = 0; i < hintChain.length(); i++) {
             var candy = hintChain.getCandy(i);
-            originalY[i] = candy.y;
             animateHint(candy);
           }
         }, 3000);
@@ -150,15 +148,18 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         this.stopHint = function() {
           // Put back everything how it was.
           for(var i = 0; i < hintChain.length(); i++) {
+            console.log(hintChain.getCandy(i));
             var candy = hintChain.getCandy(i);
             candy.regY = 0;
             candy.scaleY = candyScale;
-            candy.y = originalY[i];
+            candy.y = pointForColumn.getY(candy.row);
             createjs.Tween.removeTweens(candy);
           }
+          console.log('==========================');
         }
         
         this.cancelHint = function() {
+          this.stopHint();
           $timeout.cancel(hintTimeoutPromise);
         }
       }
@@ -302,12 +303,14 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         if(scope.level.isPossibleSwap(swap)) {
           canvas.mouseEnabled = false;
+          hint.cancelHint();
           scope.level.performSwap(swap);
           animateSwap(swap, function() {
             handleMatches();
           });
         } else {
           canvas.mouseEnabled = false;
+          hint.cancelHint();
           animateInvalidSwap(swap, function() {
             canvas.mouseEnabled = true;
             hint = new Hint();
@@ -316,8 +319,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       var handleMatches = function() {
-        // Stop hint timeout if havent triggered yet.
-        hint.cancelHint();
         
         var chains = scope.level.removeMatches(swap);
         if(chains.length == 0) {
