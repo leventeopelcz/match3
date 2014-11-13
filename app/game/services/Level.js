@@ -26,13 +26,14 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       */
       
       // In the very rare case that you end up with no possible swaps on the game board (try 3x3) try again.
-
+      
       do {
         set = crateInitialCandies();
         this.detectPossibleSwaps();
       } while(possibleSwaps.length == 0);
       
       return set;
+      
     }
     
     var hasChainAtPosition = function(row, column) {
@@ -449,7 +450,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       removeCandies(horizontalChains);
       removeCandies(verticalChains);
       removeCandies(lChains);
-
       
       
       removeCandies(horizontalPowerupChains);
@@ -469,8 +469,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       calculateScores(lPowerupChains);
       
       calculateScores(bombPowerupChains);
-      
-      console.log('==========================');
       
       return horizontalChains.concat(verticalChains).concat(lChains).concat(horizontalPowerupChains).concat(verticalPowerupChains).concat(lPowerupChains).concat(bombPowerupChains);
     }

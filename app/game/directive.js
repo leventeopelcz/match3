@@ -148,14 +148,12 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         this.stopHint = function() {
           // Put back everything how it was.
           for(var i = 0; i < hintChain.length(); i++) {
-            console.log(hintChain.getCandy(i));
             var candy = hintChain.getCandy(i);
             candy.regY = 0;
             candy.scaleY = candyScale;
             candy.y = pointForColumn.getY(candy.row);
             createjs.Tween.removeTweens(candy);
           }
-          console.log('==========================');
         }
         
         this.cancelHint = function() {
