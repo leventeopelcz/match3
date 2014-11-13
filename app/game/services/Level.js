@@ -382,7 +382,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
         if(powerup.bonusType === 4) {
           for(var row = 0; row < data.ROWS; row++) {
             for(var column = 0; column < data.COLUMNS; column++) {
-              if(candies[row][column].type === powerup.type) {
+              if(tiles[row][column] && candies[row][column].type === powerup.type) {
                 chain.candies.push(candies[row][column]);
               }
             }
