@@ -352,11 +352,16 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         scope.movesLeft--;
         scope.$apply();
         
-        if(scope.movesLeft === 0) {
+        if(scope.movesLeft === 0 && scope.score < scope.maxScore) {
           // game over
           canvas.mouseEnabled = false;
           hint.cancelHint();
-          console.log('=============== game over ================');
+          animateGameOver();
+        } else if(scope.score >= scope.maxScore) {
+          // perfect game
+          canvas.mouseEnabled = false;
+          hint.cancelHint();
+          animateEndGame();
         }
       }
       
@@ -587,6 +592,71 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         // longest delay can be.
         $timeout(animComplete, duration + 500);
+      }
+      
+      var animateEndGame = function() {
+        var text = customText('Perfect Game!', candyDestinationSize+'px', 'Lilita One');
+        
+        text.x = canvas.getBounds().width / 2;
+        text.y = canvas.getBounds().height / 2;
+        text.regX = text.getBounds().width / 2;
+        text.regY = text.getBounds().height / 2;
+        text.scaleX = 0;
+        text.scaleY = 0;
+        text.alpha = 0;
+        
+        var destinationScale = canvas.getBounds().width / text.getBounds().width / 1.5;
+        
+        uiLayer.addChild(text);
+
+        createjs.Tween.get(text)
+        .to(
+          {scaleX: destinationScale, scaleY: destinationScale, alpha: 1},
+          1000,
+          createjs.Ease.bounceOut);
+        
+        for(var row = 0; row < scope.GAME_BOARD.ROWS; row++) {
+          for(var column = 0; column < scope.GAME_BOARD.COLUMNS; column++) {
+            var candy = scope.level.candyAtPosition(row, column);
+            if(candy) {
+              var randomDuration = random.range(100, 500);
+              var realX = candy.column * candyDestinationSize;
+              var realY = candy.row * candyDestinationSize;
+
+              createjs.Tween.get(candy, {loop: true})
+              .to(
+                {scaleX: 0.8 * candyScale, scaleY: 0.8 * candyScale, alpha: 0.5, x: realX, y: realY},
+                randomDuration,
+                createjs.Ease.sineIn)
+              .to(
+                {scaleX: candyScale, scaleY: candyScale, alpha: 1, x: realX, y: realY},
+                randomDuration,
+                createjs.Ease.sineOut);
+            }
+          }
+        }
+      }
+      
+      var animateGameOver = function() {
+        var text = customText('Game Over!', candyDestinationSize+'px', 'Lilita One');
+        
+        text.x = canvas.getBounds().width / 2;
+        text.y = canvas.getBounds().height / 2;
+        text.regX = text.getBounds().width / 2;
+        text.regY = text.getBounds().height / 2;
+        text.scaleX = 0;
+        text.scaleY = 0;
+        text.alpha = 0;
+        
+        var destinationScale = canvas.getBounds().width / text.getBounds().width / 1.5;
+        
+        uiLayer.addChild(text);
+
+        createjs.Tween.get(text)
+        .to(
+          {scaleX: destinationScale, scaleY: destinationScale, alpha: 1},
+          1000,
+          createjs.Ease.bounceOut);
       }
       
       var animateAddPowerup = function(candy) {
