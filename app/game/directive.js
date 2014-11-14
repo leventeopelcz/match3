@@ -1049,7 +1049,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           // Get candy scale.
           candyScale = candyDestinationSize / CANDY_SOURCE_SIZE;
 
-          // Set canavas size.
+          // Set canvas size.
           element[0].setAttribute('width', candyDestinationSize * scope.GAME_BOARD.COLUMNS);
           element[0].setAttribute('height', candyDestinationSize * scope.GAME_BOARD.ROWS);
           
