@@ -1,5 +1,14 @@
 <div hud>
+  
   <h1>Moves Left: {{movesLeft}}</h1>
+  
   <h3>Score: {{score}}</h3>
+  
+  <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="{{score}}" aria-valuemin="0" aria-valuemax="{{maxScore}}" style="width: {{(score / maxScore) * 100 + '%'}};">
+    </div>
+  </div>
+  
 </div>
+
 <canvas game></canvas>

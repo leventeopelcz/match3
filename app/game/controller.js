@@ -10,7 +10,8 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($
     SCORE: null,
     MOVES_LEFT: null,
     NUM_CANDY_TYPES: 6,
-    BASE_SCORE: null
+    BASE_SCORE: null,
+    TARGET_SCORE: null
   }
   
   $scope.levelLoaded = false;
@@ -21,6 +22,8 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($
   $scope.movesLeft = null;
   
   $scope.score = null;
+  
+  $scope.maxScore = null;
   
   // ==========================================================================
   
@@ -33,10 +36,12 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($
     $scope.GAME_BOARD.SCORE = response.score;
     $scope.GAME_BOARD.MOVES_LEFT = response.movesLeft;
     $scope.GAME_BOARD.BASE_SCORE = response.baseScore;
+    $scope.GAME_BOARD.TARGET_SCORE = response.targetScore;
     $scope.levelLoaded = true;
     
     $scope.movesLeft = response.movesLeft;
     $scope.score = response.score;
+    $scope.maxScore = response.targetScore;
 
     // Instantiate our new level.
     $scope.level = new Level($scope.GAME_BOARD);

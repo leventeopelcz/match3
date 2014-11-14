@@ -13,5 +13,6 @@
   ],
   "movesLeft": 15,
   "score": 0,
-  "baseScore": 60
+  "baseScore": 60,
+  "targetScore": 10000
 }
