@@ -316,6 +316,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
       }
       
+      // For 'Cash Blast!', 'Wind Fall!', 'Gold Rush!', etc.
+      var matchesNumber = 0;
+      
       var handleMatches = function() {
         
         var chains = scope.level.removeMatches(swap);
@@ -323,6 +326,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           beginNextTurn();
           return;
         }
+        
+        matchesNumber += chains.length;
         
         animateMatchedCandies(chains, function() {
           var chain = null;
@@ -340,6 +345,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             });
           });
         });
+        
       }
       
       var decrementMoves = function() {
@@ -355,11 +361,14 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       var beginNextTurn = function() {
-        scope.level.detectPossibleSwaps();
-        scope.level.resetComboMultiplier();
-        canvas.mouseEnabled = true;
-        hint = new Hint();
-        decrementMoves();
+        animateEndText(matchesNumber, function() {
+          scope.level.detectPossibleSwaps();
+          scope.level.resetComboMultiplier();
+          canvas.mouseEnabled = true;
+          hint = new Hint();
+          decrementMoves();
+          matchesNumber = 0;
+        });
       }
       
       // ======================================================================
@@ -620,6 +629,56 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       var hideSelectionIndicatorForCandy = function() {
         uiLayer.removeChild(selectionIndicator);
+      }
+      
+      // ======================================================================
+      // TEXT ANIMATIONS
+      // ======================================================================
+      
+      var animateEndText = function(matches, animComplete) {
+        if(matches <= 1) {
+          animComplete();
+          return;
+        }
+        
+        if(matches > 4) {
+          var string = 'Cha-Ching!';
+        } else if(matches > 3) {
+          var string = 'Gold Rush!';
+        } else if(matches > 2) {
+          var string = 'Windfall!';
+        } else if(matches > 1) {
+          var string = 'Cash Blast!';
+        }
+        
+        var text = customText(string, candyDestinationSize+'px', 'Lilita One');
+        
+        text.x = canvas.getBounds().width / 2;
+        text.y = canvas.getBounds().height / 2;
+        text.regX = text.getBounds().width / 2;
+        text.regY = text.getBounds().height / 2;
+        text.scaleX = 0;
+        text.scaleY = 0;
+        text.alpha = 0;
+        
+        var destinationScale = canvas.getBounds().width / text.getBounds().width / 1.5;
+        
+        uiLayer.addChild(text);
+
+        createjs.Tween.get(text)
+        .to(
+          {scaleX: destinationScale, scaleY: destinationScale, alpha: 1},
+          1000,
+          createjs.Ease.bounceOut)
+        .wait(2000)
+        .to(
+          {scaleX: 0, scaleY: 0, alpha: 0},
+          300,
+          createjs.Ease.quadIn)
+        .call(function() {
+          uiLayer.removeChild(text);
+          animComplete();
+        });
       }
       
       // ======================================================================
