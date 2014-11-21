@@ -1,14 +1,18 @@
-<div hud>
-  
-  <h1>Moves Left: {{movesLeft}}</h1>
-  
-  <h3>Score: {{score}}</h3>
-  
-  <div class="progress">
-    <div class="progress-bar" role="progressbar" aria-valuenow="{{score}}" aria-valuemin="0" aria-valuemax="{{maxScore}}" style="width: {{(score / maxScore) * 100 + '%'}};">
-    </div>
-  </div>
-  
-</div>
+<div class="container">
+  <div hud class="col-xs-12 col-sm-3">
 
-<canvas game></canvas>
+    <label>Moves Left</label>
+    <div class="movesLeft">{{movesLeft}}</div>
+
+    <label>Score</label>
+    <div class="score">{{score}}</div>
+
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" aria-valuenow="{{score}}" aria-valuemin="0" aria-valuemax="{{maxScore}}" style="width: {{(score / maxScore) * 100 + '%'}};">
+      </div>
+    </div>
+
+  </div>
+
+  <canvas game class="col-xs-12 col-sm-9"></canvas>
+<div>
