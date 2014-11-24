@@ -454,7 +454,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         for(var i = 0; i < chains.length; i++) {
           var chain = chains[i];
-          animateScoreForChain(chain.candies);
+          console.log(chain.score);
+          animateScoreForChain(chain);
           
           if(chain.candies.length > 3 && chain.chainType != 'ChainTypePowerup') {
             var candy = chain.candies[0];
@@ -770,10 +771,12 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           }
         }
         
-        for(var i = 0; i < chain.length; i++) {
-          candy = chain[i];
+        for(var i = 0; i < chain.candies.length; i++) {
+          candy = chain.candies[i];
           
-          var text = customText(scope.GAME_BOARD.BASE_SCORE * (scope.level.comboMultiplier - 1), candyDestinationSize+'px', 'Lilita One');
+          console.log(chain.score);
+          
+          var text = customText(chain.score / chain.candies.length, candyDestinationSize+'px', 'Lilita One');
           
           text.x = candy.x + candyDestinationSize/2;
           text.y = candy.y + candyDestinationSize/2;
