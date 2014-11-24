@@ -456,7 +456,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
         for(var i = 0; i < chains.length; i++) {
           var chain = chains[i];
-          console.log(chain.score);
+          
           animateScoreForChain(chain);
           
           if(chain.candies.length > 3 && chain.chainType != 'ChainTypePowerup') {
@@ -1128,6 +1128,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             var tile = new createjs.Bitmap();
             
             switch(value) {
+              // Konvex Corners
               case 1:
                 tile.image = assetLoader.getResult('Tile1');
                 tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
@@ -1144,7 +1145,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
                 tile.image = assetLoader.getResult('Tile1');
                 tile.sourceRect = new createjs.Rectangle(0, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
               break;
-
+              
+              // Edges
               case 3:
                 tile.image = assetLoader.getResult('Tile1');
                 tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
@@ -1161,12 +1163,14 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
                 tile.image = assetLoader.getResult('Tile1');
                 tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
               break;
-
+              
+              // Fill
               case 15:
                 tile.image = assetLoader.getResult('Tile1');
                 tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
               break;
 
+              // Konkav Corners
               case 7:
                 tile.image = assetLoader.getResult('Tile2');
                 tile.sourceRect = new createjs.Rectangle(0, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
