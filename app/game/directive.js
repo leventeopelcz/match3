@@ -1159,6 +1159,23 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
                   tile.image = assetLoader.getResult('Tile1');
                   tile.sourceRect = new createjs.Rectangle(0, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
                 break;
+                  
+                case 3:
+                  tile.image = assetLoader.getResult('Tile1');
+                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+                break;
+                case 5:
+                  tile.image = assetLoader.getResult('Tile1');
+                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+                break;
+                case 10:
+                  tile.image = assetLoader.getResult('Tile1');
+                  tile.sourceRect = new createjs.Rectangle(0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+                break;
+                case 12:
+                  tile.image = assetLoader.getResult('Tile1');
+                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+                break;
               }
               //tile.image = assetLoader.getResult(name);
               tile.scaleX = candyScale;
