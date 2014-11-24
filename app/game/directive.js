@@ -119,8 +119,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         sprite.x = x + candyDestinationSize/2;
         sprite.y = y + candyDestinationSize/2;
         
-        sprite.scaleX = candyScale * 1.3;
-        sprite.scaleY = candyScale * 1.3;
+        sprite.scaleX = candyScale * 2.5;
+        sprite.scaleY = candyScale * 2.5;
         
         sprite.on('animationend', function(evt) {
           evt.remove();
