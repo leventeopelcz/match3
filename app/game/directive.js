@@ -47,7 +47,20 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       assetLoader.loadManifest([
         {id: 'candyAtlas', src:'images/candies.png'},
         {id: 'removeEffect', src:'images/effect_sprite.png'},
-        {id: 'effectsAtlas', src:'images/effects.png'}
+        {id: 'effectsAtlas', src:'images/effects.png'},
+        {id: 'Tile_1', src:'images/Tile_1.png'},
+        {id: 'Tile_2', src:'images/Tile_2.png'},
+        {id: 'Tile_3', src:'images/Tile_3.png'},
+        {id: 'Tile_4', src:'images/Tile_4.png'},
+        {id: 'Tile_5', src:'images/Tile_5.png'},
+        {id: 'Tile_7', src:'images/Tile_7.png'},
+        {id: 'Tile_8', src:'images/Tile_8.png'},
+        {id: 'Tile_10', src:'images/Tile_10.png'},
+        {id: 'Tile_11', src:'images/Tile_11.png'},
+        {id: 'Tile_12', src:'images/Tile_12.png'},
+        {id: 'Tile_13', src:'images/Tile_13.png'},
+        {id: 'Tile_14', src:'images/Tile_14.png'},
+        {id: 'Tile_15', src:'images/Tile_15.png'}
       ]);
       
       // ======================================================================
@@ -1108,15 +1121,37 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       // ======================================================================
       
       var createGameBoard = function() {
-        var tile = new createjs.Shape();
+        
         for(var row = 0; row < scope.GAME_BOARD.ROWS; row++) {
           for(var column = 0; column < scope.GAME_BOARD.COLUMNS; column++) {
-            if(scope.level.tileAtPosition(row, column)) {
-              tile.graphics.beginFill('#7b9eae').drawRect(column * candyDestinationSize, row * candyDestinationSize, candyDestinationSize, candyDestinationSize).beginStroke('#778890');
+
+            var bottomLeft     = (column > 0) && (row < scope.GAME_BOARD.ROWS) && scope.level.tileAtPosition(row, column - 1);
+
+            var topLeft  = (column > 0) && (row > 0) && scope.level.tileAtPosition(row - 1, column - 1);
+
+            var bottomRight    = (column < scope.GAME_BOARD.COLUMNS) && (row < scope.GAME_BOARD.ROWS) && scope.level.tileAtPosition(row, column);
+
+            var topRight = (column < scope.GAME_BOARD.COLUMNS) && (row > 0) && scope.level.tileAtPosition(row - 1, column);
+
+            // The tiles are named from 0 to 15, according to the bitmask that is
+            // made by combining these four values.
+            var value = topLeft | topRight << 1 | bottomLeft << 2 | bottomRight << 3;
+
+            // Values 0 (no tiles), 6 and 9 (two opposite tiles) are not drawn.
+            if (value != 0 && value != 6 && value != 9) {
+              var name = 'Tile_'+value;
+              var tile = new createjs.Bitmap();
+              tile.image = assetLoader.getResult(name);
+              tile.scaleX = candyScale;
+              tile.scaleY = candyScale;
+              tile.x = pointForColumn.getX(column) - candyDestinationSize / 2;
+              tile.y = pointForColumn.getY(row) - candyDestinationSize / 2;
+              
               gameBoardLayer.addChild(tile);
             }
           }
         }
+        
       }
       
       // ======================================================================
