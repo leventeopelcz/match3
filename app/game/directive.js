@@ -726,29 +726,28 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
         
         var text = customText(string, candyDestinationSize+'px', 'Lilita One');
+        var destinationScale = canvas.getBounds().width / text.getBounds().width / 1.5;
         
         text.x = canvas.getBounds().width / 2;
         text.y = canvas.getBounds().height / 2;
         text.regX = text.getBounds().width / 2;
         text.regY = text.getBounds().height / 2;
-        text.scaleX = 0;
-        text.scaleY = 0;
+        text.scaleX = destinationScale;
+        text.scaleY = destinationScale;
         text.alpha = 0;
-        
-        var destinationScale = canvas.getBounds().width / text.getBounds().width / 1.5;
         
         uiLayer.addChild(text);
 
         createjs.Tween.get(text)
         .to(
-          {scaleX: destinationScale, scaleY: destinationScale, alpha: 1},
-          1000,
-          createjs.Ease.bounceOut)
-        .wait(2000)
+          {alpha: 1},
+          700,
+          createjs.Ease.cubicOut)
+        .wait(300)
         .to(
-          {scaleX: 0, scaleY: 0, alpha: 0},
-          300,
-          createjs.Ease.quadIn)
+          {alpha: 0},
+          700,
+          createjs.Ease.cubicOut)
         .call(function() {
           uiLayer.removeChild(text);
           animComplete();
