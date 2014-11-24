@@ -48,6 +48,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         {id: 'candyAtlas', src:'images/candies.png'},
         {id: 'removeEffect', src:'images/effect_sprite.png'},
         {id: 'effectsAtlas', src:'images/effects.png'},
+        {id: 'Tile1', src:'images/Tile1.png'},
         {id: 'Tile_1', src:'images/Tile_1.png'},
         {id: 'Tile_2', src:'images/Tile_2.png'},
         {id: 'Tile_3', src:'images/Tile_3.png'},
@@ -1141,7 +1142,25 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             if (value != 0 && value != 6 && value != 9) {
               var name = 'Tile_'+value;
               var tile = new createjs.Bitmap();
-              tile.image = assetLoader.getResult(name);
+              switch(value) {
+                case 1:
+                  tile.image = assetLoader.getResult('Tile1');
+                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+                break;
+                case 2:
+                  tile.image = assetLoader.getResult('Tile1');
+                  tile.sourceRect = new createjs.Rectangle(0, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+                break;
+                case 4:
+                  tile.image = assetLoader.getResult('Tile1');
+                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+                break;
+                case 8:
+                  tile.image = assetLoader.getResult('Tile1');
+                  tile.sourceRect = new createjs.Rectangle(0, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+                break;
+              }
+              //tile.image = assetLoader.getResult(name);
               tile.scaleX = candyScale;
               tile.scaleY = candyScale;
               tile.x = pointForColumn.getX(column) - candyDestinationSize / 2;
@@ -1149,6 +1168,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
               
               gameBoardLayer.addChild(tile);
             }
+                  
           }
         }
         
