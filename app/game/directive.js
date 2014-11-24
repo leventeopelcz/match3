@@ -774,26 +774,24 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         for(var i = 0; i < chain.candies.length; i++) {
           candy = chain.candies[i];
           
-          console.log(chain.score);
-          
           var text = customText(chain.score / chain.candies.length, candyDestinationSize+'px', 'Lilita One');
           
           text.x = candy.x + candyDestinationSize/2;
           text.y = candy.y + candyDestinationSize/2;
           text.regX = text.getBounds().width / 2;
           text.regY = text.getBounds().height / 2;
-          text.scaleX = 0.3 * candyScale;
-          text.scaleY = 0.3 * candyScale;
+          text.scaleX = 0.65;
+          text.scaleY = 0.65;
           text.alpha = 0;
           uiLayer.addChild(text);
           
           createjs.Tween.get(text)
           .to(
-            {scaleX: 1 * candyScale, scaleY: 1 * candyScale, alpha: 1},
+            {alpha: 1},
             duration,
             createjs.Ease.quadOut)
           .to(
-            {scaleX: 0.3 * candyScale, scaleY: 0.3 * candyScale, alpha: 1},
+            {alpha: 0},
             duration,
             createjs.Ease.quadIn)
           .call(animationComplete(text));
