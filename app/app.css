@@ -1,29 +1,43 @@
 /* app css stylesheet */
 
 body {
-  background-color: rgb(200, 201, 206);
+  background-color: #fff;
 }
 
 .progress {
   overflow: hidden;
-  height: 20px;
-  margin-bottom: 20px;
-  background-color: #e3e3e3;
-  border-radius: 5px;
-  .box-shadow(inset 0 1px 2px rgba(0,0,0,.1));
+  height: 250px;
+  padding: 0;
+  background: url('images/blue-bg.png');
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.3);
+  border: 5px solid white;
 }
 
 .progress-bar {
-  float: left;
-  width: 0%;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   height: 100%;
   font-size: 12px;
   line-height: 20px;
   color: #ffffff;
   text-align: center;
-  background-color: #d34969;
-  .box-shadow(inset 0 -1px 0 rgba(0,0,0,.15));
-  .transition(width .6s ease);
+  background: url('images/gold-bg.png');
+  box-shadow: 0 2px 0 rgba(255, 151, 0, 0.8) inset;
+}
+
+.progress-section {
+  height: 33.3%;
+  z-index: 1;
+  position: relative;
+  border-bottom: 2px solid #fff;
+  line-height: 75px;
+  text-align: left;
+}
+
+.progress-section:last-child {
+  border-bottom: none;
 }
 
 label {
@@ -56,4 +70,12 @@ label {
 [hud] {
   font-weight: bold;
   text-align: center;
+}
+
+canvas {
+  background-color: #7b9eae;
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.3);
+  border: 5px solid white;
+  padding: 10px;
 }

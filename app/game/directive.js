@@ -26,6 +26,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       var assetLoader = new createjs.LoadQueue();
       
       // Game layers.
+      var gameBoardLayer = new createjs.Container();
+      canvas.addChild(gameBoardLayer);
+      
       var candiesLayer = new createjs.Container();
       canvas.addChild(candiesLayer);
       
@@ -1104,6 +1107,20 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       // ======================================================================
       
+      var createGameBoard = function() {
+        var tile = new createjs.Shape();
+        for(var row = 0; row < scope.GAME_BOARD.ROWS; row++) {
+          for(var column = 0; column < scope.GAME_BOARD.COLUMNS; column++) {
+            if(scope.level.tileAtPosition(row, column)) {
+              tile.graphics.beginFill('#7b9eae').drawRect(column * candyDestinationSize, row * candyDestinationSize, candyDestinationSize, candyDestinationSize).beginStroke('#778890');
+              gameBoardLayer.addChild(tile);
+            }
+          }
+        }
+      }
+      
+      // ======================================================================
+      
       var beginGame = function() {
         
         // Assets loaded by createjs.
@@ -1122,6 +1139,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           // Set canvas size.
           element[0].setAttribute('width', candyDestinationSize * scope.GAME_BOARD.COLUMNS);
           element[0].setAttribute('height', candyDestinationSize * scope.GAME_BOARD.ROWS);
+          
+          createGameBoard();
           
           addSpritesForCandies(scope.level.shuffle());
           

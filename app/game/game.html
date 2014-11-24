@@ -1,5 +1,5 @@
 <div class="container">
-  <div hud class="col-xs-12 col-sm-3">
+  <div hud class="col-xs-12 col-sm-2">
 
     <label>Moves Left</label>
     <div class="movesLeft">{{movesLeft}}</div>
@@ -7,12 +7,16 @@
     <label>Score</label>
     <div class="score">{{score}}</div>
 
-    <div class="progress">
-      <div class="progress-bar" role="progressbar" aria-valuenow="{{score}}" aria-valuemin="0" aria-valuemax="{{maxScore}}" style="width: {{(score / maxScore) * 100 + '%'}};">
-      </div>
+    <div class="progress col-xs-12">
+      <div class="progress-bar" role="progressbar" aria-valuenow="{{score}}" aria-valuemin="0" aria-valuemax="{{maxScore}}" style="height: {{(score / maxScore) * 100 + '%'}};"></div>
+      <div class="progress-section"><img src="images/gold-icon.png"> 400</div>
+      <div class="progress-section"><img src="images/gold-icon.png"> 200</div>
+      <div class="progress-section"><img src="images/gold-icon.png"> 100</div>
     </div>
 
   </div>
-
-  <canvas game class="col-xs-12 col-sm-9"></canvas>
+  
+  <div class="col-xs-12 col-sm-10">
+    <canvas game></canvas>
+  </div>
 <div>
