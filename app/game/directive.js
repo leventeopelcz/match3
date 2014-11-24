@@ -49,19 +49,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         {id: 'removeEffect', src:'images/effect_sprite.png'},
         {id: 'effectsAtlas', src:'images/effects.png'},
         {id: 'Tile1', src:'images/Tile1.png'},
-        {id: 'Tile_1', src:'images/Tile_1.png'},
-        {id: 'Tile_2', src:'images/Tile_2.png'},
-        {id: 'Tile_3', src:'images/Tile_3.png'},
-        {id: 'Tile_4', src:'images/Tile_4.png'},
-        {id: 'Tile_5', src:'images/Tile_5.png'},
-        {id: 'Tile_7', src:'images/Tile_7.png'},
-        {id: 'Tile_8', src:'images/Tile_8.png'},
-        {id: 'Tile_10', src:'images/Tile_10.png'},
-        {id: 'Tile_11', src:'images/Tile_11.png'},
-        {id: 'Tile_12', src:'images/Tile_12.png'},
-        {id: 'Tile_13', src:'images/Tile_13.png'},
-        {id: 'Tile_14', src:'images/Tile_14.png'},
-        {id: 'Tile_15', src:'images/Tile_15.png'}
+        {id: 'Tile2', src:'images/Tile2.png'}
       ]);
       
       // ======================================================================
@@ -1137,54 +1125,72 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             // The tiles are named from 0 to 15, according to the bitmask that is
             // made by combining these four values.
             var value = topLeft | topRight << 1 | bottomLeft << 2 | bottomRight << 3;
+            var tile = new createjs.Bitmap();
+            
+            switch(value) {
+              case 1:
+                tile.image = assetLoader.getResult('Tile1');
+                tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+              case 2:
+                tile.image = assetLoader.getResult('Tile1');
+                tile.sourceRect = new createjs.Rectangle(0, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+              case 4:
+                tile.image = assetLoader.getResult('Tile1');
+                tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+              case 8:
+                tile.image = assetLoader.getResult('Tile1');
+                tile.sourceRect = new createjs.Rectangle(0, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
 
-            // Values 0 (no tiles), 6 and 9 (two opposite tiles) are not drawn.
-            if (value != 0 && value != 6 && value != 9) {
-              var name = 'Tile_'+value;
-              var tile = new createjs.Bitmap();
-              switch(value) {
-                case 1:
-                  tile.image = assetLoader.getResult('Tile1');
-                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
-                break;
-                case 2:
-                  tile.image = assetLoader.getResult('Tile1');
-                  tile.sourceRect = new createjs.Rectangle(0, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
-                break;
-                case 4:
-                  tile.image = assetLoader.getResult('Tile1');
-                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
-                break;
-                case 8:
-                  tile.image = assetLoader.getResult('Tile1');
-                  tile.sourceRect = new createjs.Rectangle(0, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
-                break;
-                  
-                case 3:
-                  tile.image = assetLoader.getResult('Tile1');
-                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
-                break;
-                case 5:
-                  tile.image = assetLoader.getResult('Tile1');
-                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
-                break;
-                case 10:
-                  tile.image = assetLoader.getResult('Tile1');
-                  tile.sourceRect = new createjs.Rectangle(0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
-                break;
-                case 12:
-                  tile.image = assetLoader.getResult('Tile1');
-                  tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
-                break;
-              }
-              //tile.image = assetLoader.getResult(name);
-              tile.scaleX = candyScale;
-              tile.scaleY = candyScale;
-              tile.x = pointForColumn.getX(column) - candyDestinationSize / 2;
-              tile.y = pointForColumn.getY(row) - candyDestinationSize / 2;
-              
-              gameBoardLayer.addChild(tile);
+              case 3:
+                tile.image = assetLoader.getResult('Tile1');
+                tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+              case 5:
+                tile.image = assetLoader.getResult('Tile1');
+                tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE * 2, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+              case 10:
+                tile.image = assetLoader.getResult('Tile1');
+                tile.sourceRect = new createjs.Rectangle(0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+              case 12:
+                tile.image = assetLoader.getResult('Tile1');
+                tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+
+              case 15:
+                tile.image = assetLoader.getResult('Tile1');
+                tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+
+              case 7:
+                tile.image = assetLoader.getResult('Tile2');
+                tile.sourceRect = new createjs.Rectangle(0, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+              case 11:
+                tile.image = assetLoader.getResult('Tile2');
+                tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, 0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+              case 13:
+                tile.image = assetLoader.getResult('Tile2');
+                tile.sourceRect = new createjs.Rectangle(0, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
+              case 14:
+                tile.image = assetLoader.getResult('Tile2');
+                tile.sourceRect = new createjs.Rectangle(CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE, CANDY_SOURCE_SIZE);
+              break;
             }
+
+            tile.scaleX = candyScale;
+            tile.scaleY = candyScale;
+            tile.x = pointForColumn.getX(column) - candyDestinationSize / 2;
+            tile.y = pointForColumn.getY(row) - candyDestinationSize / 2;
+
+            gameBoardLayer.addChild(tile);
                   
           }
         }
