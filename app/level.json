@@ -16,5 +16,10 @@
   "movesLeft": 15,
   "score": 0,
   "baseScore": 40,
-  "targetScore": 10000
+  "targetScore": 10000,
+  "rewards": [
+    { "name": "min_reward", "value": 100 },
+    { "name": "med_reward", "value": 200 },
+    { "name": "max_reward", "value": 400 }
+  ]
 }

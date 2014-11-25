@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<!-- Copyright Ayogo 2013 -->
+
+<!doctype html>
 <!--[if lt IE 7]>      <html lang="en" ng-app="Empower" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html lang="en" ng-app="Empower" class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html lang="en" ng-app="Empower" class="no-js lt-ie9"> <![endif]-->
@@ -6,27 +8,21 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>My AngularJS App</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="bower_components/html5-boilerplate/css/normalize.css">
-  <link rel="stylesheet" href="bower_components/html5-boilerplate/css/main.css">
-  <link rel="stylesheet" href="vendors/bootstrap.css">
-  <link rel="stylesheet" href="app.css"/>
-  <link href='http://fonts.googleapis.com/css?family=Lilita+One' rel='stylesheet' type='text/css'>
-  <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>Match Three</title>
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="stylesheets/mobile.css" media="screen and (max-width: 849px)">
+  <!--<![endif]-->
+  <link rel="stylesheet" href="stylesheets/basic.css" media="screen and (min-width: 850px)">
+  <link href='//fonts.googleapis.com/css?family=Lilita+One|Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
   <script src="vendors/createjs-min.js"></script>
+  <script src="vendors/raphael-min.js"></script>
+  <script src="vendors/Lilita_One_400.font.js"></script>
 </head>
 <body>
-  <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-  <![endif]-->
 
   <div ng-view></div>
 
-  <!-- In production use:
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
-  -->
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
   <script src="app.js"></script>
@@ -37,5 +33,7 @@
   <script src="game/services/Swap.js"></script>
   <script src="game/services/Utilities.js"></script>
   <script src="game/services/Chain.js"></script>
+
 </body>
 </html>
+

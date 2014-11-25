@@ -1247,6 +1247,23 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             canvas.update();
           } 
           createjs.Ticker.addEventListener('tick', tick);
+          
+          
+          // NOTE: Old code, from previous game!
+          // To display progressbar icons and text in the HUD.
+          angular.forEach(scope.GAME_BOARD.REWARDS, function(val, i) {
+            var x_offset_of_icon = 13;
+            var x_offset_of_text = 48;
+            
+            var el = angular.element(document.querySelector("#"+val.name));
+            var paper = new Raphael(val.name, el.offsetWidth, el.offsetHeight);
+            paper.image('images/gold-icon.png', x_offset_of_icon, paper.height/2 - 17, 30, 31);
+            var font = paper.getFont('Lilita One');
+            
+            paper.print(x_offset_of_text, paper.height/2 - 2, val.value, font, 30).attr({transform:"t0,3", fill:"#552f0b"});
+            paper.print(x_offset_of_text, paper.height/2 - 2, val.value, font, 30).attr({"fill": "90-#FC7E0B-#FDFE38"});
+          });
+          
         }
         
         // Createjs asset loader complete handler.

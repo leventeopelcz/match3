@@ -1,22 +1,49 @@
-<div class="container">
-  <div hud class="col-xs-12 col-sm-2">
+<div id="game">
 
-    <label>Moves Left</label>
-    <div class="movesLeft">{{movesLeft}}</div>
-
-    <label>Score</label>
-    <div class="score">{{score}}</div>
-
-    <div class="progress col-xs-12">
-      <div class="progress-bar" role="progressbar" aria-valuenow="{{score}}" aria-valuemin="0" aria-valuemax="{{maxScore}}" style="height: {{(score / maxScore) * 100 + '%'}};"></div>
-      <div class="progress-section"><img src="images/gold-icon.png"> 400</div>
-      <div class="progress-section"><img src="images/gold-icon.png"> 200</div>
-      <div class="progress-section"><img src="images/gold-icon.png"> 100</div>
+  <div class="progressBarContainer">
+    <div class="movesContainer">
+      <div class="moves">
+        Moves Left
+        <span id="turnsLeft" class="textDisplay">{{movesLeft}}</span>
+      </div>
+      <div class="score">
+        Score
+        <span id="scoreDisplay">{{score}}</span>
+      </div>
     </div>
 
+    <div class="progressBar">
+      <div id="max_reward" class="progressBarSegment"></div>
+      <div id="med_reward" class="progressBarSegment"></div>
+      <div id="min_reward" class="progressBarSegment"></div>
+      <div class="progressBarFill" style="height: {{(score / maxScore) * 100 + '%'}};"></div>
+      <div class="mask"></div>
+    </div>
   </div>
-  
-  <div class="col-xs-12 col-sm-10">
-    <canvas game></canvas>
+
+  <div class="canvasContainer">
+    <!--[if lte IE 8]><canvas id="main" game><![endif]-->
+    <!--[if gt IE 8]><!--><canvas id="main" game><!--<![endif]-->
+    <p>Browser not supported. Recommended: <a href="https://www.google.com/intl/en/chrome/browser/">Chrome</a></p>
+    </canvas>
   </div>
-<div>
+
+  <!-- loading screen -->
+  <!--
+<div id="minigame-loading">
+<div class="minigame-loading-info">
+<img class="minigame-loading-icon" src="images/diabetestogether/iconmonstr-cloud-4-icon.svg" alt="loader icon">
+<h3 class="minigame-loading-text">Loading...</h3>
+</div>
+</div>
+-->
+
+  <!-- error screen -->
+  <div id="minigame-loading-error">
+    <div class="minigame-loading-info">
+      <img class="minigame-loading-icon" src="images/diabetestogether/iconmonstr-cloud-29-icon.svg" alt="loader error icon">
+      <h3 class="minigame-loading-text">Something went wrong, please try again later.</h3>
+    </div>
+  </div>
+
+</div>
