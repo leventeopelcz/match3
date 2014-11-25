@@ -20,7 +20,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       var candyScale = 1;
       
       // Max width of game board.
-      var maxBoardWidth = 600;
+      var maxBoardWidth = 810;
       
       // CreateJS asset loader.
       var assetLoader = new createjs.LoadQueue();
