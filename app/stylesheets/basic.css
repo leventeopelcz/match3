@@ -20,9 +20,7 @@ html, body{
 
 #main {
 	float: left;
-	top: 13px;
 	position: relative;
-	left: 8px;
 }
 
 
@@ -112,7 +110,7 @@ div.textDisplayBorder {
 
 .movesContainer {
 	height:205px;
-	margin-top:25px;
+	margin-top:40px;
 }
 
 #max_reward {
