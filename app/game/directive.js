@@ -945,11 +945,15 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           effectsLayer.addChild(wooshLeft);
           
           // NOTE: make these durations 'responsive', they depend on canvas size!!!
-          duration = 2000;
+          duration = 2500;
         
           createjs.Tween.get(wooshRight)
           .to(
-            {scaleX: candyScale, scaleY: candyScale, alpha: 1, x: wooshRight.x + canvasWidth},
+            {scaleX: candyScale, scaleY: candyScale, alpha: 1, x: wooshRight.x + candyDestinationSize},
+            100,
+            createjs.Ease.linear)
+          .to(
+            {x: wooshRight.x + canvasWidth},
             duration,
             createjs.Ease.quadOut)
           .call(function() {
@@ -959,7 +963,11 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           
           createjs.Tween.get(wooshLeft)
           .to(
-            {scaleX: candyScale, scaleY: candyScale, alpha: 1, x: wooshLeft.x - canvasWidth},
+            {scaleX: candyScale, scaleY: candyScale, alpha: 1, x: wooshLeft.x - candyDestinationSize},
+            100,
+            createjs.Ease.linear)
+          .to(
+            {x: wooshLeft.x - canvasWidth},
             duration,
             createjs.Ease.quadOut)
           .call(function() {
@@ -1008,11 +1016,15 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           effectsLayer.addChild(wooshDown);
           
           // NOTE: make these durations 'responsive', they depend on canvas size!!!
-          duration = 2000;
-        
+          duration = 2500;
+          
           createjs.Tween.get(wooshUp)
           .to(
-            {scaleX: candyScale, scaleY: candyScale, alpha: 1, y: wooshUp.y + canvasHeight},
+            {scaleX: candyScale, scaleY: candyScale, alpha: 1, y: wooshUp.y + candyDestinationSize},
+            100,
+            createjs.Ease.linear)
+          .to(
+            {y: wooshUp.y + canvasHeight},
             duration,
             createjs.Ease.quadOut)
           .call(function() {
@@ -1022,7 +1034,11 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           
           createjs.Tween.get(wooshDown)
           .to(
-            {scaleX: candyScale, scaleY: candyScale, alpha: 1, y: wooshDown.y - canvasHeight},
+            {scaleX: candyScale, scaleY: candyScale, alpha: 1, y: wooshDown.y - candyDestinationSize},
+            100,
+            createjs.Ease.linear)
+          .to(
+            {y: wooshDown.y - canvasHeight},
             duration,
             createjs.Ease.quadOut)
           .call(function() {
