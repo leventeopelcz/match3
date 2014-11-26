@@ -518,8 +518,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           return;
         }
         
-        var longestDuration = 0;
-        
         for(var i = 0; i < columns.length; i++) {
           var array = columns[i];
           for(var j = 0; j < array.length; j++) {
@@ -527,10 +525,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             
             var newY = pointForColumn.getY(candy.row);
             var duration = ((newY - candy.y) / candyDestinationSize) * 300;
-            
-            if(longestDuration < duration) {
-              longestDuration = duration;
-            }
             
             var tween = createjs.Tween.get(candy);
             tween
@@ -541,16 +535,16 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           }
         }
         
-        $timeout(animComplete, longestDuration);
+        $timeout(animComplete, 0);
       }
       
       var animateNewCandies = function(columns, animComplete) {
-        var startRow = 0;
         var longestDuration = 0;
         
         for(var i = 0; i < columns.length; i++) {
           var array = columns[i];
-          startRow -= array.length;
+          var startRow = 0;
+          startRow -= array.length - 1;
           
           for(var j = 0; j < array.length; j++) {
             var candy = array[j];
