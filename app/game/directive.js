@@ -525,21 +525,19 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           for(var j = 0; j < array.length; j++) {
             var candy = array[j];
             
-            var delay = 200 * j;
             var newY = pointForColumn.getY(candy.row);
-            var duration = ((newY - candy.y) / candyDestinationSize) * 100;
+            var duration = ((newY - candy.y) / candyDestinationSize) * 300;
             
-            if(longestDuration < duration + delay) {
-              longestDuration = duration + delay;
+            if(longestDuration < duration) {
+              longestDuration = duration;
             }
             
             var tween = createjs.Tween.get(candy);
             tween
-              .wait(delay)
               .to(
                 {y: newY},
                 duration,
-                createjs.Ease.sineOut);
+                createjs.Ease.bounceOut);
           }
         }
         
@@ -547,11 +545,12 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       }
       
       var animateNewCandies = function(columns, animComplete) {
+        var startRow = 0;
         var longestDuration = 0;
-
+        
         for(var i = 0; i < columns.length; i++) {
           var array = columns[i];
-          var startRow = array[0].row - 1;
+          startRow -= array.length;
           
           for(var j = 0; j < array.length; j++) {
             var candy = array[j];
@@ -560,27 +559,26 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             candy.y = pointForColumn.getY(startRow);
             addSpriteForCandy(candy);
             
-            var delay = 200 * (array.length - j - 1);
-            var duration = (candy.row - startRow) * 100;
             var newY = pointForColumn.getY(candy.row);
+            var duration = (Math.abs(candy.y - newY) / candyDestinationSize) * 300;
             
-            if(longestDuration < duration + delay) {
-              longestDuration = duration + delay;
+            startRow++;
+            
+            if(longestDuration < duration) {
+              longestDuration = duration;
             }
             
             var tween = createjs.Tween.get(candy);
             tween
-              .wait(delay)
               .to(
                 {y: newY},
                 duration,
-                createjs.Ease.sineOut);
+                createjs.Ease.bounceOut);
           }
           
         }
         
-        // +100 to smooth it out.
-        $timeout(animComplete, longestDuration + 100);
+        $timeout(animComplete, longestDuration);
       }
       
       var animateBeginGame = function(candy, animComplete) {
