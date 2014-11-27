@@ -10,6 +10,10 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       // Get Canvas.
       var canvas = new createjs.Stage(element[0]);
       
+      // Canvas dimensions.
+      var CANVAS_WIDTH = null;
+      var CANVAS_HEIGHT = null;
+      
       // Define Candy source size from atlas.
       var CANDY_SOURCE_SIZE = 200;
       
@@ -597,15 +601,15 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       var animateEndGame = function() {
         var text = customText('Perfect Game!', candyDestinationSize+'px', 'Lilita One');
         
-        text.x = canvas.getBounds().width / 2;
-        text.y = canvas.getBounds().height / 2;
+        text.x = CANVAS_WIDTH / 2;
+        text.y = CANVAS_HEIGHT / 2;
         text.regX = text.getBounds().width / 2;
         text.regY = text.getBounds().height / 2;
         text.scaleX = 0;
         text.scaleY = 0;
         text.alpha = 0;
         
-        var destinationScale = canvas.getBounds().width / text.getBounds().width / 1.5;
+        var destinationScale = CANVAS_WIDTH / text.getBounds().width / 1.5;
         
         uiLayer.addChild(text);
 
@@ -640,15 +644,15 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       var animateGameOver = function() {
         var text = customText('Game Over!', candyDestinationSize+'px', 'Lilita One');
         
-        text.x = canvas.getBounds().width / 2;
-        text.y = canvas.getBounds().height / 2;
+        text.x = CANVAS_WIDTH / 2;
+        text.y = CANVAS_HEIGHT / 2;
         text.regX = text.getBounds().width / 2;
         text.regY = text.getBounds().height / 2;
         text.scaleX = 0;
         text.scaleY = 0;
         text.alpha = 0;
         
-        var destinationScale = canvas.getBounds().width / text.getBounds().width / 1.5;
+        var destinationScale = CANVAS_WIDTH / text.getBounds().width / 1.5;
         
         uiLayer.addChild(text);
 
@@ -722,10 +726,10 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
         
         var text = customText(string, candyDestinationSize+'px', 'Lilita One');
-        var destinationScale = canvas.getBounds().width / text.getBounds().width / 1.5;
+        var destinationScale = CANVAS_WIDTH / text.getBounds().width / 1.5;
         
-        text.x = canvas.getBounds().width / 2;
-        text.y = canvas.getBounds().height / 2;
+        text.x = CANVAS_WIDTH / 2;
+        text.y = CANVAS_HEIGHT / 2;
         text.regX = text.getBounds().width / 2;
         text.regY = text.getBounds().height / 2;
         text.scaleX = destinationScale;
@@ -910,8 +914,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           width = CANDY_SOURCE_SIZE * 3;
           height = CANDY_SOURCE_SIZE;
           
-          var canvasWidth = canvas.getBounds().width;
-          
           var wooshRight = createSpriteforEffect(
             'wooshRight', 
             'effectsAtlas', 
@@ -947,7 +949,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             100,
             createjs.Ease.linear)
           .to(
-            {x: wooshRight.x + canvasWidth},
+            {x: wooshRight.x + CANVAS_WIDTH},
             duration,
             createjs.Ease.quadOut)
           .call(function() {
@@ -961,7 +963,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             100,
             createjs.Ease.linear)
           .to(
-            {x: wooshLeft.x - canvasWidth},
+            {x: wooshLeft.x - CANVAS_WIDTH},
             duration,
             createjs.Ease.quadOut)
           .call(function() {
@@ -979,8 +981,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           y = 0;
           width = CANDY_SOURCE_SIZE * 3;
           height = CANDY_SOURCE_SIZE;
-          
-          var canvasHeight = canvas.getBounds().height;
           
           var wooshUp = createSpriteforEffect(
             'wooshUp', 
@@ -1018,7 +1018,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             100,
             createjs.Ease.linear)
           .to(
-            {y: wooshUp.y + canvasHeight},
+            {y: wooshUp.y + CANVAS_HEIGHT},
             duration,
             createjs.Ease.quadOut)
           .call(function() {
@@ -1032,7 +1032,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             100,
             createjs.Ease.linear)
           .to(
-            {y: wooshDown.y - canvasHeight},
+            {y: wooshDown.y - CANVAS_HEIGHT},
             duration,
             createjs.Ease.quadOut)
           .call(function() {
@@ -1232,8 +1232,11 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           candyScale = candyDestinationSize / CANDY_SOURCE_SIZE;
 
           // Set canvas size.
-          element[0].setAttribute('width', candyDestinationSize * scope.GAME_BOARD.COLUMNS);
-          element[0].setAttribute('height', candyDestinationSize * scope.GAME_BOARD.ROWS);
+          CANVAS_WIDTH = candyDestinationSize * scope.GAME_BOARD.COLUMNS;
+          CANVAS_HEIGHT = candyDestinationSize * scope.GAME_BOARD.ROWS;
+          
+          element[0].setAttribute('width', CANVAS_WIDTH);
+          element[0].setAttribute('height', CANVAS_HEIGHT);
           
           createGameBoard();
           
