@@ -49,7 +49,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         {id: 'removeEffect', src:'images/effect_sprite.png'},
         {id: 'effectsAtlas', src:'images/effects.png'},
         {id: 'Tile1', src:'images/Tile1.png'},
-        {id: 'Tile2', src:'images/Tile2.png'}
+        {id: 'Tile2', src:'images/Tile2.png'},
+        {src: 'vendors/raphael-min.js'},
+        {src: 'vendors/Lilita_One_400.font.js'}
       ]);
       
       // ======================================================================
@@ -1216,6 +1218,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         // Assets loaded by createjs.
         var assetsLoaded = function() {
           
+          // Hide loading panel.
+          document.getElementById('minigame-loading').style.display = 'none';
+          
           // Get candy pixel size.
           if($window.innerWidth >= maxBoardWidth) {
             candyDestinationSize = maxBoardWidth / scope.GAME_BOARD.COLUMNS;
@@ -1275,7 +1280,12 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         }
         
         // Createjs asset loader complete handler.
-        assetLoader.on('complete', assetsLoaded);        
+        assetLoader.on('complete', assetsLoaded);
+        // Createjs loading assets error.
+        assetLoader.on('error', function(){
+          document.getElementById('minigame-loading-error').style.display = 'block';
+        });
+        
       }
       
     }
