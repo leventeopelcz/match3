@@ -1221,11 +1221,21 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           // Hide loading panel.
           document.getElementById('minigame-loading').style.display = 'none';
           
+          var dpr = window.devicePixelRatio || 1;
+          var bsr = window.webkitBackingStorePixelRatio ||
+                    window.mozBackingStorePixelRatio ||
+                    window.msBackingStorePixelRatio ||
+                    window.backingStorePixelRatio || 1;
+
+          var scale = dpr / bsr;
+
+          var width = $window.innerWidth * scale;
+          
           // Get candy pixel size.
-          if($window.innerWidth >= maxBoardWidth) {
+          if(width >= maxBoardWidth) {
             candyDestinationSize = maxBoardWidth / scope.GAME_BOARD.COLUMNS;
           } else {
-            candyDestinationSize = $window.innerWidth / scope.GAME_BOARD.COLUMNS;
+            candyDestinationSize = width / scope.GAME_BOARD.COLUMNS;
           }
 
           // Get candy scale.
