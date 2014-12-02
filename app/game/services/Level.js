@@ -745,7 +745,21 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       
       for(var i = 0; i < data.ROWS; i++) {
         for(var j = 0; j < data.COLUMNS; j++) {
-          set.push(createCandyAtPosition(i,j,candies[i][j]));
+          // Horizontal
+          if(candies[i][j] === 6) {
+            set.push(createCandyAtPosition(i,j,1,1));
+          } else
+          // Vertical
+          if(candies[i][j] === 7) {
+            set.push(createCandyAtPosition(i,j,1,2));
+          } else
+          // AOE
+          if(candies[i][j] === 8) {
+            set.push(createCandyAtPosition(i,j,1,3));
+          } else 
+          {
+            set.push(createCandyAtPosition(i,j,candies[i][j]));
+          }
         }
       }
       
