@@ -87,7 +87,7 @@ div.textDisplayBorder {
 .progressBar{
 	position: relative;
 	width: 116px;
-	height: 260px;
+	height: 250px;
 	margin:26px 0 0 11px;
 	background: url("../images/blue-bg.png") no-repeat;
 }
