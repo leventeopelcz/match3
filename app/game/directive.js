@@ -345,6 +345,13 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           for(var i = 0; i < chains.length; i++) {
             chain = chains[i];
             scope.score += chain.score;
+            
+            if((scope.score / scope.maxScore) * 100 <= 100) {
+              scope.percent = (scope.score / scope.maxScore) * 100;
+            } else {
+              scope.percent = 100;
+            }
+            
           }
           
           var columns = scope.level.fillHoles();

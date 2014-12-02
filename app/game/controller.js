@@ -26,6 +26,8 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($
   
   $scope.maxScore = null;
   
+  $scope.percent = 0;
+  
   // ==========================================================================
   
   // Load the JSON file that contains the level layout.
