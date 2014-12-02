@@ -71,21 +71,10 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       
       // Adds the sprites for the candies.
       var addSpritesForCandies = function(candies) {
-        var x;
-        var y = 0;
-        var width = CANDY_SOURCE_SIZE;
-        var height = CANDY_SOURCE_SIZE;
-        
-        for(var i = 0; i < candies.length; i++) {
-          x = (candies[i].type - 1) * CANDY_SOURCE_SIZE;
-          candies[i].image = assetLoader.getResult('candyAtlas');
-          candies[i].sourceRect = new createjs.Rectangle(x, y, width, height);
-          candies[i].x = candies[i].column * candyDestinationSize + candyDestinationSize/4;
-          candies[i].y = candies[i].row * candyDestinationSize + candyDestinationSize/4;
-          candies[i].scaleX = candyScale / 2;
-          candies[i].scaleY = candyScale / 2;
-          candiesLayer.addChild(candies[i]);
-          candies[i].alpha = 0;
+        for(var i in candies) {
+          candies[i].x = candies[i].column * candyDestinationSize + candyDestinationSize / 4;
+          candies[i].y = candies[i].row * candyDestinationSize + candyDestinationSize / 4;
+          addSpriteForCandy(candies[i]);
           
           animateBeginGame(candies[i], function() {
             // anim complete;
@@ -110,6 +99,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         candy.sourceRect = new createjs.Rectangle(x, y, width, height);
         candy.scaleX = candyScale;
         candy.scaleY = candyScale;
+        
         candiesLayer.addChild(candy);
       }
       
@@ -594,6 +584,12 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         var realX = candy.column * candyDestinationSize;
         var realY = candy.row * candyDestinationSize;
         
+        // Initialize
+        candy.scaleX = candyScale / 2;
+        candy.scaleY = candyScale / 2;
+        candy.alpha = 0;
+        
+        // Animate
         createjs.Tween.get(candy)
           .wait(randomDelay)
           .to(
