@@ -22,6 +22,16 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       set = createTestGameBoard();
       this.detectPossibleSwaps();
       
+      console.log(possibleSwaps);
+      console.log('=============');
+      console.log(possibleChains);
+      for(var i in possibleChains) {
+        var c = possibleChains[i].candies;
+        for(var j in c) {
+          console.log(c[j]);
+        }
+        console.log('------------');
+      }
       return set;
       */
       
@@ -43,36 +53,64 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       var horizontalChain = new Chain();
       var verticalChain = new Chain();
       
-      for(var i = column-1; i >= 0 && candies[row][i] && candies[row][i].type == candyType; i--) {
+      for(var i = column-1; i >= 0 && candies[row][i] && (candies[row][i].type == candyType || candies[row][column].bonusType && candies[row][i].bonusType); i--) {
         horizontalMatches++;
         horizontalChain.addCandy(candies[row][i]);
         //console.log("horizontal<< : ("+row+":"+i+")");
       }
-      for(var i = column+1; i < data.COLUMNS && candies[row][i] && candies[row][i].type == candyType; i++) {
+      for(var i = column+1; i < data.COLUMNS && candies[row][i] && (candies[row][i].type == candyType || candies[row][column].bonusType && candies[row][i].bonusType); i++) {
         horizontalMatches++;
         horizontalChain.addCandy(candies[row][i]);
         //console.log("horizontal>> : ("+row+":"+i+")");
       }
       
-      if(horizontalMatches >= 3) {
+      /*
+      if(candies[row][column+1] && candies[row][column+1].bonusType) {
+        horizontalChain.addCandy(candies[row][column+1]);
+        horizontalChain.chainType = 'ChainTypeHorizontal';
+        return horizontalChain;
+      }
+      
+      if(candies[row][column-1] && candies[row][column-1].bonusType) {
+        horizontalChain.addCandy(candies[row][column-1]);
+        horizontalChain.chainType = 'ChainTypeHorizontal';
+        return horizontalChain;
+      }
+      */
+      
+      if(horizontalMatches >= 3 || candies[row][column].bonusType && horizontalMatches === 2) {
         horizontalChain.chainType = 'ChainTypeHorizontal';
         return horizontalChain;
       } else {
         horizontalChain = null;
       }
       
-      for(var j = row-1; j >= 0 && candies[j][column] && candies[j][column].type == candyType; j--) {
+      for(var j = row-1; j >= 0 && candies[j][column] && (candies[j][column].type == candyType || candies[row][column].bonusType && candies[j][column].bonusType); j--) {
         verticalMatches++;
         verticalChain.addCandy(candies[j][column]);
         //console.log("vertival^^ : ("+j+":"+column+")");
       }
-      for(var j = row+1; j < data.ROWS && candies[j][column] && candies[j][column].type == candyType; j++) {
+      for(var j = row+1; j < data.ROWS && candies[j][column] && (candies[j][column].type == candyType || candies[row][column].bonusType && candies[j][column].bonusType); j++) {
         verticalMatches++;
         verticalChain.addCandy(candies[j][column]);
         //console.log("vertivalvv : ("+j+":"+column+")");
       }
       
-      if(verticalMatches >= 3) {
+      /*
+      if(row < data.ROWS && candies[row+1][column] && candies[row+1][column].bonusType) {
+        verticalChain.addCandy(candies[row+1][column]);
+        verticalChain.chainType = 'ChainTypeVertical';
+        return verticalChain;
+      }
+      
+      if(row > 0 && candies[row-1][column] && candies[row-1][column].bonusType) {
+        verticalChain.addCandy(candies[row-1][column]);
+        verticalChain.chainType = 'ChainTypeVertical';
+        return verticalChain;
+      }
+      */
+      
+      if(verticalMatches >= 3 || candies[row][column].bonusType && verticalMatches === 2) {
         verticalChain.chainType = 'ChainTypeVertical';
         return verticalChain;
       } else {
