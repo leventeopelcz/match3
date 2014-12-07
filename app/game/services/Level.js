@@ -533,7 +533,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       
       var bombPowerupChains = detectPowerupChains(bombPowerups);
       var swapPowerupChains = detectPowerupChains(swapPowerups);
-      console.log(swapPowerupChains);
       
       removeCandies(horizontalChains);
       removeCandies(verticalChains);
