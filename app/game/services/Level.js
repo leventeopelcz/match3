@@ -388,60 +388,91 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       return candies[candy.row][candy.column];
     }
     
+    var removeDuplicates = function(arrayToRemoveFrom, arrayToRemove) {
+      for(var i in arrayToRemoveFrom) {
+        for(var j in arrayToRemove) {
+          if(arrayToRemoveFrom[i] === arrayToRemove[j]) {
+            arrayToRemoveFrom.splice(i, 1);
+          }
+        }
+      }
+    }
+    
     var detectPowerupChains = function(powerups) {
       var set = [];
       var powerup = null;
+      var newPowerups = []; // powerups we found in powerupchain and they need to be triggered.
+      var allPowerups = []; // store all powerups to counter infinite loops
       
-      for(var i in powerups) {
-        powerup = powerups[i];
-        var chain = new Chain();
-        
-        // Horizontally
-        if(powerup.bonusType === 1) {
-          for(var column = 0; column < data.COLUMNS; column++) {
-            // Add all candies to chain except powerup (watch out for gaps).
-            if(tiles[powerup.row][column]) {
-              chain.candies.push(candies[powerup.row][column]);
-            }
-          }
-        }
-        
-        // Vertically
-        if(powerup.bonusType === 2) {
-          for(var row = 0; row < data.ROWS; row++) {
-            // Add all candies to chain except powerup.
-            if(tiles[row][powerup.column]) {
-              chain.candies.push(candies[row][powerup.column]);
-            }
-          }
-        }
-        
-        // L Shape
-        if(powerup.bonusType === 3) {
-          for(var row = powerup.row - 1; row < powerup.row + 2; row++) {
-            for(var column = powerup.column - 1; column < powerup.column + 2; column++) {
-              // Add all candies to chain except powerup.
-              if(row < data.ROWS && column < data.COLUMNS && tiles[row][column]) {
-                chain.candies.push(candies[row][column]);
-              }
-            }
-          }
-        }
-        
-        // Bomb
-        if(powerup.bonusType === 4) {
-          for(var row = 0; row < data.ROWS; row++) {
+      do {
+      
+        for(var i in powerups) {
+          powerup = powerups[i];
+          var chain = new Chain();
+
+          // Horizontally
+          if(powerup.bonusType === 1) {
             for(var column = 0; column < data.COLUMNS; column++) {
-              if(tiles[row][column] && candies[row][column].type === powerup.type) {
-                chain.candies.push(candies[row][column]);
+              // Add all candies to chain except powerup (watch out for gaps).
+              if(tiles[powerup.row][column]) {
+                chain.candies.push(candies[powerup.row][column]);
+                if(candies[powerup.row][column] !== powerup && candies[powerup.row][column].bonusType) {
+                  newPowerups.push(candies[powerup.row][column]);
+                }
+              }
+
+            }
+          }
+
+          // Vertically
+          if(powerup.bonusType === 2) {
+            for(var row = 0; row < data.ROWS; row++) {
+              // Add all candies to chain except powerup.
+              if(tiles[row][powerup.column]) {
+                chain.candies.push(candies[row][powerup.column]);
+                if(candies[row][powerup.column] !== powerup && candies[row][powerup.column].bonusType) {
+                  newPowerups.push(candies[row][powerup.column]);
+                }
               }
             }
           }
+
+          // L Shape
+          if(powerup.bonusType === 3) {
+            for(var row = powerup.row - 1; row < powerup.row + 2; row++) {
+              for(var column = powerup.column - 1; column < powerup.column + 2; column++) {
+                // Add all candies to chain except powerup.
+                if(row < data.ROWS && column < data.COLUMNS && tiles[row][column]) {
+                  chain.candies.push(candies[row][column]);
+                  if(candies[row][column] !== powerup && candies[row][column].bonusType) {
+                    newPowerups.push(candies[row][column]);
+                  }
+                }
+              }
+            }
+          }
+
+          // Bomb
+          if(powerup.bonusType === 4) {
+            for(var row = 0; row < data.ROWS; row++) {
+              for(var column = 0; column < data.COLUMNS; column++) {
+                if(tiles[row][column] && candies[row][column].type === powerup.type) {
+                  chain.candies.push(candies[row][column]);
+                }
+              }
+            }
+          }
+
+          chain.chainType = 'ChainTypePowerup';
+          set.push(chain);
         }
         
-        chain.chainType = 'ChainTypePowerup';
-        set.push(chain);
-      }
+        allPowerups = allPowerups.concat(powerups);
+        powerups = newPowerups;
+        removeDuplicates(powerups, allPowerups);
+        newPowerups = [];
+        
+      } while(powerups.length > 0);
 
       return set;
     }
