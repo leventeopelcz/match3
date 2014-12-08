@@ -9,9 +9,9 @@ Level layout is stored in the app/level.json file. '0' are empty spaces, '1' are
 
 # Game system
 
-app/game.js: The Game module and routing.
-app/game.html: The actual html for the game.
-app/controller.js: The controller for the game, the glue between view and logic.
-app/directive.js: All the view related functions are here.
+* app/game.js: The Game module and routing.
+* app/game.html: The actual html for the game.
+* app/controller.js: The controller for the game, the glue between view and logic.
+* app/directive.js: All the view related functions are here.
 
 More coming soon.
