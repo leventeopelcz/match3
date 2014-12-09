@@ -1,6 +1,6 @@
 'use strict';
 
-Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($scope, file, Swap, Level) {
+Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routeParams', function($scope, file, Swap, Level, $routeParams) {
   
   // Level data.
   $scope.GAME_BOARD = {
@@ -31,7 +31,15 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', function($
   // ==========================================================================
   
   // Load the JSON file that contains the level layout.
-  file.load('level.json', function(response) {
+  var jsonFile = null;
+  
+  if($routeParams.debug) {
+    jsonFile = $routeParams.debug;
+  } else {
+    jsonFile = 'level.json';
+  }
+  
+  file.load(jsonFile, function(response) {
     // Set global level data.
     $scope.GAME_BOARD.LAYOUT = response.layout;
     $scope.GAME_BOARD.ROWS = response.layout.length;

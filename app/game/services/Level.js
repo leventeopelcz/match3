@@ -4,7 +4,7 @@
 // NOTE: same match in chains more than once? Double check this.
 
 // Level class 
-Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) {
+Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(random, Swap, Chain, $routeParams) {
   function Level(data) {
     var candies = [data.ROWS]; // Actually: [data.ROWS][data.COLUMNS]
     
@@ -17,33 +17,19 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
     this.shuffle = function() {
       var set = [];
       
-      // Uncomment to test with predifined gameboard.
-      /*
-      set = createTestGameBoard();
-      this.detectPossibleSwaps();
-      
-      console.log(possibleSwaps);
-      console.log('=============');
-      console.log(possibleChains);
-      for(var i in possibleChains) {
-        var c = possibleChains[i].candies;
-        for(var j in c) {
-          console.log(c[j]);
-        }
-        console.log('------------');
-      }
-      return set;
-      */
-      
-      // In the very rare case that you end up with no possible swaps on the game board (try 3x3) try again.
-      
-      do {
-        set = crateInitialCandies();
+      if($routeParams.debug) {
+        // Test with predifined gameboard.
+        set = createTestGameBoard();
         this.detectPossibleSwaps();
-      } while(possibleSwaps.length == 0);
+      } else {
+        // In the very rare case that you end up with no possible swaps on the game board (try 3x3) try again.
+        do {
+          set = crateInitialCandies();
+          this.detectPossibleSwaps();
+        } while(possibleSwaps.length == 0);
+      }
       
-      return set;
-      
+      return set; 
     }
     
     var hasChainAtPosition = function(row, column) {
@@ -796,37 +782,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       console.log.apply(console, board);
     }
     
-    this.topUpCandiesRed = function() {
-      var columns = [];
-      var candyType = 1;
-      var last = 0;
-      
-      for(var column = 0; column < data.COLUMNS; column++) {
-        var array = null;
-        for(var row = 0; row < data.ROWS && !candies[row][column]; row++) {
-          
-          if(tiles[row][column] != 0) {
-            if(last != candyType) {
-              var candy = createCandyAtPosition(row, column, candyType);
-              last = candyType;
-            } else {
-              var candy = createCandyAtPosition(row, column, candyType + 1);
-              last = 0;
-            }
-            
-            if(!array) {
-              array = [];
-              columns.push(array);
-            }
-            array.push(candy);
-          }
-          
-        }
-      }
-      
-      return columns;
-    }
-    
     // instead of randomly generating the game board, we just read in the whole board with candies from a test JSON.
     var createTestGameBoard = function() {
       var set = [];
@@ -845,8 +800,11 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
           // AOE
           if(candies[i][j] === 8) {
             set.push(createCandyAtPosition(i,j,1,3));
-          } else 
-          {
+          } else
+          // Bomb
+          if(candies[i][j] === 9) {
+            set.push(createCandyAtPosition(i,j,null,4));
+          } else {
             set.push(createCandyAtPosition(i,j,candies[i][j]));
           }
         }
@@ -855,5 +813,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', function(random, Swap, Chain) 
       return set;
     }
   }
+  
   return Level;
 }]);
