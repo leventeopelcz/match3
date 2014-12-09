@@ -525,7 +525,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             var candy = array[j];
             
             var newY = pointForColumn.getY(candy.row);
-            var duration = ((newY - candy.y) / candyDestinationSize) * 300;
+            var duration = Math.sqrt((Math.abs(candy.y - newY) / candyDestinationSize) * 400000);
             
             var tween = createjs.Tween.get(candy);
             tween
@@ -555,7 +555,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
             addSpriteForCandy(candy);
             
             var newY = pointForColumn.getY(candy.row);
-            var duration = (Math.abs(candy.y - newY) / candyDestinationSize) * 300;
+            var duration = Math.sqrt((Math.abs(candy.y - newY) / candyDestinationSize) * 400000);
             
             startRow++;
             
