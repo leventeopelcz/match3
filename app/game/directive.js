@@ -1272,7 +1272,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           // Canvas ticker for animations.
           var tick = function(evt) {
             canvas.update();
-          } 
+          }
+          createjs.Ticker.setFPS(60);
           createjs.Ticker.addEventListener('tick', tick);
           
           
