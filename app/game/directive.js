@@ -305,6 +305,8 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           hint.cancelHint();
           scope.level.performSwap(swap);
           animateSwap(swap, function() {
+            scope.movesLeft--;
+            scope.$apply();
             handleMatches();
           });
         } else {
@@ -356,31 +358,27 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
         
       }
       
-      var decrementMoves = function() {
-        scope.movesLeft--;
-        scope.$apply();
-        
-        if(scope.movesLeft === 0 && scope.score < scope.maxScore) {
-          // game over
-          canvas.mouseEnabled = false;
-          hint.cancelHint();
-          animateGameOver();
-        } else if(scope.score >= scope.maxScore) {
-          // perfect game
-          canvas.mouseEnabled = false;
-          hint.cancelHint();
-          animateEndGame();
-        }
-      }
-      
       var beginNextTurn = function() {
         animateEndText(matchesNumber, function() {
+          
           scope.level.detectPossibleSwaps();
           scope.level.resetComboMultiplier();
           canvas.mouseEnabled = true;
           hint = new Hint();
-          decrementMoves();
           matchesNumber = 0;
+          
+          if(scope.movesLeft === 0 && scope.score < scope.maxScore) {
+            // game over
+            canvas.mouseEnabled = false;
+            hint.cancelHint();
+            animateGameOver();
+          } else if(scope.score >= scope.maxScore) {
+            // perfect game
+            canvas.mouseEnabled = false;
+            hint.cancelHint();
+            animateEndGame();
+          }
+          
         });
       }
       
