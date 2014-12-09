@@ -804,7 +804,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
           // Bomb
           if(candies[i][j] === 9) {
             set.push(createCandyAtPosition(i,j,null,4));
-          } else {
+          } else if(candies[i][j] !== 0){
             set.push(createCandyAtPosition(i,j,candies[i][j]));
           }
         }

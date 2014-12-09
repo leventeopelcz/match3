@@ -2,7 +2,7 @@
 
 // FIXME: Cancel swipe outside canvas?
 
-Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($window, random, $timeout, Swap) {
+Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams', function($window, random, $timeout, Swap, $routeParams) {
   return {
     restrict: 'AE',
     link: function(scope, element, attrs) {
@@ -1121,6 +1121,13 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
       // ======================================================================
       
       var createGameBoard = function() {
+        
+        if($routeParams.debug) {
+          var bg = new createjs.Shape();
+          bg.graphics.beginStroke("#fff").beginFill("#7b9eae").drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+          gameBoardLayer.addChild(bg);
+          return;
+        }
         
         for(var row = 0; row < scope.GAME_BOARD.ROWS; row++) {
           for(var column = 0; column < scope.GAME_BOARD.COLUMNS; column++) {

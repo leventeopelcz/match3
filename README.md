@@ -18,7 +18,7 @@ The ```test.json``` files ```layout``` can contain these numbers:
 * 8: aoe type 1 special candy
 * 9: bomb special candy
 
-The game will look a bit off (margin-top: -30px, margin-left: -30px) and the game board background is wrong, don't worry about it. It is caused because you can't have 0's in the test.json, thus it will generate a messed up board bg and the game board will get offset by the css. But the game works normally.
+The original game board background is turned off in debug mode.
 
 # Game system
 
