@@ -744,7 +744,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', function($windo
           {alpha: 1},
           700,
           createjs.Ease.cubicOut)
-        .wait(300)
+        .wait(200)
         .to(
           {alpha: 0},
           700,
