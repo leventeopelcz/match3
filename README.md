@@ -11,6 +11,7 @@ Level layout is stored in the app/level.json file. '0' are empty spaces, '1' are
 
 Just insert ```?debug=test.json``` at the end of the url. The ```test.json``` is the name of the json test file and should be located in the app folder.
 The ```test.json``` files ```layout``` can contain these numbers:
+
 * 1-5: the 5 candy type.
 * 6: horizontal type 1 special candy
 * 7: vertical type 1 special candy
