@@ -1,7 +1,25 @@
-# How to install
+# Install Dependencies
 
-You will need angular to be able to run the game. So just bootstrap angular, copy over the app/game, app/images, app/stylesheets, app/vendors, app/level.json and make sure all is linked up.
-Make sure the Game module is injected and loaded, rename it if necessary.
+Get Node.js and npm: `http://nodejs.org/`
+
+Now you can install bower
+```
+npm install -g bower
+```
+
+Run 
+```
+npm install
+```
+
+# Run the Application
+
+Start the server 
+```
+npm start
+```
+
+Now browse to the game: `http://localhost:8000/app/index.html`
 
 # Making different levels
 
