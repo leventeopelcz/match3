@@ -7,7 +7,7 @@ Now you can install bower
 npm install -g bower
 ```
 
-Run 
+First time run 
 ```
 npm install
 ```
