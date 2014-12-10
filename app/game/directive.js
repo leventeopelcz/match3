@@ -361,11 +361,19 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
       var beginNextTurn = function() {
         animateEndText(matchesNumber, function() {
           
-          scope.level.detectPossibleSwaps();
           scope.level.resetComboMultiplier();
           canvas.mouseEnabled = true;
-          hint = new Hint();
           matchesNumber = 0;
+          
+          // Need to shuffle board, there is no match on it!
+          if(!scope.level.getRandomMatch()) {
+            // Remove all first, then generate new candies.
+            candiesLayer.removeAllChildren();
+            addSpritesForCandies(scope.level.shuffle());
+          } else {
+            scope.level.detectPossibleSwaps();
+            hint = new Hint();
+          }
           
           if(scope.movesLeft === 0 && scope.score < scope.maxScore) {
             // game over
