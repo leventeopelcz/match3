@@ -50,22 +50,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
         //console.log("horizontal>> : ("+row+":"+i+")");
       }
       
-      /*
-      if(candies[row][column].bonusType && candies[row][column+1] && candies[row][column+1].bonusType) {
-        console.log(candies[row][column+1]);
-        horizontalChain.addCandy(candies[row][column+1]);
-        horizontalChain.chainType = 'ChainTypeHorizontal';
-        return horizontalChain;
-      }
-      
-      if(candies[row][column].bonusType && candies[row][column-1] && candies[row][column-1].bonusType) {
-        console.log(candies[row][column-1]);
-        horizontalChain.addCandy(candies[row][column-1]);
-        horizontalChain.chainType = 'ChainTypeHorizontal';
-        return horizontalChain;
-      }
-      */
-      
       if(horizontalMatches >= 3) {
         horizontalChain.chainType = 'ChainTypeHorizontal';
         return horizontalChain;
@@ -83,20 +67,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
         verticalChain.addCandy(candies[j][column]);
         //console.log("vertivalvv : ("+j+":"+column+")");
       }
-      
-      /*
-      if(candies[row][column].bonusType && candies[row+1][column] && candies[row+1][column].bonusType) {
-        verticalChain.addCandy(candies[row+1][column]);
-        verticalChain.chainType = 'ChainTypeVertical';
-        return verticalChain;
-      }
-      
-      if(candies[row][column].bonusType && candies[row-1][column] && candies[row-1][column].bonusType) {
-        verticalChain.addCandy(candies[row-1][column]);
-        verticalChain.chainType = 'ChainTypeVertical';
-        return verticalChain;
-      }
-      */
       
       if(verticalMatches >= 3) {
         verticalChain.chainType = 'ChainTypeVertical';
