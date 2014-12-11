@@ -490,32 +490,72 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       var bombPowerupChains = detectPowerupChains(bombPowerups);
       var swapPowerupChains = detectPowerupChains(swapPowerups);
       
+      // get all powerup chains (duplicates)
+      var allPowerupChains = horizontalPowerupChains.concat(verticalPowerupChains).concat(lPowerupChains).concat(bombPowerupChains).concat(swapPowerupChains);
+      
+      // get all candies from these chains (duplicates)
+      var allPowerupCandies= [];
+      allPowerupChains.map(function(chain) {
+        chain.candies.map(function(candy) {
+          allPowerupCandies.push(candy);
+        });
+      });
+      
+      // remove duplicates
+      var uniqueCandies = allPowerupCandies.filter(function(elem, pos) {
+        return allPowerupCandies.indexOf(elem) == pos;
+      });
+      
+      // create the unique powerup chain 
+      var uniquePowerupChains = [];
+      
+      if(uniqueCandies.length > 0) {
+        var chain = new Chain();
+        chain.chainType = 'ChainTypePowerup';
+        chain.candies = uniqueCandies;
+        
+        // Remove duplicates from other chains (hor, vert, L)
+        horizontalChains.map(function(c) {
+          c.candies.map(function(candy) {
+            chain.removeCandy(candy);
+          });
+        });
+        
+        verticalChains.map(function(c) {
+          c.candies.map(function(candy) {
+            chain.removeCandy(candy);
+          });
+        });
+        
+        lChains.map(function(c) {
+          c.candies.map(function(candy) {
+            chain.removeCandy(candy);
+          });
+        });
+        
+        console.log(uniqueCandies);
+        
+        uniquePowerupChains.push(chain);
+      }
+      
       removeCandies(horizontalChains);
       removeCandies(verticalChains);
       removeCandies(lChains);
       
-      
-      removeCandies(horizontalPowerupChains);
-      removeCandies(verticalPowerupChains);
-      removeCandies(lPowerupChains);
-      
-      removeCandies(bombPowerupChains);
-      removeCandies(swapPowerupChains);
+      removeCandies(uniquePowerupChains);
       
       
       calculateScores(horizontalChains);
       calculateScores(verticalChains);
       calculateScores(lChains);
       
+      calculateScores(uniquePowerupChains);
       
-      calculateScores(horizontalPowerupChains);
-      calculateScores(verticalPowerupChains);
-      calculateScores(lPowerupChains);
+      console.log(uniquePowerupChains);
+      console.log(horizontalChains);
+      console.log(verticalChains);
       
-      calculateScores(bombPowerupChains);
-      calculateScores(swapPowerupChains);
-      
-      return horizontalChains.concat(verticalChains).concat(lChains).concat(horizontalPowerupChains).concat(verticalPowerupChains).concat(lPowerupChains).concat(bombPowerupChains).concat(swapPowerupChains);
+      return horizontalChains.concat(verticalChains).concat(lChains).concat(uniquePowerupChains);
     }
     
     this.getRandomMatch = function() {
