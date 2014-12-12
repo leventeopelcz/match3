@@ -408,11 +408,12 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
             }
           }
 
-          // Bomb
+          // Bomb NOTE: THis needs work! Doesnt work if it's triggered, not swapped
           if(powerup.bonusType === 4) {
             for(var row = 0; row < data.ROWS; row++) {
               for(var column = 0; column < data.COLUMNS; column++) {
                 if(tiles[row][column] && candies[row][column].type === powerup.type) {
+                  console.log(powerup.type);
                   chain.candies.push(candies[row][column]);
                 }
               }
@@ -430,6 +431,135 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
         
       } while(powerups.length > 0);
 
+      return set;
+    }
+    
+    var bombSwappedWithCandy = function(bomb, candy) {
+      var chain = new Chain();
+      chain.chainType = 'ChainTypePowerup';
+      
+      chain.candies.push(bomb);
+      for(var row = 0; row < data.ROWS; row++) {
+        for(var column = 0; column < data.COLUMNS; column++) {
+          if(tiles[row][column] && candies[row][column].type === candy.type) {
+            chain.candies.push(candies[row][column]);
+          }
+        }
+      }
+      
+      return chain;
+    }
+    
+    var bombSwappedWithBomb = function() {
+      var chain = new Chain();
+      chain.chainType = 'ChainTypePowerup';
+      
+      for(var row = 0; row < data.ROWS; row++) {
+        for(var column = 0; column < data.COLUMNS; column++) {
+          if(tiles[row][column]) {
+            chain.candies.push(candies[row][column]);
+          }
+        }
+      }
+      
+      return chain;
+    }
+    
+    var bombSwappedWithStriped = function(bomb, stripedCandy) {
+      var chain = new Chain();
+      chain.chainType = 'ChainTypePowerup';
+      
+      chain.candies.push(bomb);
+      for(var row = 0; row < data.ROWS; row++) {
+        for(var column = 0; column < data.COLUMNS; column++) {
+          if(tiles[row][column] && candies[row][column].type === stripedCandy.type) {
+            candies[row][column].bonusType = stripedCandy.bonusType;
+            chain.candies.push(candies[row][column]);
+          }
+        }
+      }
+      
+      return chain;
+    }
+    
+    var bombSwappedWithWrapped = function(bomb, wrappedCandy) {
+      var chain = new Chain();
+      chain.chainType = 'ChainTypePowerup';
+      
+      do {
+        var randomType = random.range(1, data.NUM_CANDY_TYPES);
+      } while(randomType === wrappedCandy.type);
+      
+      chain.candies.push(bomb);
+      for(var row = 0; row < data.ROWS; row++) {
+        for(var column = 0; column < data.COLUMNS; column++) {
+          if(tiles[row][column] && (candies[row][column].type === wrappedCandy.type || candies[row][column].type === randomType)) {
+            chain.candies.push(candies[row][column]);
+          }
+        }
+      }
+      
+      return chain;
+    }
+    
+    var stripedSwappedWithStriped = function(swap) {
+      var chain = new Chain();
+      chain.chainType = 'ChainTypePowerup';
+      
+      for(var column = 0; column < data.COLUMNS; column++) {
+        // Add all candies to chain except powerup (watch out for gaps).
+        if(tiles[powerup.row][column]) {
+          chain.candies.push(candies[powerup.row][column]);
+          if(candies[powerup.row][column] !== powerup && candies[powerup.row][column].bonusType) {
+            newPowerups.push(candies[powerup.row][column]);
+          }
+        }
+      }
+      
+      return chain;
+    }
+    
+    var detectSwapPowerupChains = function(swap) {
+      var set = [];
+      
+      // Bomb with candy
+      if(swap.candyA.bonusType === 4 && !swap.candyB.bonusType) {
+        console.log('bomb and candy');
+        set.push(bombSwappedWithCandy(swap.candyA, swap.candyB));
+      }
+      if(swap.candyB.bonusType === 4 && !swap.candyA.bonusType) {
+        set.push(bombSwappedWithCandy(swap.candyB, swap.candyA));
+      }
+      
+      // Bomb with bomb
+      if(swap.candyA.bonusType === 4 && swap.candyB.bonusType === 4) {
+        set.push(bombSwappedWithBomb());
+        console.log('bomb width bomb');
+      }
+      
+      // Bomb with striped
+      if(swap.candyA.bonusType === 4 && (swap.candyB.bonusType === 1 || swap.candyB.bonusType === 2)) {
+        set.push(bombSwappedWithStriped(swap.candyA, swap.candyB));
+        console.log('bomb width striped');
+      }
+      if(swap.candyB.bonusType === 4 && (swap.candyA.bonusType === 1 || swap.candyA.bonusType === 2)) {
+        set.push(bombSwappedWithStriped(swap.candyB, swap.candyA));
+      }
+      
+      // Bomb with wrapped
+      if(swap.candyA.bonusType === 4 && swap.candyB.bonusType === 3) {
+        set.push(bombSwappedWithWrapped(swap.candyA, swap.candyB));
+        console.log('bomb width wrapped');
+      }
+      if(swap.candyB.bonusType === 4 && swap.candyA.bonusType === 3) {
+        set.push(bombSwappedWithWrapped(swap.candyB, swap.candyA));
+      }
+      
+      // Striped with striped
+      if((swap.candyA.bonusType === 1 || swap.candyA.bonusType === 2) && (swap.candyB.bonusType === 1 || swap.candyB.bonusType === 2)) {
+        set.push();
+      }
+      
       return set;
     }
     
@@ -459,19 +589,16 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
     this.removeMatches = function(swap) {
       
       // Special case if it's a bomb.
+      var swapPowerupChains = [];
       if(swap) {
-        if(swap.candyA.bonusType === 4) {
-          swap.candyA.type = swap.candyB.type;
-          var bombPowerups = [swap.candyA];
-        }
-        if(swap.candyB.bonusType === 4) {
-          swap.candyB.type = swap.candyA.type;
-          var bombPowerups = [swap.candyB];
-        }
-        if(swap.candyA.bonusType && swap.candyB.bonusType) {
-          var swapPowerups = [swap.candyA, swap.candyB];
-        }
+        swapPowerupChains = detectSwapPowerupChains(swap);
+        
+        //if(swap.candyA.bonusType && swap.candyB.bonusType) {
+          //var swapPowerups = [swap.candyA, swap.candyB];
+        //}
       }
+      
+      console.log(swapPowerupChains);
       
       var horizontalChains = detectHorizontalMatches();
       var verticalChains = detectVerticalMatches();
@@ -487,11 +614,8 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       var verticalPowerupChains = detectPowerupChains(verticalPowerups);
       var lPowerupChains = detectPowerupChains(lPowerups);
       
-      var bombPowerupChains = detectPowerupChains(bombPowerups);
-      var swapPowerupChains = detectPowerupChains(swapPowerups);
-      
       // get all powerup chains (duplicates)
-      var allPowerupChains = horizontalPowerupChains.concat(verticalPowerupChains).concat(lPowerupChains).concat(bombPowerupChains).concat(swapPowerupChains);
+      var allPowerupChains = horizontalPowerupChains.concat(verticalPowerupChains).concat(lPowerupChains).concat(swapPowerupChains);
       
       // get all candies from these chains (duplicates)
       var allPowerupCandies= [];
@@ -679,6 +803,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
         var chain = chains[i];
         for(var j in chain.candies) {
           var candy = chain.candies[j];
+          //console.log(candies[candy.row][candy.column]);
           candies[candy.row][candy.column] = null;
         }
       }
