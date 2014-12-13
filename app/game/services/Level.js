@@ -502,16 +502,91 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       return chain;
     }
     
-    var stripedSwappedWithStriped = function(swap) {
+    var stripedSwappedWithStriped = function(stripes) {
       var chain = new Chain();
       chain.chainType = 'ChainTypePowerup';
       
-      for(var column = 0; column < data.COLUMNS; column++) {
-        // Add all candies to chain except powerup (watch out for gaps).
-        if(tiles[powerup.row][column]) {
-          chain.candies.push(candies[powerup.row][column]);
-          if(candies[powerup.row][column] !== powerup && candies[powerup.row][column].bonusType) {
-            newPowerups.push(candies[powerup.row][column]);
+      for(var i in stripes) {
+        // Horizontal
+        if(stripes[i].bonusType === 1) {
+          for(var column = 0; column < data.COLUMNS; column++) {
+            if(tiles[stripes[i].row][column]) {
+              chain.candies.push(candies[stripes[i].row][column]);
+            }
+          }
+        }
+        // Vertical
+        if(stripes[i].bonusType === 2) {
+          for(var row = 0; row < data.ROWS; row++) {
+            if(tiles[row][stripes[i].column]) {
+              chain.candies.push(candies[row][stripes[i].column]);
+            }
+          }
+        }
+      }
+      
+      return chain;
+    }
+    
+    var stripedSwappedWithWrapped = function(stripedCandy, wrappedCandy) {
+      var chain = new Chain();
+      chain.chainType = 'ChainTypePowerup';
+      
+      // Horizontal
+      for(var row = stripedCandy.row - 1; row <= stripedCandy.row + 1; row++) {
+        if(row > 0 && row < data.ROWS) {
+          for(var column = 0; column < data.COLUMNS; column++) {
+            if(tiles[row][column]) {
+              chain.candies.push(candies[row][column]);
+            }
+          }
+        }
+      }
+      
+      // Vertical
+      for(var column = stripedCandy.column - 1; column <= stripedCandy.column + 1; column++) {
+        if(column > 0 && column < data.COLUMNS) {
+          for(var row = 0; row < data.ROWS; row++) {
+            if(tiles[row][column]) {
+              chain.candies.push(candies[row][column]);
+            }
+          }
+        }
+      }
+      
+      return chain;
+    }
+    
+    var wrappedSwappedWidthWrapped = function(swap) {
+      var chain = new Chain();
+      chain.chainType = 'ChainTypePowerup';
+      
+      var wrappedCandy = null;
+      var horizontalOffset = 0;
+      var verticalOffset = 0;
+      
+      // Horizontal swap
+      if(swap.candyA.column < swap.candyB.column) {
+        wrappedCandy = swap.candyA;
+        horizontalOffset = 1;
+      } else if(swap.candyA.column > swap.candyB.column) {
+        wrappedCandy = swap.candyB;
+        horizontalOffset = 1;
+      }
+      
+      // Vertical swap
+      if(swap.candyA.row < swap.candyB.row) {
+        wrappedCandy = swap.candyA;
+        verticalOffset = 1;
+      } else if(swap.candyA.row > swap.candyB.row) {
+        wrappedCandy = swap.candyB;
+        verticalOffset = 1;
+      }
+      
+      for(var row = wrappedCandy.row - 2; row <= wrappedCandy.row + 2 + verticalOffset; row++) {
+        for(var column = wrappedCandy.column - 2; column <= wrappedCandy.column + 2 + horizontalOffset; column++) {
+          if(row > 0 && row < data.ROWS && column > 0 && column < data.COLUMNS && tiles[row][column]) {
+            chain.candies.push(candies[row][column]);
           }
         }
       }
@@ -557,7 +632,20 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       
       // Striped with striped
       if((swap.candyA.bonusType === 1 || swap.candyA.bonusType === 2) && (swap.candyB.bonusType === 1 || swap.candyB.bonusType === 2)) {
-        set.push();
+        set.push(stripedSwappedWithStriped([swap.candyA, swap.candyB]));
+      }
+      
+      // Striped with wrapped
+      if((swap.candyA.bonusType === 1 || swap.candyA.bonusType === 2) && swap.candyB.bonusType === 3) {
+        set.push(stripedSwappedWithWrapped(swap.candyA, swap.candyB));
+      }
+      if((swap.candyB.bonusType === 1 || swap.candyB.bonusType === 2) && swap.candyA.bonusType === 3) {
+        set.push(stripedSwappedWithWrapped(swap.candyB, swap.candyA));
+      }
+      
+      // Wrapped with wrapped
+      if(swap.candyA.bonusType === 3 && swap.candyB.bonusType === 3) {
+        set.push(wrappedSwappedWidthWrapped(swap));
       }
       
       return set;
@@ -592,10 +680,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       var swapPowerupChains = [];
       if(swap) {
         swapPowerupChains = detectSwapPowerupChains(swap);
-        
-        //if(swap.candyA.bonusType && swap.candyB.bonusType) {
-          //var swapPowerups = [swap.candyA, swap.candyB];
-        //}
       }
       
       console.log(swapPowerupChains);
