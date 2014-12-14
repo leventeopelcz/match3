@@ -698,8 +698,11 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       var verticalPowerupChains = detectPowerupChains(verticalPowerups);
       var lPowerupChains = detectPowerupChains(lPowerups);
       
+      var swapPowerups = detectPowerupInChains(swapPowerupChains);
+      var triggeredSwapPowerupChains = detectPowerupChains(swapPowerups);
+      
       // get all powerup chains (duplicates)
-      var allPowerupChains = horizontalPowerupChains.concat(verticalPowerupChains).concat(lPowerupChains).concat(swapPowerupChains);
+      var allPowerupChains = horizontalPowerupChains.concat(verticalPowerupChains).concat(lPowerupChains).concat(swapPowerupChains).concat(triggeredSwapPowerupChains);
       
       // get all candies from these chains (duplicates)
       var allPowerupCandies= [];
