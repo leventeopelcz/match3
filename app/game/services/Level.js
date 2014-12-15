@@ -366,7 +366,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
           powerup = powerups[i];
           var chain = new Chain();
 
-          // Horizontally
+          // Horizontal Striped
           if(powerup.bonusType === 1) {
             for(var column = 0; column < data.COLUMNS; column++) {
               // Add all candies to chain except powerup (watch out for gaps).
@@ -380,7 +380,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
             }
           }
 
-          // Vertically
+          // Vertical Striped
           if(powerup.bonusType === 2) {
             for(var row = 0; row < data.ROWS; row++) {
               // Add all candies to chain except powerup.
@@ -393,7 +393,7 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
             }
           }
 
-          // L Shape
+          // Wrapped
           if(powerup.bonusType === 3) {
             for(var row = powerup.row - 1; row < powerup.row + 2; row++) {
               for(var column = powerup.column - 1; column < powerup.column + 2; column++) {
@@ -408,12 +408,13 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
             }
           }
 
-          // Bomb NOTE: THis needs work! Doesnt work if it's triggered, not swapped
+          // Bomb
           if(powerup.bonusType === 4) {
+            var randomType = random.range(1, data.NUM_CANDY_TYPES);
+            console.log('randomtype for bomb: '+randomType);
             for(var row = 0; row < data.ROWS; row++) {
               for(var column = 0; column < data.COLUMNS; column++) {
-                if(tiles[row][column] && candies[row][column].type === powerup.type) {
-                  console.log(powerup.type);
+                if(tiles[row][column] && candies[row][column].type === randomType) {
                   chain.candies.push(candies[row][column]);
                 }
               }
