@@ -411,7 +411,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
           // Bomb
           if(powerup.bonusType === 4) {
             var randomType = random.range(1, data.NUM_CANDY_TYPES);
-            console.log('randomtype for bomb: '+randomType);
             for(var row = 0; row < data.ROWS; row++) {
               for(var column = 0; column < data.COLUMNS; column++) {
                 if(tiles[row][column] && candies[row][column].type === randomType) {
@@ -600,7 +599,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       
       // Bomb with candy
       if(swap.candyA.bonusType === 4 && !swap.candyB.bonusType) {
-        console.log('bomb and candy');
         set.push(bombSwappedWithCandy(swap.candyA, swap.candyB));
       }
       if(swap.candyB.bonusType === 4 && !swap.candyA.bonusType) {
@@ -610,13 +608,11 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       // Bomb with bomb
       if(swap.candyA.bonusType === 4 && swap.candyB.bonusType === 4) {
         set.push(bombSwappedWithBomb());
-        console.log('bomb width bomb');
       }
       
       // Bomb with striped
       if(swap.candyA.bonusType === 4 && (swap.candyB.bonusType === 1 || swap.candyB.bonusType === 2)) {
         set.push(bombSwappedWithStriped(swap.candyA, swap.candyB));
-        console.log('bomb width striped');
       }
       if(swap.candyB.bonusType === 4 && (swap.candyA.bonusType === 1 || swap.candyA.bonusType === 2)) {
         set.push(bombSwappedWithStriped(swap.candyB, swap.candyA));
@@ -625,7 +621,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       // Bomb with wrapped
       if(swap.candyA.bonusType === 4 && swap.candyB.bonusType === 3) {
         set.push(bombSwappedWithWrapped(swap.candyA, swap.candyB));
-        console.log('bomb width wrapped');
       }
       if(swap.candyB.bonusType === 4 && swap.candyA.bonusType === 3) {
         set.push(bombSwappedWithWrapped(swap.candyB, swap.candyA));
@@ -682,8 +677,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       if(swap) {
         swapPowerupChains = detectSwapPowerupChains(swap);
       }
-      
-      console.log(swapPowerupChains);
       
       var horizontalChains = detectHorizontalMatches();
       var verticalChains = detectVerticalMatches();
@@ -745,8 +738,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
           });
         });
         
-        console.log(uniqueCandies);
-        
         uniquePowerupChains.push(chain);
       }
       
@@ -762,10 +753,6 @@ Game.factory('Level', ['random', 'Swap', 'Chain', '$routeParams', function(rando
       calculateScores(lChains);
       
       calculateScores(uniquePowerupChains);
-      
-      console.log(uniquePowerupChains);
-      console.log(horizontalChains);
-      console.log(verticalChains);
       
       return horizontalChains.concat(verticalChains).concat(lChains).concat(uniquePowerupChains);
     }
