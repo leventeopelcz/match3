@@ -365,13 +365,14 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
           canvas.mouseEnabled = true;
           matchesNumber = 0;
           
+          scope.level.detectPossibleSwaps();
+          
           // Need to shuffle board, there is no match on it!
           if(!scope.level.getRandomMatch()) {
             // Remove all first, then generate new candies.
             candiesLayer.removeAllChildren();
             addSpritesForCandies(scope.level.shuffle());
           } else {
-            scope.level.detectPossibleSwaps();
             hint = new Hint();
           }
           
