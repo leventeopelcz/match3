@@ -1,6 +1,6 @@
 'use strict';
 
-Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routeParams', function($scope, file, Swap, Level, $routeParams) {
+Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routeParams', '$rootScope', function($scope, file, Swap, Level, $routeParams, $rootScope) {
   
   // Level data.
   $scope.GAME_BOARD = {
@@ -20,6 +20,9 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
   
   $scope.levelLoaded = false;
   
+  $scope.imageUrl = null;
+  $rootScope.cssUrl = null;
+  
   // This is going to be our new level.
   $scope.level = null;
   
@@ -35,6 +38,7 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
   
   // Load the JSON file that contains the level layout.
   var jsonFile = null;
+  var configFile = 'config.json';
   
   if($routeParams.debug) {
     jsonFile = $routeParams.debug;
@@ -62,6 +66,13 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
 
     // Instantiate our new level.
     $scope.level = new Level($scope.GAME_BOARD);
+    
+    file.load(configFile, function(response) {
+      $scope.imageUrl = response.imageUrl;
+      $rootScope.cssUrl = response.cssUrl;
+      $scope.levelLoaded = true;
+    });
+    
   });
 
 }]);

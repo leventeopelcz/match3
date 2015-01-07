@@ -47,22 +47,20 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
       
       // ======================================================================
       
-      // Assets to load.
-      assetLoader.loadManifest([
-        {id: 'candyAtlas', src:'images/candies.png'},
-        {id: 'removeEffect', src:'images/effect_sprite.png'},
-        {id: 'effectsAtlas', src:'images/effects.png'},
-        {id: 'Tile1', src:'images/Tile1.png'},
-        {id: 'Tile2', src:'images/Tile2.png'},
-        {src: 'vendors/raphael-min.js'},
-        {src: 'vendors/Lilita_One_400.font.js'}
-      ]);
-      
-      // ======================================================================
-      
       // If level data is loaded.
       scope.$watch('levelLoaded', function() {
         if(scope.levelLoaded) {
+          // Assets to load.
+          assetLoader.loadManifest([
+            {id: 'candyAtlas', src:scope.imageUrl+'candies.png'},
+            {id: 'removeEffect', src:scope.imageUrl+'effect_sprite.png'},
+            {id: 'effectsAtlas', src:scope.imageUrl+'effects.png'},
+            {id: 'Tile1', src:scope.imageUrl+'Tile1.png'},
+            {id: 'Tile2', src:scope.imageUrl+'Tile2.png'},
+            {src: 'vendors/raphael-min.js'},
+            {src: 'vendors/Lilita_One_400.font.js'}
+          ]);
+          
           beginGame();
         }
       });
