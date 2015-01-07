@@ -18,5 +18,13 @@
     { "name": "min_reward", "value": 100 },
     { "name": "med_reward", "value": 200 },
     { "name": "max_reward", "value": 400 }
-  ]
+  ],
+  "combos": [
+    "Cash Blast!",
+    "Windfall!",
+    "Gold Rush!",
+    "Cha-Ching!"
+  ],
+  "gameOver": "Game Over!",
+  "perfectGame": "Perfect Game!"
 }
