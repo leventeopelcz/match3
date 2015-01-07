@@ -608,7 +608,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
       }
       
       var animateEndGame = function() {
-        var text = customText('Perfect Game!', candyDestinationSize+'px', 'Lilita One');
+        var text = customText(scope.GAME_BOARD.PERFECT_GAME, candyDestinationSize+'px', 'Lilita One');
         
         text.x = CANVAS_WIDTH / 2;
         text.y = CANVAS_HEIGHT / 2;
@@ -651,7 +651,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
       }
       
       var animateGameOver = function() {
-        var text = customText('Game Over!', candyDestinationSize+'px', 'Lilita One');
+        var text = customText(scope.GAME_BOARD.GAME_OVER, candyDestinationSize+'px', 'Lilita One');
         
         text.x = CANVAS_WIDTH / 2;
         text.y = CANVAS_HEIGHT / 2;
@@ -725,13 +725,13 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
         }
         
         if(matches > 4) {
-          var string = 'Cha-Ching!';
+          var string = scope.GAME_BOARD.COMBOS[3];
         } else if(matches > 3) {
-          var string = 'Gold Rush!';
+          var string = scope.GAME_BOARD.COMBOS[2];
         } else if(matches > 2) {
-          var string = 'Windfall!';
+          var string = scope.GAME_BOARD.COMBOS[1];
         } else if(matches > 1) {
-          var string = 'Cash Blast!';
+          var string = scope.GAME_BOARD.COMBOS[0];
         }
         
         var text = customText(string, candyDestinationSize+'px', 'Lilita One');

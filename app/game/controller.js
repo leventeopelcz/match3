@@ -12,7 +12,10 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
     NUM_CANDY_TYPES: 6,
     BASE_SCORE: null,
     TARGET_SCORE: null,
-    REWARDS: null
+    REWARDS: null,
+    COMBOS: null,
+    GAME_OVER: null,
+    PERFECT_GAME: null
   }
   
   $scope.levelLoaded = false;
@@ -49,7 +52,9 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
     $scope.GAME_BOARD.BASE_SCORE = response.baseScore;
     $scope.GAME_BOARD.TARGET_SCORE = response.targetScore;
     $scope.GAME_BOARD.REWARDS = response.rewards;
-    $scope.levelLoaded = true;
+    $scope.GAME_BOARD.COMBOS = response.combos;
+    $scope.GAME_BOARD.GAME_OVER = response.gameOver;
+    $scope.GAME_BOARD.PERFECT_GAME = response.perfectGame;
     
     $scope.movesLeft = response.movesLeft;
     $scope.score = response.score;
