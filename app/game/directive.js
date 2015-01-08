@@ -336,10 +336,19 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
             chain = chains[i];
             scope.score += chain.score;
             
-            if((scope.score / scope.maxScore) * 100 <= 100) {
-              scope.percent = (scope.score / scope.maxScore) * 100;
+            //if (typeof window['matchMedia'] !== 'undefined' && window.matchMedia('(max-width: 849px)').matches) {
+            if(window.innerWidth > 849) {
+              if((scope.score / scope.maxScore) * 100 <= 100) {
+                scope.percent = 'height: ' + ((scope.score / scope.maxScore) * 100) + '%';
+              } else {
+                scope.percent = 'height: 100%';
+              }
             } else {
-              scope.percent = 100;
+              if((scope.score / scope.maxScore) * 100 <= 100) {
+                scope.percent = 'width: ' + ((scope.score / scope.maxScore) * 100) + '%';
+              } else {
+                scope.percent = 'width: 100%';
+              }
             }
             
           }
