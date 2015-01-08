@@ -1,6 +1,6 @@
 'use strict';
 
-Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routeParams', '$rootScope', function($scope, file, Swap, Level, $routeParams, $rootScope) {
+Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routeParams', 'cssInjector', function($scope, file, Swap, Level, $routeParams, cssInjector) {
   
   // Level data.
   $scope.GAME_BOARD = {
@@ -21,7 +21,6 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
   $scope.levelLoaded = false;
   
   $scope.imageUrl = null;
-  $rootScope.cssUrl = null;
   
   // This is going to be our new level.
   $scope.level = null;
@@ -32,7 +31,7 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
   
   $scope.maxScore = null;
   
-  $scope.percent = 0;
+  $scope.percent = '';
   
   // ==========================================================================
   
@@ -69,7 +68,7 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
     
     file.load(configFile, function(response) {
       $scope.imageUrl = response.imageUrl;
-      $rootScope.cssUrl = response.cssUrl;
+      cssInjector.add(response.cssUrl+"theme.css");
       $scope.levelLoaded = true;
     });
     

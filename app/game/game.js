@@ -1,6 +1,6 @@
 'use strict';
 
-var Game = angular.module('Empower.game', ['ngRoute'])
+var Game = angular.module('Empower.game', ['ngRoute', 'angular.css.injector'])
 
 Game.config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/game', {
