@@ -39,11 +39,8 @@ The ```test.json``` files ```layout``` can contain these numbers:
 
 The original game board background is turned off in debug mode.
 
-# Game system
+# Themes
 
-* app/game.js: The Game module and routing.
-* app/game.html: The actual html for the game.
-* app/controller.js: The controller for the game, the glue between view and logic.
-* app/directive.js: All the view related functions are here.
-
-More coming soon.
+There is a config.json that has an image assets url and a css url in it. For some image assets you need to change the urls in the css file too to take effect.
+Also extended the level.json file with all the text that can appear in the game.
+So all you need to do is replace the image and css assets and apply the proper url for them to use a new theme.
