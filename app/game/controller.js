@@ -59,7 +59,9 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
     $scope.movesLeft = response.movesLeft;
     $scope.score = response.score;
     $scope.maxScore = response.targetScore;
-
+    
+    $scope.levelLoaded = true;
+    
     // Instantiate our new level.
     $scope.level = new Level($scope.GAME_BOARD);
   });
