@@ -398,6 +398,22 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
         });
       }
       
+      
+      // Public API for shuffling.
+      scope.shuffle = function() {
+        hint.cancelHint();
+        candiesLayer.removeAllChildren();
+        addSpritesForCandies(scope.level.shuffle());
+        hint = new Hint();
+      }
+      
+      // Public API for restarting.
+      scope.restart = function() {
+        scope.score = scope.GAME_BOARD.SCORE;
+        scope.movesLeft = scope.GAME_BOARD.MOVES_LEFT;
+        scope.shuffle();
+      }
+      
       // ======================================================================
       // ANIMATIONS
       // ======================================================================
