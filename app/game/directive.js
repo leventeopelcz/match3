@@ -1288,7 +1288,9 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
           element[0].setAttribute('width', CANVAS_WIDTH);
           element[0].setAttribute('height', CANVAS_HEIGHT);
           
-          createGameBoard();
+          if(scope.GAME_BOARD.NEEDSBACKGROUND) {
+            createGameBoard();
+          }
           
           addSpritesForCandies(scope.level.shuffle());
           

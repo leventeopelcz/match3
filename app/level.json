@@ -26,5 +26,6 @@
     "Cha-Ching!"
   ],
   "gameOver": "Game Over!",
-  "perfectGame": "Perfect Game!"
+  "perfectGame": "Perfect Game!",
+  "needsBackground": true
 }
