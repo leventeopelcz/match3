@@ -839,7 +839,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
         
         text.cache(0, 0, width, height);
         
-        gradient.graphics.beginLinearGradientFill(["#f7e70a", "#f64400"], [0, 1], 0, 0, 0, height);
+        gradient.graphics.beginLinearGradientFill(scope.GAME_BOARD.TEXTTHEME.gradient, [0, 1], 0, 0, 0, height);
         gradient.graphics.drawRect(0, 0, width, height);
         gradient.graphics.endFill();
         
@@ -849,10 +849,10 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
         
         gradient.cache(0, 0, width, height);
         
-        var outline = new createjs.Text(string, fontSize+' '+fontFamily, "#573514");
+        var outline = new createjs.Text(string, fontSize+' '+fontFamily, scope.GAME_BOARD.TEXTTHEME.outline);
         outline.outline = candyDestinationSize * 0.05; // 5% border depending on candy size.
         
-        var outline2 = new createjs.Text(string, fontSize+' '+fontFamily, "#000");
+        var outline2 = new createjs.Text(string, fontSize+' '+fontFamily, scope.GAME_BOARD.TEXTTHEME.shadow);
         outline2.outline = candyDestinationSize * 0.1; // 10% border depending on candy size.
         
         container.addChild(outline2);
@@ -1332,7 +1332,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
             
             var text = paper
               .text(paper.width/2 + textOffset/2 - 10, paper.height/2 - 2, val.value)
-              .attr({fill:'90-#FC7E0B-#FDFE38', 'font-size':30, 'font-family':'Lilita One'});
+              .attr({fill:'90-'+scope.GAME_BOARD.REWARDSTHEME, 'font-size':30, 'font-family':'Lilita One'});
             
             text.scale((paper.width - textOffset) / text.getBBox().width);
           });

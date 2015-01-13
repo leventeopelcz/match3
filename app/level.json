@@ -27,5 +27,11 @@
   ],
   "gameOver": "Game Over!",
   "perfectGame": "Perfect Game!",
-  "needsBackground": true
+  "needsBackground": true,
+  "textTheme": {
+    "gradient": ["#f7e70a", "#f64400"],
+    "outline": "#573514",
+    "shadow": "#000"
+  },
+  "rewardsTheme": "#FC7E0B-#FDFE38"
 }

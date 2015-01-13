@@ -16,7 +16,9 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
     COMBOS: null,
     GAME_OVER: null,
     PERFECT_GAME: null,
-    NEEDSBACKGROUND: null
+    NEEDSBACKGROUND: null,
+    TEXTTHEME: null,
+    REWARDSTHEME: null
   }
   
   $scope.levelLoaded = false;
@@ -68,6 +70,8 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
     $scope.GAME_BOARD.GAME_OVER = response.gameOver;
     $scope.GAME_BOARD.PERFECT_GAME = response.perfectGame;
     $scope.GAME_BOARD.NEEDSBACKGROUND = response.needsBackground;
+    $scope.GAME_BOARD.TEXTTHEME = response.textTheme;
+    $scope.GAME_BOARD.REWARDSTHEME = response.rewardsTheme;
     
     $scope.movesLeft = response.movesLeft;
     $scope.score = response.score;
