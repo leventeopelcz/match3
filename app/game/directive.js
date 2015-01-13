@@ -57,8 +57,7 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
             {id: 'effectsAtlas', src:scope.imageUrl+'effects.png'},
             {id: 'Tile1', src:scope.imageUrl+'Tile1.png'},
             {id: 'Tile2', src:scope.imageUrl+'Tile2.png'},
-            {src: 'vendors/raphael-min.js'},
-            {src: 'vendors/Lilita_One_400.font.js'}
+            {src: 'vendors/raphael-min.js'}
           ]);
           
           beginGame();
@@ -1316,20 +1315,26 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
           createjs.Ticker.setFPS(60);
           createjs.Ticker.addEventListener('tick', tick);
           
-          
-          // NOTE: Old code, from previous game!
           // To display progressbar icons and text in the HUD.
           angular.forEach(scope.GAME_BOARD.REWARDS, function(val, i) {
-            var x_offset_of_icon = 13;
-            var x_offset_of_text = 48;
+            var iconOffset = 13;
+            var textOffset = 60;
             
             var el = angular.element(document.querySelector("#"+val.name));
-            var paper = new Raphael(val.name, el.offsetWidth, el.offsetHeight);
-            paper.image('images/gold-icon.png', x_offset_of_icon, paper.height/2 - 17, 30, 31);
-            var font = paper.getFont('Lilita One');
+            var paper = new Raphael(val.name, el.width, el.height);
+            paper.image('images/gold-icon.png', iconOffset, paper.height/2 - 17, 30, 31);
             
-            paper.print(x_offset_of_text, paper.height/2 - 2, val.value, font, 30).attr({transform:"t0,3", fill:"#552f0b"});
-            paper.print(x_offset_of_text, paper.height/2 - 2, val.value, font, 30).attr({"fill": "90-#FC7E0B-#FDFE38"});
+            var shadow = paper
+              .text(paper.width/2 + textOffset/2 - 10, paper.height/2 - 2, val.value)
+              .attr({fill:'#552f0b', 'font-size':30, 'font-family':'Lilita One', transform:"t0,3"});
+            
+            shadow.scale((paper.width - textOffset) / shadow.getBBox().width);
+            
+            var text = paper
+              .text(paper.width/2 + textOffset/2 - 10, paper.height/2 - 2, val.value)
+              .attr({fill:'90-#FC7E0B-#FDFE38', 'font-size':30, 'font-family':'Lilita One'});
+            
+            text.scale((paper.width - textOffset) / text.getBBox().width);
           });
           
         }

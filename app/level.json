@@ -16,8 +16,8 @@
   "targetScore": 10000,
   "rewards": [
     { "name": "min_reward", "value": 100 },
-    { "name": "med_reward", "value": 200 },
-    { "name": "max_reward", "value": 400 }
+    { "name": "med_reward", "value": 2000 },
+    { "name": "max_reward", "value": 40000 }
   ],
   "combos": [
     "Cash Blast!",
