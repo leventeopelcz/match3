@@ -46,6 +46,14 @@ Game.controller('GameController', ['$scope', 'file', 'Swap', 'Level', '$routePar
     jsonFile = 'level.json';
   }
   
+  // Public API to get if score reached X% or not.
+  $scope.isPercent = function(percent) {
+    if(percent <= ($scope.score / $scope.maxScore) * 100) {
+      return true;
+    }
+    return false;
+  }
+  
   file.load(jsonFile, function(response) {
     // Set global level data.
     $scope.GAME_BOARD.LAYOUT = response.layout;

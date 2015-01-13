@@ -398,7 +398,6 @@ Game.directive('game', ['$window', 'random', '$timeout', 'Swap', '$routeParams',
         });
       }
       
-      
       // Public API for shuffling.
       scope.shuffle = function() {
         hint.cancelHint();
